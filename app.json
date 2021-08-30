@@ -1,0 +1,131 @@
+{
+  "id": "com.athom.flowchecker",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "brandColor": "#000000",
+  "name": {
+    "en": "Flow Checker",
+    "nl": "Flow Checker"
+  },
+  "description": {
+    "en": "Get insight in you Homey Flows",
+    "nl": "Krijg info over je Homey Flows"
+  },
+  "category": [
+    "tools"
+  ],
+  "images": {
+    "xlarge": "/assets/images/xlarge.png",
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "author": {
+    "name": "Martijn Poppen",
+    "email": "flowchecker@martijnpoppen.nl"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Martijn Poppen",
+        "email": "flowchecker@martijnpoppen.nl"
+      }
+    ],
+    "translators": [
+      {
+        "name": "🇬🇧 Martijn Poppen"
+      },
+      {
+        "name": "🇳🇱 Martijn Poppen"
+      }
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "martijnpoppen"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://community.athom.com/t/app-amberpro/50486"
+  },
+  "source": "https://github.com/martijnpoppen/net.amberpro",
+  "homeyCommunityTopicId": 50486,
+  "support": "https://community.athom.com/t/app-amberpro/50486",
+  "api": {
+    "settings": {
+      "method": "put",
+      "path": "/settings/"
+    }
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "trigger_BROKEN",
+        "title": {
+          "en": "A flow broke down",
+          "nl": "Een flow is kapot gegaan"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_DISABLED",
+        "title": {
+          "en": "A flow is disabled",
+          "nl": "Een flow is uitgezet"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "action_reboot_flow",
+        "title": {
+          "en": "Reboot",
+          "nl": "Herstarten"
+        },
+        "titleFormatted": {
+          "en": "[[device]] Reboot",
+          "nl": "[[device]] Herstarten"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=action_reboot"
+          }
+        ]
+      }
+    ]
+  }
+}

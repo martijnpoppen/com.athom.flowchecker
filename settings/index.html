@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+<head>
+    <!-- The '/homey.js' script must be included in your settings view to work -->
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <style>
+        fieldset legend, .hy-fieldset:not(.hy-nostyle) legend {
+            font-size: 14px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <fieldset>
+        <legend data-i18n="settings.title"></legend>
+        <div class="field row">
+            <label for="notification_broken" data-i18n="settings.notification_broken"></label>
+            <input id="notification_broken" type="checkbox" value="" />
+        </div>
+        <div class="field row">
+            <label for="notification_disabled" data-i18n="settings.notification_disabled"></label>
+            <input id="notification_disabled" type="checkbox" value="" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend data-i18n="settings.flows_broken"></legend>
+        <div class="field row">
+            <ul id="flows_broken"></ul>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend data-i18n="settings.flows_disabled"></legend>
+        <div class="field row">
+            <ul id="flows_disabled"></ul>
+        </div>
+    </fieldset>
+    <p id="error" style="color: red;"></p>
+    <p id="loading" style="color: #0000FF;"></p>
+    <p id="success" style="color: #5fd225;"></p>
+    <button id="save" class="right">Save changes</button>
+    <button id="clear" class="left">Clear all</button>
+
+    <script src="./settings.js"></script>
+
+</body>
+
+</html>

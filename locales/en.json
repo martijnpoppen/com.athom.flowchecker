@@ -1,0 +1,9 @@
+{
+"settings": {
+    "title": "FlowChecker Settings",
+    "notification_broken": "Notify when flow breaks",
+    "notification_disabled": "Notify when flow gets disabled",
+    "flows_broken": "FlowChecker broken flows",
+    "flows_disabled": "FlowChecker disabled flows"
+}
+}
