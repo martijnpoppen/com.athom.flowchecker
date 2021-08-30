@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -103,26 +103,6 @@
               "en": "Flow",
               "nl": "Flow"
             }
-          }
-        ]
-      }
-    ],
-    "actions": [
-      {
-        "id": "action_reboot_flow",
-        "title": {
-          "en": "Reboot",
-          "nl": "Herstarten"
-        },
-        "titleFormatted": {
-          "en": "[[device]] Reboot",
-          "nl": "[[device]] Herstarten"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "capabilities=action_reboot"
           }
         ]
       }
