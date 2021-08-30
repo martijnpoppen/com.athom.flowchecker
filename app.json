@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -51,11 +51,11 @@
     }
   },
   "bugs": {
-    "url": "https://community.athom.com/t/app-amberpro/50486"
+    "url": "https://community.athom.com/t/app-flowchecker/50986"
   },
-  "source": "https://github.com/martijnpoppen/net.amberpro",
-  "homeyCommunityTopicId": 50486,
-  "support": "https://community.athom.com/t/app-amberpro/50486",
+  "source": "https://github.com/martijnpoppen/com.athom.flowchecker",
+  "homeyCommunityTopicId": 50986,
+  "support": "https://community.athom.com/t/app-flowchecker/50986",
   "api": {
     "settings": {
       "method": "put",
