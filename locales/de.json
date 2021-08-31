@@ -1,9 +1,9 @@
 {
-"settings": {
-    "title": "sSettings",
+  "settings": {
+    "title": "Settings",
     "notification_broken": "Notify when flow breaks",
     "notification_disabled": "Notify when flow gets disabled",
     "flows_broken": "broken flows",
     "flows_disabled": "disabled flows"
-}
+  }
 }
