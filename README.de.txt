@@ -1,11 +1,11 @@
-Retrieve information from your Homey Flows. 
-Get notification when a value has changed.
+Erhalten Sie Informationen zu Ihren Homey Flows.
+Lassen Sie sich benachrichtigen, wenn sich ein Wert geändert hat.
 
-Current features:
-- Notify broken flows (default enabled)
-- Notify disabled flows (default disabled)
-- Overview broken flows
-- Overview disabled flows
+Aktuelle Funktionen:
+- Benachrichtigung über defekte Flows (standardmäßig aktiviert)
+- Benachrichtigung über deaktivierte Flows (standardmäßig deaktiviert)
+- Übersicht über defekte Flows
+- Übersicht über deaktivierte Flows
 
-More info on the community:
-- Link in app info below
+Weitere Informationen in der Community:
+- Link in der App-Info unten
