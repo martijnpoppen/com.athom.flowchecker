@@ -19,5 +19,8 @@
   },
   "1.0.6": {
     "en": "ADD: german translation - FIX: duplicate notifications on startup"
+  },
+  "1.0.7": {
+    "en": "FIX: German corrections"
   }
 }
