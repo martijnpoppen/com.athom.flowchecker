@@ -74,7 +74,7 @@
         "title": {
           "en": "A flow broke down",
           "nl": "Een flow is kapot gegaan",
-          "de": "Ein Flow ist defekt"
+          "de": "Ein Flow ist beschädigt"
         },
         "tokens": [
           {
@@ -151,7 +151,7 @@
         "title": {
           "en": "There !{{are|aren't}} broken flows",
           "nl": "Er !{{zijn|zijn geen}} kapotte flows",
-          "de": "Da !{{sind|sind nicht}} defekte Flows"
+          "de": "Da !{{sind|sind nicht}} beschädigte Flows"
         }
       },
       {

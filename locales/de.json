@@ -1,9 +1,9 @@
 {
   "settings": {
-    "title": "Settings",
-    "notification_broken": "Notify when flow breaks",
-    "notification_disabled": "Notify when flow gets disabled",
-    "flows_broken": "broken flows",
-    "flows_disabled": "disabled flows"
+    "title": "Einstellungen",
+    "notification_broken": "Benachrichtigung, wenn ein Flow beschädigt wird",
+    "notification_disabled": "Benachrichtigen, wenn der Flow deaktiviert wird",
+    "flows_broken": "beschädigte Flows",
+    "flows_disabled": "deaktivierte Flows"
   }
 }
