@@ -9,11 +9,13 @@
   "brandColor": "#000000",
   "name": {
     "en": "Flow Checker",
-    "nl": "Flow Checker"
+    "nl": "Flow Checker",
+    "de": "Flow Checker"
   },
   "description": {
     "en": "Get insight in your Homey Flows",
-    "nl": "Krijg inzicht in Homey Flows"
+    "nl": "Krijg inzicht in Homey Flows",
+    "de": "Erhalten Sie Einblick in Homey Flows"
   },
   "category": [
     "tools"
@@ -40,6 +42,9 @@
       },
       {
         "name": "🇳🇱 Martijn Poppen"
+      },
+      {
+        "name": "🇩🇪 Dirk Göbel"
       }
     ]
   },
@@ -68,7 +73,8 @@
         "id": "trigger_BROKEN",
         "title": {
           "en": "A flow broke down",
-          "nl": "Een flow is kapot gegaan"
+          "nl": "Een flow is kapot gegaan",
+          "de": "Ein Flow ist defekt"
         },
         "tokens": [
           {
@@ -76,7 +82,8 @@
             "type": "string",
             "title": {
               "en": "Flow",
-              "nl": "Flow"
+              "nl": "Flow",
+              "de": "Flow"
             }
           },
           {
@@ -84,7 +91,8 @@
             "type": "string",
             "title": {
               "en": "ID",
-              "nl": "ID"
+              "nl": "ID",
+              "de": "ID",
             }
           }
         ]
@@ -93,7 +101,8 @@
         "id": "trigger_DISABLED",
         "title": {
           "en": "A flow is disabled",
-          "nl": "Een flow is uitgezet"
+          "nl": "Een flow is uitgezet",
+          "de": "Ein Flow ist deaktiviert"
         },
         "tokens": [
           {
@@ -101,7 +110,8 @@
             "type": "string",
             "title": {
               "en": "Flow",
-              "nl": "Flow"
+              "nl": "Flow",
+              "de": "Flow"
             }
           }
         ]
@@ -110,7 +120,8 @@
         "id": "trigger_FIXED",
         "title": {
           "en": "A flow started working again",
-          "nl": "Een flow is actief geworden"
+          "nl": "Een flow is actief geworden",
+          "de": "Ein Flow ist wieder aktiviert worden"
         },
         "tokens": [
           {
@@ -118,7 +129,8 @@
             "type": "string",
             "title": {
               "en": "Flow",
-              "nl": "Flow"
+              "nl": "Flow",
+              "de": "Flow"
             }
           },
           {
@@ -126,7 +138,8 @@
             "type": "string",
             "title": {
               "en": "ID",
-              "nl": "ID"
+              "nl": "ID",
+              "de": "ID"
             }
           }
         ]
@@ -137,14 +150,16 @@
         "id": "condition_BROKEN",
         "title": {
           "en": "There !{{are|aren't}} broken flows",
-          "nl": "Er !{{zijn|zijn geen}} kapotte flows"
+          "nl": "Er !{{zijn|zijn geen}} kapotte flows",
+          "de": "Da !{{sind|sind nicht}} defekte Flows"
         }
       },
       {
         "id": "condition_DISABLED",
         "title": {
           "en": "There !{{are|aren't}} disabled flows",
-          "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows"
+          "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
+          "de": "Da !{{sind|sind nicht}} deaktivierte Flows"
         }
       }
     ]
