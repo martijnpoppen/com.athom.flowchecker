@@ -2,8 +2,7 @@
 
 const Homey = require("homey");
 const HomeyAPI = require("athom-api").HomeyAPI;
-// const flowActions = require('./lib/flows/actions');
-// const flowTriggers = require('./lib/flows/triggers');
+const flowConditions = require('./lib/flows/conditions');
 const _settingsKey = `${Homey.manifest.id}.settings`;
 
 class App extends Homey.App {
@@ -25,8 +24,8 @@ class App extends Homey.App {
     this.log("[onInit] - Loaded settings", this.appSettings);
 
     this._api = await HomeyAPI.forCurrentHomey(this.homey);
-    
-    // await flowTriggers.init(this.homey);
+
+    await flowConditions.init(this.homey);
 
     await this.findFlowDefects();
     await this.setFindFlowsInterval();
@@ -100,9 +99,11 @@ class App extends Homey.App {
         } else if(key === 'DISABLED') {
           flows = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
         }
+
+        flows = flows.map((f) => ({name: f.name, id: f.id}));
     
         if (flowArray.length !== flows.length) {
-          await this.updateSettings({...this.appSettings, [key]: [...new Set(flows.map((f) => f.name))]});
+          await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
           await this.checkFlowDiff(key, flows, flowArray);
         }
     }
@@ -110,17 +111,26 @@ class App extends Homey.App {
     async checkFlowDiff(key, flows, flowArray) {
       try {
         const flowDiff = flows.filter(x => !flowArray.includes(x));
+        const flowDiffReverse = flowArray.filter(x => !flows.includes(x));
 
-        this.log(`[flowDiff] ${key} - flowDiff: `, flowDiff.length);
+        this.log(`[flowDiff] ${key} - flowDiff: `, flowDiff);
+        this.log(`[flowDiff] ${key} - flowDiffReverse: `, flowDiffReverse);
   
         if(flowDiff.length) {
-          flowDiff.forEach(flow =>  {
-            this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
+          flowDiff.forEach(async flow =>  {
+            await this.setNotification(key, flow.name);
+            await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
                 .catch( this.error )
                 .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
-  
-           this.setNotification(key, flow.name);
           });
+        }
+
+        if(flowDiffReverse.length) {
+            flowDiffReverse.forEach(async flow =>  {
+              await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id})
+                  .catch( this.error )
+                  .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
+            });
         }
       } catch (error) {
         this.error(error);
@@ -130,10 +140,11 @@ class App extends Homey.App {
 
     async setNotification(key, flow, type) {
       try {
-        if(this.appSettings[`NOTIFICATION_${key}`]);
-        await this.homey.notifications.createNotification({
-          excerpt: `[FlowChecker] - Event: ${key} - Flow: ${flow}`,
-        });
+        if(this.appSettings[`NOTIFICATION_${key}`]) {
+            await this.homey.notifications.createNotification({
+            excerpt: `FlowChecker - Event: ${key} - Flow: **${flow}**`,
+            });
+        }
       } catch (error) {
         this.error(error);
       }

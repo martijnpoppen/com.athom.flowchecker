@@ -1,9 +1,9 @@
 {
   "settings": {
-    "title": "FlowChecker instellingen",
+    "title": "Notificatie instellingen",
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
-    "flows_broken": "FlowChecker kapotte flows",
-    "flows_disabled": "FlowChecker uitgezette flows"
+    "flows_broken": "kapotte flows",
+    "flows_disabled": "uitgezette flows"
   }
 }

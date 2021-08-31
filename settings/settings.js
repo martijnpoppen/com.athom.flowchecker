@@ -1,23 +1,6 @@
 function onHomeyReady(Homey) {
     const _settingsKey = `com.athom.flowchecker.settings`;
 
-    const initializeSettings = function (err, data) {
-        if (err || !data) {
-            document.getElementById('error').innerHTML = err;
-            return;
-        }
-
-        document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
-        document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
-        document.getElementById('flows_broken').innerHTML =  '<li>' + data['BROKEN'].join('</li><li>') + '</li>'
-        document.getElementById('flows_disabled').innerHTML =  '<li>' + data['DISABLED'].join('</li><li>') + '</li>'
-
-        initSave(data);
-        initClear(data);
-    }
-
-    // --------------------------------------------------------------
-
     Homey.get(_settingsKey, initializeSettings);
     Homey.on('settings.set', (key, data) => {
         if (key == _settingsKey) {
@@ -26,6 +9,21 @@ function onHomeyReady(Homey) {
     });
 
     Homey.ready();
+}
+
+function initializeSettings (err, data) {
+    if (err || !data) {
+        document.getElementById('error').innerHTML = err;
+        return;
+    }
+
+    document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
+    document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
+    if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  '<li>' + data['BROKEN'].map(f => f.name).sort().join('</li><li>') + '</li>'
+    if(data['DISABLED'].length) document.getElementById('flows_disabled').innerHTML =  '<li>' + data['DISABLED'].map(f => f.name).sort().join('</li><li>') + '</li>'
+
+    initSave(data);
+    initClear(data);
 }
 
 function setInterval(data) {

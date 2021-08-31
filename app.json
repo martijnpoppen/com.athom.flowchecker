@@ -105,7 +105,48 @@
             }
           }
         ]
+      },
+      {
+        "id": "trigger_FIXED",
+        "title": {
+          "en": "A flow started working again",
+          "nl": "Een flow is actief geworden"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID"
+            }
+          }
+        ]
       }
+    ],
+    "conditions": [
+        {
+            "id": "condition_BROKEN",
+            "title": {
+                "en": "There !{{are|aren't}} broken flows",
+                "nl": "Er !{{zijn|zijn geen}} kapotte flows"
+            }
+          },
+          {
+            "id": "condition_DISABLED",
+            "title": {
+              "en": "There !{{are|aren't}} disabled flows",
+              "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows"
+            }
+          }
     ]
   }
 }
