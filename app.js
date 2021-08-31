@@ -3,6 +3,8 @@
 const Homey = require("homey");
 const HomeyAPI = require("athom-api").HomeyAPI;
 const flowConditions = require('./lib/flows/conditions');
+const { sleep } = require('./lib/helpers');
+
 const _settingsKey = `${Homey.manifest.id}.settings`;
 
 class App extends Homey.App {
@@ -27,8 +29,7 @@ class App extends Homey.App {
 
     await flowConditions.init(this.homey);
 
-    await this.findFlowDefects();
-    await this.setFindFlowsInterval();
+    await this.findFlowDefects(true);
   }
 
   // -------------------- SETTINGS ----------------------
@@ -79,10 +80,15 @@ class App extends Homey.App {
       this.onPollInterval = setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
     }
   
-    async findFlowDefects() {
+    async findFlowDefects(initial = false) {
       try {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
+
+        if(initial) {
+            await sleep(9000);
+            await this.setFindFlowsInterval()
+        }
       } catch (error) {
         this.error(error);
       }
