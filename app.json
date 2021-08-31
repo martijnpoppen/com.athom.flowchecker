@@ -121,7 +121,7 @@
         "title": {
           "en": "A flow started working again",
           "nl": "Een flow is actief geworden",
-          "de": "Ein Flow ist wieder aktiviert worden"
+          "de": "Ein Flow wurde wieder aktiviert"
         },
         "tokens": [
           {
@@ -151,7 +151,7 @@
         "title": {
           "en": "There !{{are|aren't}} broken flows",
           "nl": "Er !{{zijn|zijn geen}} kapotte flows",
-          "de": "Da !{{sind|sind nicht}} beschädigte Flows"
+          "de": "Beschädigte Flows !{{sind|sind nicht}} vorhanden"
         }
       },
       {
@@ -159,7 +159,7 @@
         "title": {
           "en": "There !{{are|aren't}} disabled flows",
           "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
-          "de": "Da !{{sind|sind nicht}} deaktivierte Flows"
+          "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden"
         }
       }
     ]
