@@ -4,6 +4,6 @@
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
     "flows_broken": "kapotte flows",
-    "flows_disabled": "uitgezette flows"
+    "flows_disabled": "uitgeschakelde flows"
   }
 }

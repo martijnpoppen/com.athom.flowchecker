@@ -1,5 +1,3 @@
-Get insight in you Homey Flows
-
 Retrieve information from your Homey Flows. 
 Get notification when a value has changed.
 
