@@ -10,5 +10,8 @@
   },
   "1.0.3": {
     "en": "ADD new conditions and trigger"
+  },
+  "1.0.4": {
+    "en": "i18n updates"
   }
 }
