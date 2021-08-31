@@ -13,5 +13,8 @@
   },
   "1.0.4": {
     "en": "i18n updates"
+  },
+  "1.0.5": {
+    "en": "ADD: german transalation - FIX: duplicate notifications on startup"
   }
 }
