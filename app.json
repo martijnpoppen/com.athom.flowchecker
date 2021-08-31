@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -133,20 +133,20 @@
       }
     ],
     "conditions": [
-        {
-            "id": "condition_BROKEN",
-            "title": {
-                "en": "There !{{are|aren't}} broken flows",
-                "nl": "Er !{{zijn|zijn geen}} kapotte flows"
-            }
-          },
-          {
-            "id": "condition_DISABLED",
-            "title": {
-              "en": "There !{{are|aren't}} disabled flows",
-              "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows"
-            }
-          }
+      {
+        "id": "condition_BROKEN",
+        "title": {
+          "en": "There !{{are|aren't}} broken flows",
+          "nl": "Er !{{zijn|zijn geen}} kapotte flows"
+        }
+      },
+      {
+        "id": "condition_DISABLED",
+        "title": {
+          "en": "There !{{are|aren't}} disabled flows",
+          "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows"
+        }
+      }
     ]
   }
 }
