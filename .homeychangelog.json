@@ -28,5 +28,11 @@
   },
   "1.1.1": {
     "en": "FIX: Make broken flows checker consistent"
+  },
+  "1.1.2": {
+    "en": "FIX: multi variable in `Then` checker"
+  },
+  "1.1.3": {
+    "en": "FIX: variables inside conditions and action flowcards"
   }
 }
