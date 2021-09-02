@@ -126,13 +126,12 @@ class App extends Homey.App {
     }
 
     async findLogic(key) {
-        const brokenLogicFlows = this.appSettings[key];
+        const flowArray = this.appSettings[key];
 
-        this.log(`[findLogic] ${key} - brokenLogicFlows: `, brokenLogicFlows);
+        this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
         let logicVariables = Object.values(await this._api.logic.getVariables());
         logicVariables = logicVariables.map((f) => (`homey:manager:logic|${f.id}`));
-        this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
         
         const flows = Object.values(await this._api.flow.getFlows({ filter: { broken: false, enabled: true } }));
         
@@ -164,18 +163,16 @@ class App extends Homey.App {
         
         filteredFlows = filteredFlows.map((f) => ({name: f.name, id: f.id}));
 
-        this.log(`[findLogic] ${key} - filteredFlows: `, filteredFlows);
-
-        if (brokenLogicFlows.length !== filteredFlows.length) {
+        if (flowArray.length !== filteredFlows.length) {
             await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)]});
-            await this.checkFlowDiff(key, filteredFlows, brokenLogicFlows)
+            await this.checkFlowDiff(key, filteredFlows, flowArray)
         }
     }
 
     async checkFlowDiff(key, flows, flowArray) {
       try {
-        const flowDiff = flows.filter(x => !flowArray.includes(x));
-        const flowDiffReverse = flowArray.filter(x => !flows.includes(x));
+        const flowDiff = flows.filter(({ id: id1 }) => !flowArray.some(({ id: id2 }) => id2 === id1));
+        const flowDiffReverse = flowArray.filter(({ id: id1 }) => !flows.some(({ id: id2 }) => id2 === id1));
 
         this.log(`[flowDiff] ${key} - flowDiff: `, flowDiff);
         this.log(`[flowDiff] ${key} - flowDiffReverse: `, flowDiffReverse);
