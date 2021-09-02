@@ -136,29 +136,35 @@ class App extends Homey.App {
         const flows = Object.values(await this._api.flow.getFlows({ filter: { broken: false, enabled: true } }));
         
         let filteredFlows = flows.filter(flow =>  {
+            let logicArray = [];
             const trigger = flow.trigger.uri === 'homey:manager:logic' ? flow.trigger : {};
             const conditions = flow.conditions;
             const actions = flow.actions;
 
-            if(trigger.uri === 'homey:manager:logic' && !logicVariables.includes(trigger.args.variable.id)) {
-                return true;
-            }
-
-            if(conditions.some(c => c.droptoken && c.droptoken.includes('homey:manager:logic') && !logicVariables.includes(c.droptoken))){
-                return true;
-            }
-
-            return actions.some(f => {
-                const argsArray = f.args && Object.values(f.args) || [];
-                if (!argsArray || !argsArray.length) return false;
-                const logic = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
-                
-                if(logic) {
-                    return !logicVariables.includes(logic.substring(logic.indexOf("[[") + 2,  logic.lastIndexOf("]]")));
+            [trigger, ...conditions, ...actions].forEach(f => {
+                if(f.uri && f.uri === 'homey:manager:logic' && f.args && f.args.variable && f.args.variable.id) {
+                    logicArray.push(`homey:manager:logic|${f.args.variable.id}`);
+                } else if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
+                    logicArray.push(f.droptoken);
+                } else if(f.args) {
+                    const argsArray = f.args && Object.values(f.args) || [];
+                    if (!argsArray || !argsArray.length) return false;
+    
+                    const logic = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
+                    
+                    if(logic) {
+                        const actionLogicArray = logic.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
+                        logicArray = [...logicArray, ...actionLogicArray];
+                    }
                 }
+            });            
 
-                return false;
-            });
+            if(logicArray.length) {
+                console.log('logicArray', logicArray);
+                return !logicVariables.some(r=> logicArray.indexOf(r) >= 0);
+            }
+
+            return false;
         });
         
         filteredFlows = filteredFlows.map((f) => ({name: f.name, id: f.id}));
