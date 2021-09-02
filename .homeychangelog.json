@@ -25,5 +25,8 @@
   },
   "1.1.0": {
     "en": "NEW: Add broken logic variable check"
+  },
+  "1.1.1": {
+    "en": "FIX: Make broken flows checker consistent"
   }
 }
