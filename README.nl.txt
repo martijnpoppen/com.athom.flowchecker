@@ -2,10 +2,12 @@ Haal informatie op uit Homey Flows.
 Ontvang een melding wanneer een waarde is gewijzigd.
 
 Huidige functies:
-- Notificatie gebroken flows (standaard ingeschakeld)
+- Notificatie kapotte flows (standaard ingeschakeld)
 - Notificatie uitgeschakelde flows (standaard uitgeschakeld)
+- Notificatie kapotte variabelen in flows (standaard ingeschakeld)
 - Overzicht kapotte flows
 - Overzicht uitgeschakelde flows
+- Overzicht kapotte variabelen in flows
 
 Meer info op de community pagina:
 - Link in onderaan App Store pagina

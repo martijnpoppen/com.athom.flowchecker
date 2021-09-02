@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -72,7 +72,7 @@
       {
         "id": "trigger_BROKEN",
         "title": {
-          "en": "A flow broke down",
+          "en": "A flow is broken",
           "nl": "Een flow is kapot gegaan",
           "de": "Ein Flow ist beschädigt"
         },
@@ -112,6 +112,34 @@
               "en": "Flow",
               "nl": "Flow",
               "de": "Flow"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_BROKEN_VARIABLE",
+        "title": {
+          "en": "A flow has a broken variable",
+          "nl": "Een flow heeft een kapotte variabele",
+          "de": "Ein Flow hat eine beschädigte Variable"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow",
+              "de": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID"
             }
           }
         ]
@@ -160,6 +188,14 @@
           "en": "There !{{are|aren't}} disabled flows",
           "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
           "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden"
+        }
+      },
+      {
+        "id": "condition_BROKEN_VARIABLE",
+        "title": {
+          "en": "There !{{are|aren't}} flows with broken variables",
+          "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
+          "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden"
         }
       }
     ]

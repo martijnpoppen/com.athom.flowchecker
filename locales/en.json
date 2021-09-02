@@ -3,7 +3,9 @@
     "title": "Settings",
     "notification_broken": "Notify when flow breaks",
     "notification_disabled": "Notify when flow gets disabled",
+    "notification_broken_variable": "Notify when flow has broken variables",
     "flows_broken": "broken flows",
-    "flows_disabled": "disabled flows"
+    "flows_disabled": "disabled flows",
+    "flows_broken_variable": "flows with broken variable"
   }
 }

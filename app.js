@@ -46,13 +46,23 @@ class App extends Homey.App {
       if (settingsInitialized) {
         this.log("[initSettings] - Found settings key", _settingsKey);
         this.appSettings = this.homey.settings.get(_settingsKey);
+
+        if(!this.appSettings.BROKEN_VARIABLE) {
+            await this.updateSettings({
+                ...this.appSettings,
+                BROKEN_VARIABLE: [],
+                NOTIFICATION_BROKEN_VARIABLE: true
+              });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
           BROKEN: [],
           DISABLED: [],
+          BROKEN_VARIABLE: [],
           NOTIFICATION_BROKEN: true,
-          NOTIFICATION_DISABLED: false
+          NOTIFICATION_DISABLED: false,
+          NOTIFICATION_BROKEN_VARIABLE: true
         });
       }
     } catch (err) {
@@ -73,7 +83,7 @@ class App extends Homey.App {
 
 // -------------------- FUNCTIONS ----------------------
 
-    async setFindFlowsInterval(REFRESH = 1) {
+    async setFindFlowsInterval(REFRESH = 3) {
       const REFRESH_INTERVAL = 1000 * (REFRESH * 60);
 
       this.log(`[onPollInterval]`, REFRESH, REFRESH_INTERVAL);
@@ -84,6 +94,7 @@ class App extends Homey.App {
       try {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
+        await this.findLogic('BROKEN_VARIABLE');
 
         if(initial) {
             await sleep(9000);
@@ -114,6 +125,53 @@ class App extends Homey.App {
         }
     }
 
+    async findLogic(key) {
+        const brokenLogicFlows = this.appSettings[key];
+
+        this.log(`[findLogic] ${key} - brokenLogicFlows: `, brokenLogicFlows);
+
+        let logicVariables = Object.values(await this._api.logic.getVariables());
+        logicVariables = logicVariables.map((f) => (`homey:manager:logic|${f.id}`));
+        this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
+        
+        const flows = Object.values(await this._api.flow.getFlows({ filter: { broken: false, enabled: true } }));
+        
+        let filteredFlows = flows.filter(flow =>  {
+            const trigger = flow.trigger.uri === 'homey:manager:logic' ? flow.trigger : {};
+            const conditions = flow.conditions;
+            const actions = flow.actions;
+
+            if(trigger.uri === 'homey:manager:logic' && !logicVariables.includes(trigger.args.variable.id)) {
+                return true;
+            }
+
+            if(conditions.some(c => c.droptoken && c.droptoken.includes('homey:manager:logic') && !logicVariables.includes(c.droptoken))){
+                return true;
+            }
+
+            return actions.some(f => {
+                const argsArray = f.args && Object.values(f.args) || [];
+                if (!argsArray || !argsArray.length) return false;
+                const logic = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
+                
+                if(logic) {
+                    return !logicVariables.includes(logic.substring(logic.indexOf("[[") + 2,  logic.lastIndexOf("]]")));
+                }
+
+                return false;
+            });
+        });
+        
+        filteredFlows = filteredFlows.map((f) => ({name: f.name, id: f.id}));
+
+        this.log(`[findLogic] ${key} - filteredFlows: `, filteredFlows);
+
+        if (brokenLogicFlows.length !== filteredFlows.length) {
+            await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)]});
+            await this.checkFlowDiff(key, filteredFlows, brokenLogicFlows)
+        }
+    }
+
     async checkFlowDiff(key, flows, flowArray) {
       try {
         const flowDiff = flows.filter(x => !flowArray.includes(x));
@@ -124,7 +182,7 @@ class App extends Homey.App {
   
         if(flowDiff.length) {
           flowDiff.forEach(async flow =>  {
-            await this.setNotification(key, flow.name);
+            await this.setNotification(key, flow.name, 'Flow');
             await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
                 .catch( this.error )
                 .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
@@ -148,7 +206,7 @@ class App extends Homey.App {
       try {
         if(this.appSettings[`NOTIFICATION_${key}`]) {
             await this.homey.notifications.createNotification({
-            excerpt: `FlowChecker - Event: ${key} - Flow: **${flow}**`,
+            excerpt: `FlowChecker -  Event: ${key} - ${type}: **${flow}**`,
             });
         }
       } catch (error) {

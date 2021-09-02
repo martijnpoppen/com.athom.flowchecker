@@ -3,7 +3,9 @@
     "title": "Einstellungen",
     "notification_broken": "Benachrichtigen, wenn ein Flow beschädigt wird",
     "notification_disabled": "Benachrichtigen, wenn ein Flow deaktiviert wird",
+    "notification_broken_variable": "Benachrichtigen, wenn ein Flow mit beschädigten Variablen",
     "flows_broken": "beschädigte Flows",
-    "flows_disabled": "deaktivierte Flows"
+    "flows_disabled": "deaktivierte Flows",
+    "flows_broken_variable": "Flows mit beschädigten Variablen"
   }
 }

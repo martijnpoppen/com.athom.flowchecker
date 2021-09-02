@@ -19,20 +19,13 @@ function initializeSettings (err, data) {
 
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
+    document.getElementById('notification_broken_variable').checked = data['NOTIFICATION_BROKEN_VARIABLE'];
     if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  '<li>' + data['BROKEN'].map(f => f.name).sort().join('</li><li>') + '</li>'
     if(data['DISABLED'].length) document.getElementById('flows_disabled').innerHTML =  '<li>' + data['DISABLED'].map(f => f.name).sort().join('</li><li>') + '</li>'
+    if(data['BROKEN_VARIABLE'].length) document.getElementById('flows_broken_variable').innerHTML =  '<li>' + data['BROKEN_VARIABLE'].map(f => f.name).sort().join('</li><li>') + '</li>'
 
     initSave(data);
     initClear(data);
-}
-
-function setInterval(data) {
-    const refresh = document.getElementById('niu_refresh');
-    for(let i = 0; i < refresh.options.length; i++) {
-        if(refresh.options[i].value == `${data['REFRESH']}`) {
-            refresh.options[i].selected = true;
-        }
-    }
 }
 
 function initSave(_settings) {
@@ -45,8 +38,10 @@ function initSave(_settings) {
         const settings = {
             NOTIFICATION_BROKEN: document.getElementById('notification_broken').checked,
             NOTIFICATION_DISABLED: document.getElementById('notification_disabled').checked,
+            NOTIFICATION_BROKEN_VARIABLE: document.getElementById('notification_broken_variable').checked,
             BROKEN: _settings['BROKEN'],
-            DISABLED: _settings['DISABLED']
+            DISABLED: _settings['DISABLED'],
+            BROKEN_VARIABLE: _settings['BROKEN_VARIABLE']
         }
 
         // ----------------------------------------------
@@ -78,16 +73,20 @@ function initClear(_settings) {
         loading = document.getElementById('loading');
         success = document.getElementById('success');
 
-        document.getElementById('notification_broken').innerHTML = '';
-        document.getElementById('notification_disabled').innerHTML = '';
-        document.getElementById('flows_broken').checked = true;
-        document.getElementById('flows_disabled').checked = false;
+        document.getElementById('flows_broken').innerHTML = '';
+        document.getElementById('flows_disabled').innerHTML = '';
+        document.getElementById('flows_broken_variable').innerHTML = '';
+        document.getElementById('notification_broken').checked = true;
+        document.getElementById('notification_disabled').checked = false;
+        document.getElementById('notification_broken_variable').checked = true;
 
         const settings = {
             NOTIFICATION_BROKEN: true,
             NOTIFICATION_DISABLED: false,
+            NOTIFICATION_BROKEN_VARIABLE: true,
             BROKEN: [],
-            DISABLED: []
+            DISABLED: [],
+            BROKEN_VARIABLE: []
         }
 
         Homey.api('PUT', '/settings', settings, function (err, result) {

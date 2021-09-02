@@ -22,5 +22,8 @@
   },
   "1.0.7": {
     "en": "FIX: German corrections"
+  },
+  "1.1.0": {
+    "en": "NEW: Add broken logic variable check"
   }
 }
