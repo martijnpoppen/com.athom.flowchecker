@@ -34,5 +34,8 @@
   },
   "1.1.3": {
     "en": "FIX: variables inside conditions and action flowcards"
+  },
+  "1.1.4": {
+    "en": "OPT: increment interval for variable check"
   }
 }
