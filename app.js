@@ -6,6 +6,7 @@ const flowConditions = require('./lib/flows/conditions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
+const _refreshInterval = 3;
 
 class App extends Homey.App {
   log() {
@@ -43,6 +44,8 @@ class App extends Homey.App {
         }
       });
 
+      this.interval = 0;
+
       if (settingsInitialized) {
         this.log("[initSettings] - Found settings key", _settingsKey);
         this.appSettings = this.homey.settings.get(_settingsKey);
@@ -54,6 +57,7 @@ class App extends Homey.App {
                 NOTIFICATION_BROKEN_VARIABLE: true
               });
         }
+
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -83,10 +87,10 @@ class App extends Homey.App {
 
 // -------------------- FUNCTIONS ----------------------
 
-    async setFindFlowsInterval(REFRESH = 3) {
-      const REFRESH_INTERVAL = 1000 * (REFRESH * 60);
+    async setFindFlowsInterval() {
+      const REFRESH_INTERVAL = 1000 * (_refreshInterval * 60);
 
-      this.log(`[onPollInterval]`, REFRESH, REFRESH_INTERVAL);
+      this.log(`[onPollInterval]`, _refreshInterval, REFRESH_INTERVAL);
       this.onPollInterval = setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
     }
   
@@ -94,12 +98,18 @@ class App extends Homey.App {
       try {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
-        await this.findLogic('BROKEN_VARIABLE');
+
+        if(this.interval % (_refreshInterval * 10) === 0) {
+            this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: `, this.interval);
+            await this.findLogic('BROKEN_VARIABLE');
+        }
 
         if(initial) {
             await sleep(9000);
-            await this.setFindFlowsInterval()
+            await this.setFindFlowsInterval();
         }
+
+        this.interval = this.interval + _refreshInterval;
       } catch (error) {
         this.error(error);
       }
