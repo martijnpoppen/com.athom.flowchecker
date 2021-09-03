@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -16,6 +16,25 @@
     "en": "Get insight in your Homey Flows",
     "nl": "Krijg inzicht in Homey Flows",
     "de": "Erhalten Sie Einblick in Homey Flows"
+  },
+  "tags": {
+    "en": [
+      "Flows",
+      "Variables",
+      "Tokens",
+      "Tags",
+      "Broken",
+      "Disabled",
+      "Broken flows",
+      "Disabled flows",
+      "Broken variables",
+      "Checker",
+      "Security",
+      "Control",
+      "Official",
+      "Homey",
+      "Athom"
+    ]
   },
   "category": [
     "tools"
