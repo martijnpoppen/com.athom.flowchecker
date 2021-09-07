@@ -173,7 +173,8 @@ class App extends Homey.App {
                         const actionArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
                         logicVariablesArray = [...logicVariablesArray, ...actionArray];
                     } else if(logicDevice) {
-                        const actionArray = logicDevice.match(/(?<=\[\[)(.*?)(?=\|)/g).filter(l => l.includes('homey:device'));
+                        console.log('logicDevice', logicDevice);
+                        const actionArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
                         logicDeviceArray = [...logicDeviceArray, ...actionArray];
                     }
                 }
