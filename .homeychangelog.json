@@ -43,5 +43,8 @@
   },
   "1.2.0": {
     "en": "NEW: add broken_variable check for device tokens"
+  },
+  "1.2.1": {
+    "en": "ADD: extra logs for debugging"
   }
 }
