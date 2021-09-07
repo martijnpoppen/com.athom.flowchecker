@@ -183,7 +183,7 @@ class App extends Homey.App {
                 // console.log('logicVariablesArray', logicVariablesArray);
                 return !logicVariables.some(r=> logicVariablesArray.indexOf(r) >= 0);
             } else if(logicDeviceArray.length) {
-                // console.log('logicDeviceArray', logicDeviceArray);
+                console.log('logicDeviceArray', logicDeviceArray);
                 return !deviceVariables.some(r=> logicDeviceArray.indexOf(r) >= 0);
             }
 
