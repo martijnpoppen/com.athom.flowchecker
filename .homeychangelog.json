@@ -40,5 +40,8 @@
   },
   "1.1.5": {
     "en": "Branding + Variable release"
+  },
+  "1.2.0": {
+    "en": "NEW: add broken_variable check for device tokens"
   }
 }
