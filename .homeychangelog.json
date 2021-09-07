@@ -49,5 +49,8 @@
   },
   "1.2.3": {
     "en": "ADD: extra logs for debugging"
+  },
+  "1.2.4": {
+    "en": "FIX: prevent false positives for device variables"
   }
 }
