@@ -142,36 +142,49 @@ class App extends Homey.App {
 
         let logicVariables = Object.values(await this._api.logic.getVariables());
         logicVariables = logicVariables.map((f) => (`homey:manager:logic|${f.id}`));
+
+        let deviceVariables = Object.values(await this._api.devices.getDevices());
+        deviceVariables = deviceVariables.map((f) => (`homey:device:${f.id}`));
         
         const flows = Object.values(await this._api.flow.getFlows({ filter: { broken: false, enabled: true } }));
         
         let filteredFlows = flows.filter(flow =>  {
-            let logicArray = [];
-            const trigger = flow.trigger.uri === 'homey:manager:logic' ? flow.trigger : {};
+            let logicVariablesArray = [];
+            let logicDeviceArray = [];
+            const trigger = flow.trigger;
             const conditions = flow.conditions;
             const actions = flow.actions;
 
             [trigger, ...conditions, ...actions].forEach(f => {
                 if(f.uri && f.uri === 'homey:manager:logic' && f.args && f.args.variable && f.args.variable.id) {
-                    logicArray.push(`homey:manager:logic|${f.args.variable.id}`);
+                    logicVariablesArray.push(`homey:manager:logic|${f.args.variable.id}`);
                 } else if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
-                    logicArray.push(f.droptoken);
+                    logicVariablesArray.push(f.droptoken);
+                } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
+                    logicDeviceArray.push(f.droptoken.split('|')[0]);
                 } else if(f.args) {
                     const argsArray = f.args && Object.values(f.args) || [];
                     if (!argsArray || !argsArray.length) return false;
     
-                    const logic = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
-                    
-                    if(logic) {
-                        const actionLogicArray = logic.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
-                        logicArray = [...logicArray, ...actionLogicArray];
+                    const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
+                    const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));                
+
+                    if(logicVar) {
+                        const actionArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
+                        logicVariablesArray = [...logicVariablesArray, ...actionArray];
+                    } else if(logicDevice) {
+                        const actionArray = logicDevice.match(/(?<=\[\[)(.*?)(?=\|)/g).filter(l => l.includes('homey:device'));
+                        logicDeviceArray = [...logicDeviceArray, ...actionArray];
                     }
                 }
             });            
 
-            if(logicArray.length) {
-                console.log('logicArray', logicArray);
-                return !logicVariables.some(r=> logicArray.indexOf(r) >= 0);
+            if(logicVariablesArray.length) {
+                // console.log('logicVariablesArray', logicVariablesArray);
+                return !logicVariables.some(r=> logicVariablesArray.indexOf(r) >= 0);
+            } else if(logicDeviceArray.length) {
+                // console.log('logicDeviceArray', logicDeviceArray);
+                return !deviceVariables.some(r=> logicDeviceArray.indexOf(r) >= 0);
             }
 
             return false;
