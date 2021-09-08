@@ -52,5 +52,11 @@
   },
   "1.2.4": {
     "en": "FIX: prevent false positives for device variables"
+  },
+  "1.2.5": {
+    "en": "New app update (test: 1.2.4. 1):"
+  },
+  "1.2.6": {
+    "en": "NEW: add broken_variable check for device tokens"
   }
 }
