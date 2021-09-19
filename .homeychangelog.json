@@ -61,5 +61,8 @@
   },
   "1.2.7": {
     "en": "ADD: 15 sec delay on startup of app. Prevent false positives when Homey reboots."
+  },
+  "1.3.0": {
+    "en": "NEW: add interval setting | flow tokens | amount overview"
   }
 }
