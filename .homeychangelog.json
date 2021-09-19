@@ -58,5 +58,8 @@
   },
   "1.2.6": {
     "en": "NEW: add broken_variable check for device tokens"
+  },
+  "1.2.7": {
+    "en": "ADD: 15 sec delay on startup of app. Prevent false positives when Homey reboots."
   }
 }

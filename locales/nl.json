@@ -3,7 +3,10 @@
     "title": "Notificatie instellingen",
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
-    "notification_broken_variable": "Notificatie als een flow een kapotte variable heeft",
+    "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
+    "interval_flows": "flow interval (minuten)",
+    "interval_variables": "variabele interval (minuten)",
+    "flows_overview": "overzicht",
     "flows_broken": "kapotte flows",
     "flows_disabled": "uitgeschakelde flows",
     "flows_broken_variable": "flows met kapotte variabele"

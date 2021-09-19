@@ -6,7 +6,6 @@ const flowConditions = require('./lib/flows/conditions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
-const _refreshInterval = 3;
 
 class App extends Homey.App {
   log() {
@@ -30,6 +29,9 @@ class App extends Homey.App {
 
     await flowConditions.init(this.homey);
 
+    // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
+    await this.createTokens();
+    await sleep(15000);
     await this.findFlowDefects(true);
   }
 
@@ -58,6 +60,12 @@ class App extends Homey.App {
               });
         }
 
+        if(!this.appSettings.INTERVAL_FLOWS) {
+            await this.updateSettings({
+                ...this.appSettings,
+                INTERVAL_FLOWS: 3
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -76,22 +84,57 @@ class App extends Homey.App {
 
   async updateSettings(settings) {
     try {
+      const oldSettings = this.appSettings;
+      
       this.log("[updateSettings] - New settings:", settings);
       this.appSettings = settings;
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
+
+      if(oldSettings.INTERVAL_FLOWS) {
+        this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
+        if(settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
+            this.setFindFlowsInterval(true);
+        }
+      }
     } catch (error) {
       this.error(err);
     }
   }
 
+  async createTokens() {
+    this.token_BROKEN = await this.homey.flow.createToken("token_BROKEN", {
+        type: "number",
+        title: this.homey.__("settings.flows_broken")
+      });
+
+      this.token_DISABLED = await this.homey.flow.createToken("token_DISABLED", {
+        type: "number",
+        title: this.homey.__("settings.flows_disabled")
+      });
+
+      this.token_BROKEN_VARIABLE = await this.homey.flow.createToken("token_BROKEN_VARIABLE", {
+        type: "number",
+        title: this.homey.__("settings.flows_broken_variable")
+      });
+
+      await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
+      await this.token_DISABLED.setValue(this.appSettings.DISABLED.length);
+      await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
+  }
+
 // -------------------- FUNCTIONS ----------------------
 
-    async setFindFlowsInterval() {
-      const REFRESH_INTERVAL = 1000 * (_refreshInterval * 60);
+    async setFindFlowsInterval(clear = false) {
+      const REFRESH_INTERVAL = 1000 * (this.appSettings.INTERVAL_FLOWS * 60);
 
-      this.log(`[onPollInterval]`, _refreshInterval, REFRESH_INTERVAL);
-      this.onPollInterval = setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
+      if(clear) {
+        this.log(`[onPollInterval] - Clearinterval`);
+        this.homey.clearInterval(this.onPollInterval);
+      }
+
+      this.log(`[onPollInterval]`, this.appSettings.INTERVAL_FLOWS, REFRESH_INTERVAL);
+      this.onPollInterval = this.homey.setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
     }
   
     async findFlowDefects(initial = false) {
@@ -99,7 +142,7 @@ class App extends Homey.App {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
 
-        if(this.interval % (_refreshInterval * 10) === 0) {
+        if(this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
             this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: `, this.interval);
             await this.findLogic('BROKEN_VARIABLE');
         }
@@ -109,7 +152,7 @@ class App extends Homey.App {
             await this.setFindFlowsInterval();
         }
 
-        this.interval = this.interval + _refreshInterval;
+        this.interval = this.interval + this.appSettings.INTERVAL_FLOWS;
       } catch (error) {
         this.error(error);
       }
@@ -173,7 +216,7 @@ class App extends Homey.App {
                         const actionArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
                         logicVariablesArray = [...logicVariablesArray, ...actionArray];
                     } else if(logicDevice) {
-                        console.log('logicDevice', logicDevice);
+                        // console.log('logicDevice', logicDevice);
                         const actionArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
                         logicDeviceArray = [...logicDeviceArray, ...actionArray];
                     }
@@ -184,7 +227,7 @@ class App extends Homey.App {
                 // console.log('logicVariablesArray', logicVariablesArray);
                 return !logicVariables.some(r=> logicVariablesArray.indexOf(r) >= 0);
             } else if(logicDeviceArray.length) {
-                console.log('logicDeviceArray', logicDeviceArray);
+                // console.log('logicDeviceArray', logicDeviceArray);
                 return !deviceVariables.some(r=> logicDeviceArray.indexOf(r) >= 0);
             }
 
@@ -195,6 +238,7 @@ class App extends Homey.App {
 
         if (flowArray.length !== filteredFlows.length) {
             await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)]});
+            await this[`token_${key}`].setValue(flows.length);
             await this.checkFlowDiff(key, filteredFlows, flowArray)
         }
     }

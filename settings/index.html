@@ -8,11 +8,17 @@
         fieldset legend, .hy-fieldset:not(.hy-nostyle) legend {
             font-size: 14px !important;
         }
+
+        #flows_overview  .row, #flows_settings .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px auto;
+        }
     </style>
 </head>
 
 <body>
-    <fieldset>
+    <fieldset id="flows_settings">
         <legend data-i18n="settings.title"></legend>
         <div class="field row">
             <label for="notification_broken" data-i18n="settings.notification_broken"></label>
@@ -25,6 +31,23 @@
         <div class="field row">
             <label for="notification_broken_variable" data-i18n="settings.notification_broken_variable"></label>
             <input id="notification_broken_variable" type="checkbox" value="" />
+        </div>
+
+        <div class="field row">
+            <label for="interval_flows" data-i18n="settings.interval_flows"></label>
+            <input id="interval_flows" type="number" min="3" step="1" value="" oninput="updateValue()" />
+        </div>
+
+        <div class="field row">
+            <label for="interval_variables" data-i18n="settings.interval_variables"></label>
+            <input disabled id="interval_variables" type="number" value="" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend data-i18n="settings.flows_overview"></legend>
+        <div class="field">
+            <div id="flows_overview"></div>
         </div>
     </fieldset>
 
