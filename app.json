@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -216,6 +216,42 @@
           "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
           "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden"
         }
+      }
+    ],
+    "actions": [
+      {
+        "id": "action_check_flows",
+        "title": {
+          "en": "update broken flows and variables",
+          "nl": "Update kapotte flows en variabelen",
+          "de": "Update Beschädigte Flows und Flows mit beschädigten Variablen"
+        }
+      },
+      {
+        "id": "action_set_flow_interval",
+        "title": {
+          "en": "Set Flow interval",
+          "nl": "Stel Flow interval in",
+          "de": "Flow intervall einstellen"
+        },
+        "titleFormatted": {
+          "en": "Set Flow interval to [[minutes]] minutes",
+          "nl": "Stel Flow interval in op [[minutes]] minuten",
+          "de": "Flow intervall einstellen auf [[minutes]] Minuten"
+        },
+        "args": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "min": 3,
+            "step": 1,
+            "placeholder": {
+              "en": "Minutes",
+              "nl": "Minuten",
+              "de": "Minuten"
+            }
+          }
+        ]
       }
     ]
   }
