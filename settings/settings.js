@@ -20,12 +20,12 @@ function initializeSettings (err, data) {
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
     document.getElementById('notification_broken_variable').checked = data['NOTIFICATION_BROKEN_VARIABLE'];
-    document.getElementById('flows_overview').innerHTML =  `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><div>${data['BROKEN'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_disabled")}</label><div>${data['DISABLED'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><div>${data['BROKEN_VARIABLE'].length}</div></div><div class="row"><label>${Homey.__("settings.all_flows")}</label><div>${data['ALL_FLOWS']}</div></div><div class="row"><label>${Homey.__("settings.all_variables")}</label><div>${data['ALL_VARIABLES']}</div></div>`;
+    document.getElementById('flows_overview').innerHTML =  `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><label>${data['BROKEN'].length}<label></div><div class="row"><label>${Homey.__("settings.flows_disabled")}</label><label>${data['DISABLED'].length}<label></div><div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><label>${data['BROKEN_VARIABLE'].length}<label></div><div class="row"><label>${Homey.__("settings.all_flows")}</label><label>${data['ALL_FLOWS']}<label></div><div class="row"><label>${Homey.__("settings.all_variables")}</label><label>${data['ALL_VARIABLES']}<label></div>`;
     document.getElementById('interval_flows').value = data['INTERVAL_FLOWS'];
     document.getElementById('interval_variables').value = (data['INTERVAL_FLOWS'] * 10);
-    if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  '<li>' + data['BROKEN'].map(f => f.name).sort().join('</li><li>') + '</li>';
-    if(data['DISABLED'].length) document.getElementById('flows_disabled').innerHTML =  '<li>' + data['DISABLED'].map(f => f.name).sort().join('</li><li>') + '</li>';
-    if(data['BROKEN_VARIABLE'].length) document.getElementById('flows_broken_variable').innerHTML =  '<li>' + data['BROKEN_VARIABLE'].map(f => f.name).sort().join('</li><li>') + '</li>';
+    if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  flowMapper(data, data['BROKEN'])
+    if(data['DISABLED'].length) document.getElementById('flows_disabled').innerHTML =  flowMapper(data, data['DISABLED'])
+    if(data['BROKEN_VARIABLE'].length) document.getElementById('flows_broken_variable').innerHTML =  flowMapper(data, data['BROKEN_VARIABLE'])
 
     initSave(data);
     initClear(data);
@@ -34,6 +34,16 @@ function initializeSettings (err, data) {
 
 function updateValue() {
     document.getElementById('interval_variables').value = (document.getElementById('interval_flows').value * 10);
+}
+
+function flowMapper(data, flows) {
+    let html = `<label class="red">${Homey.__("settings.ctrl_click")}</label>`;
+    const homey_id = data['HOMEY_ID'];
+    flows.sort((a,b) =>  a.name.localeCompare(b.name)).forEach((f) => {
+        html += `<div class="row"><label><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${f.name}</a></label</div>`;
+    });
+
+    return html;
 }
 
 function initSave(_settings) {
@@ -50,7 +60,10 @@ function initSave(_settings) {
             BROKEN: _settings['BROKEN'],
             DISABLED: _settings['DISABLED'],
             BROKEN_VARIABLE: _settings['BROKEN_VARIABLE'],
-            INTERVAL_FLOWS: document.getElementById('interval_flows').value
+            INTERVAL_FLOWS: document.getElementById('interval_flows').value,
+            ALL_FLOWS: _settings['ALL_FLOWS'],
+            ALL_VARIABLES: _settings['ALL_VARIABLES'],
+            HOMEY_ID: _settings['HOMEY_ID']
         }
 
         // ----------------------------------------------
@@ -101,7 +114,8 @@ function initClear(_settings) {
             BROKEN_VARIABLE: [],
             INTERVAL_FLOWS: 3,
             ALL_FLOWS: 0,
-            ALL_VARIABLES: 0
+            ALL_VARIABLES: 0,
+            HOMEY_ID: _settings['HOMEY_ID']
         }
 
         Homey.api('PUT', '/settings', settings, function (err, result) {

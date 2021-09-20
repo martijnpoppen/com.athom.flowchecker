@@ -30,6 +30,7 @@ class App extends Homey.App {
     await flowConditions.init(this.homey);
 
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
+    await this.setHomeyInfo();
     await this.createTokens();
     await sleep(15000);
     await this.findFlowDefects(true);
@@ -74,7 +75,6 @@ class App extends Homey.App {
                 ALL_VARIABLES: 0
             });
         }
-
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -85,7 +85,8 @@ class App extends Homey.App {
           NOTIFICATION_DISABLED: false,
           NOTIFICATION_BROKEN_VARIABLE: true,
           ALL_FLOWS: 0,
-          ALL_VARIABLES: 0
+          ALL_VARIABLES: 0,
+          HOMEY_ID: ''
         });
       }
     } catch (err) {
@@ -144,6 +145,18 @@ class App extends Homey.App {
       await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
       await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
       await this.token_ALL_FLOWS.setValue(this.appSettings.ALL_FLOWS);
+  }
+
+  async setHomeyInfo() {
+      try {
+        const homeyInfo = await this._api.system.getInfo();
+        await this.updateSettings({
+            ...this.appSettings,
+            HOMEY_ID: homeyInfo.cloudId || ''
+        });
+      } catch (error) {
+        this.error(error);
+      }
   }
 
 // -------------------- FUNCTIONS ----------------------
@@ -216,7 +229,7 @@ class App extends Homey.App {
         
         const flows = Object.values(await this._api.flow.getFlows());
         
-        let filteredFlows = flows.filter(flow =>  {
+        let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
             let logicVariables = [];
             let logicDevices = [];
             const trigger = flow.trigger;

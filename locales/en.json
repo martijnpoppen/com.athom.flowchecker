@@ -6,6 +6,7 @@
     "notification_broken_variable": "Notify when flow has broken variables",
     "interval_flows": "flow interval (minutes)",
     "interval_variables": "variable interval (minutes)",
+    "ctrl_click": "CTRL/CMD + Click to open flow",
     "flows_overview": "overview",
     "flows_broken": "broken flows",
     "flows_disabled": "disabled flows",

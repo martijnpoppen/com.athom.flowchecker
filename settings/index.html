@@ -9,10 +9,24 @@
             font-size: 14px !important;
         }
 
-        #flows_overview  .row, #flows_settings .row {
+        .red {
+            color: red !important;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #flows_overview .row, 
+        #flows_settings .row {
             display: flex;
             justify-content: space-between;
             margin: 10px auto;
+        }
+
+        #flows_broken .row, 
+        #flows_disabled .row, 
+        #flows_broken_variable .row {
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -54,21 +68,21 @@
     <fieldset>
         <legend data-i18n="settings.flows_broken"></legend>
         <div class="field row">
-            <ul id="flows_broken"></ul>
+            <div id="flows_broken"></div>
         </div>
     </fieldset>
 
     <fieldset>
         <legend data-i18n="settings.flows_disabled"></legend>
         <div class="field row">
-            <ul id="flows_disabled"></ul>
+            <div id="flows_disabled"></div>
         </div>
     </fieldset>
 
     <fieldset>
         <legend data-i18n="settings.flows_broken_variable"></legend>
         <div class="field row">
-            <ul id="flows_broken_variable"></ul>
+            <div id="flows_broken_variable"></div>
         </div>
     </fieldset>
     <p id="error" style="color: red;"></p>

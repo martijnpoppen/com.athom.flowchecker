@@ -6,6 +6,7 @@
     "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
     "interval_flows": "flow interval (minuten)",
     "interval_variables": "variabele interval (minuten)",
+    "ctrl_click": "CTRL/CMD + Klik om flow te openen",
     "flows_overview": "overzicht",
     "flows_broken": "kapotte flows",
     "flows_disabled": "uitgeschakelde flows",

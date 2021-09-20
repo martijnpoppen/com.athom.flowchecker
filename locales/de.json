@@ -6,6 +6,7 @@
     "notification_broken_variable": "Benachrichtigen, wenn ein Flow beschädigte Variablen hat",
     "interval_flows": "flow interval (Minuten)",
     "interval_variables": "Variable interval (Minuten)",
+    "ctrl_click": "CTRL/CMD + Klicken zum Öffnen von Flow",
     "flows_overview": "Überblick",
     "flows_broken": "beschädigte Flows",
     "flows_disabled": "deaktivierte Flows",
