@@ -66,6 +66,15 @@ class App extends Homey.App {
                 INTERVAL_FLOWS: 3
             });
         }
+
+        if(!this.appSettings.ALL_FLOWS) {
+            await this.updateSettings({
+                ...this.appSettings,
+                ALL_FLOWS: 0,
+                ALL_VARIABLES: 0
+            });
+        }
+
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -74,7 +83,9 @@ class App extends Homey.App {
           BROKEN_VARIABLE: [],
           NOTIFICATION_BROKEN: true,
           NOTIFICATION_DISABLED: false,
-          NOTIFICATION_BROKEN_VARIABLE: true
+          NOTIFICATION_BROKEN_VARIABLE: true,
+          ALL_FLOWS: 0,
+          ALL_VARIABLES: 0
         });
       }
     } catch (err) {
@@ -118,9 +129,21 @@ class App extends Homey.App {
         title: this.homey.__("settings.flows_broken_variable")
       });
 
+      this.token_ALL_VARIABLES = await this.homey.flow.createToken("token_ALL_VARIABLES", {
+        type: "number",
+        title: this.homey.__("settings.all_variables")
+      });
+
+      this.token_ALL_FLOWS = await this.homey.flow.createToken("token_ALL_FLOWS", {
+        type: "number",
+        title: this.homey.__("settings.all_flows")
+      });
+
       await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
       await this.token_DISABLED.setValue(this.appSettings.DISABLED.length);
       await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
+      await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
+      await this.token_ALL_FLOWS.setValue(this.appSettings.ALL_FLOWS);
   }
 
 // -------------------- FUNCTIONS ----------------------
@@ -174,37 +197,39 @@ class App extends Homey.App {
     
         if (flowArray.length !== flows.length) {
           await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
+          await this[`token_${key}`].setValue(flows.length);
           await this.checkFlowDiff(key, flows, flowArray);
         }
     }
 
     async findLogic(key) {
         const flowArray = this.appSettings[key];
+        this.ALL_VARIABLES = 0;
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
-        let logicVariables = Object.values(await this._api.logic.getVariables());
-        logicVariables = logicVariables.map((f) => (`homey:manager:logic|${f.id}`));
+        let homeyVariables = Object.values(await this._api.logic.getVariables());
+        homeyVariables = homeyVariables.map((f) => (`homey:manager:logic|${f.id}`));
 
-        let deviceVariables = Object.values(await this._api.devices.getDevices());
-        deviceVariables = deviceVariables.map((f) => (`homey:device:${f.id}`));
+        let homeyDevices = Object.values(await this._api.devices.getDevices());
+        homeyDevices = homeyDevices.map((f) => (`homey:device:${f.id}`));
         
-        const flows = Object.values(await this._api.flow.getFlows({ filter: { broken: false, enabled: true } }));
+        const flows = Object.values(await this._api.flow.getFlows());
         
         let filteredFlows = flows.filter(flow =>  {
-            let logicVariablesArray = [];
-            let logicDeviceArray = [];
+            let logicVariables = [];
+            let logicDevices = [];
             const trigger = flow.trigger;
             const conditions = flow.conditions;
             const actions = flow.actions;
 
             [trigger, ...conditions, ...actions].forEach(f => {
                 if(f.uri && f.uri === 'homey:manager:logic' && f.args && f.args.variable && f.args.variable.id) {
-                    logicVariablesArray.push(`homey:manager:logic|${f.args.variable.id}`);
+                    logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
                 } else if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
-                    logicVariablesArray.push(f.droptoken);
+                    logicVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
-                    logicDeviceArray.push(f.droptoken.split('|')[0]);
+                    logicDevices.push(f.droptoken.split('|')[0]);
                 } else if(f.args) {
                     const argsArray = f.args && Object.values(f.args) || [];
                     if (!argsArray || !argsArray.length) return false;
@@ -214,21 +239,20 @@ class App extends Homey.App {
 
                     if(logicVar) {
                         const actionArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
-                        logicVariablesArray = [...logicVariablesArray, ...actionArray];
+                        logicVariables = [...logicVariables, ...actionArray];
                     } else if(logicDevice) {
-                        // console.log('logicDevice', logicDevice);
                         const actionArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
-                        logicDeviceArray = [...logicDeviceArray, ...actionArray];
+                        logicDevices = [...logicDevices, ...actionArray];
                     }
                 }
-            });            
+            });
 
-            if(logicVariablesArray.length) {
-                // console.log('logicVariablesArray', logicVariablesArray);
-                return !logicVariables.some(r=> logicVariablesArray.indexOf(r) >= 0);
-            } else if(logicDeviceArray.length) {
-                // console.log('logicDeviceArray', logicDeviceArray);
-                return !deviceVariables.some(r=> logicDeviceArray.indexOf(r) >= 0);
+            this.ALL_VARIABLES = this.ALL_VARIABLES+logicVariables.length+logicDevices.length;
+
+            if(logicVariables.length) {
+                return !homeyVariables.some(r=> logicVariables.indexOf(r) >= 0);
+            } else if(logicDevices.length) {
+                return !homeyDevices.some(r=> logicDevices.indexOf(r) >= 0);
             }
 
             return false;
@@ -236,10 +260,15 @@ class App extends Homey.App {
         
         filteredFlows = filteredFlows.map((f) => ({name: f.name, id: f.id}));
 
+        await this.token_ALL_FLOWS.setValue(flows.length);
+        await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
+
         if (flowArray.length !== filteredFlows.length) {
-            await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)]});
-            await this[`token_${key}`].setValue(flows.length);
+            await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)], ALL_FLOWS: flows.length, ALL_VARIABLES: this.ALL_VARIABLES});
+            await this[`token_${key}`].setValue(filteredFlows.length);
             await this.checkFlowDiff(key, filteredFlows, flowArray)
+        } else {
+            await this.updateSettings({...this.appSettings, ALL_FLOWS: flows.length, ALL_VARIABLES: this.ALL_VARIABLES});
         }
     }
 

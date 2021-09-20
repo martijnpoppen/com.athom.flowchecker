@@ -9,6 +9,8 @@
     "flows_overview": "Überblick",
     "flows_broken": "beschädigte Flows",
     "flows_disabled": "deaktivierte Flows",
-    "flows_broken_variable": "Flows mit beschädigten Variablen"
+    "flows_broken_variable": "Flows mit beschädigten Variablen",
+    "all_flows": "alle Flows",
+    "all_variables": "alle Variablen (Logik + Geräte)"
   }
 }

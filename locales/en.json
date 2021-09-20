@@ -9,6 +9,8 @@
     "flows_overview": "overview",
     "flows_broken": "broken flows",
     "flows_disabled": "disabled flows",
-    "flows_broken_variable": "flows with broken variable"
+    "flows_broken_variable": "flows with broken variable",
+    "all_flows": "all flows",
+    "all_variables": "all variables (logic + devices)"
   }
 }

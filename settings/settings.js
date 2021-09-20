@@ -20,7 +20,7 @@ function initializeSettings (err, data) {
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
     document.getElementById('notification_broken_variable').checked = data['NOTIFICATION_BROKEN_VARIABLE'];
-    document.getElementById('flows_overview').innerHTML =  `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><div>${data['BROKEN'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_disabled")}</label><div>${data['DISABLED'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><div>${data['BROKEN_VARIABLE'].length}</div></div>`;
+    document.getElementById('flows_overview').innerHTML =  `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><div>${data['BROKEN'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_disabled")}</label><div>${data['DISABLED'].length}</div></div><div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><div>${data['BROKEN_VARIABLE'].length}</div></div><div class="row"><label>${Homey.__("settings.all_flows")}</label><div>${data['ALL_FLOWS']}</div></div><div class="row"><label>${Homey.__("settings.all_variables")}</label><div>${data['ALL_VARIABLES']}</div></div>`;
     document.getElementById('interval_flows').value = data['INTERVAL_FLOWS'];
     document.getElementById('interval_variables').value = (data['INTERVAL_FLOWS'] * 10);
     if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  '<li>' + data['BROKEN'].map(f => f.name).sort().join('</li><li>') + '</li>';
@@ -99,7 +99,9 @@ function initClear(_settings) {
             BROKEN: [],
             DISABLED: [],
             BROKEN_VARIABLE: [],
-            INTERVAL_FLOWS: 3
+            INTERVAL_FLOWS: 3,
+            ALL_FLOWS: 0,
+            ALL_VARIABLES: 0
         }
 
         Homey.api('PUT', '/settings', settings, function (err, result) {

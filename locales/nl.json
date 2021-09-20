@@ -9,6 +9,8 @@
     "flows_overview": "overzicht",
     "flows_broken": "kapotte flows",
     "flows_disabled": "uitgeschakelde flows",
-    "flows_broken_variable": "flows met kapotte variabele"
+    "flows_broken_variable": "flows met kapotte variabele",
+    "all_flows": "alle flows",
+    "all_variables": "alle variabelen (logic + apparaten)"
   }
 }
