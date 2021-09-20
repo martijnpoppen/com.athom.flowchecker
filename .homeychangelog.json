@@ -67,5 +67,8 @@
   },
   "1.4.0": {
     "en": "NEW: add all flows and all variables tokens + overview"
+  },
+  "1.5.0": {
+    "en": "NEW: add link to flow in settings | FIX: broken variable showing broken flows"
   }
 }
