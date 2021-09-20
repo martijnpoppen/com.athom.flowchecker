@@ -3,6 +3,7 @@
 const Homey = require("homey");
 const HomeyAPI = require("athom-api").HomeyAPI;
 const flowConditions = require('./lib/flows/conditions');
+const flowActions = require('./lib/flows/actions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
@@ -28,6 +29,7 @@ class App extends Homey.App {
     this._api = await HomeyAPI.forCurrentHomey(this.homey);
 
     await flowConditions.init(this.homey);
+    await flowActions.init(this.homey);
 
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.setHomeyInfo();
@@ -173,13 +175,13 @@ class App extends Homey.App {
       this.onPollInterval = this.homey.setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
     }
   
-    async findFlowDefects(initial = false) {
+    async findFlowDefects(initial = false, force = false) {
       try {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
 
-        if(this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
-            this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: `, this.interval);
+        if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
+            this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
             await this.findLogic('BROKEN_VARIABLE');
         }
 
@@ -188,7 +190,7 @@ class App extends Homey.App {
             await this.setFindFlowsInterval();
         }
 
-        this.interval = this.interval + this.appSettings.INTERVAL_FLOWS;
+        if(!force) this.interval = this.interval + this.appSettings.INTERVAL_FLOWS;
       } catch (error) {
         this.error(error);
       }
