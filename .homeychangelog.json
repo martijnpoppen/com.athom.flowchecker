@@ -73,5 +73,11 @@
   },
   "1.6.0": {
     "en": "Add action flow cards for interval and manual update"
+  },
+  "1.6.1": {
+    "en": "Text adjustments"
+  },
+  "1.6.2": {
+    "en": "ADD: interval checkbox (enable/disable)"
   }
 }

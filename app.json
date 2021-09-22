@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -222,7 +222,7 @@
       {
         "id": "action_check_flows",
         "title": {
-          "en": "update broken flows and variables",
+          "en": "Update broken flows and variables",
           "nl": "Update kapotte flows en variabelen",
           "de": "Update Beschädigte Flows und Flows mit beschädigten Variablen"
         }
@@ -235,9 +235,9 @@
           "de": "Flow intervall einstellen"
         },
         "titleFormatted": {
-          "en": "Set Flow interval to [[minutes]] minutes",
-          "nl": "Stel Flow interval in op [[minutes]] minuten",
-          "de": "Flow intervall einstellen auf [[minutes]] Minuten"
+          "en": "Set Flow check interval to [[minutes]] minutes",
+          "nl": "Stel Flow check interval in op [[minutes]] minuten",
+          "de": "Flow check intervall einstellen auf [[minutes]] Minuten"
         },
         "args": [
           {
