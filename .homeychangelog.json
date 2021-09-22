@@ -85,5 +85,8 @@
   },
   "1.6.4": {
     "en": "ADD: interval checkbox (enable/disable)"
+  },
+  "1.6.5": {
+    "en": "FIX: hidden fields in settings page"
   }
 }
