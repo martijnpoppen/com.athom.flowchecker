@@ -91,5 +91,8 @@
   },
   "1.6.6": {
     "en": "FIX: Move buttons in settings page | FIX: German language"
+  },
+  "1.6.7": {
+    "en": "FIX: layout settings page"
   }
 }
