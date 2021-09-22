@@ -17,8 +17,6 @@ function initializeSettings (err, data) {
         return;
     }
 
-    showHide(document.getElementById('interval_enabled'));
-
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
     document.getElementById('notification_broken_variable').checked = data['NOTIFICATION_BROKEN_VARIABLE'];
@@ -30,6 +28,7 @@ function initializeSettings (err, data) {
     if(data['DISABLED'].length) document.getElementById('flows_disabled').innerHTML =  flowMapper(data, data['DISABLED'])
     if(data['BROKEN_VARIABLE'].length) document.getElementById('flows_broken_variable').innerHTML =  flowMapper(data, data['BROKEN_VARIABLE'])
 
+    showHide(document.getElementById('interval_enabled'));
     initSave(data);
     initClear(data);
 }
