@@ -4,6 +4,8 @@
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
     "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
+    "interval": "Interval instellingen",
+    "interval_enabled": "Automatisch flows checken",
     "interval_flows": "flow interval (minuten)",
     "interval_variables": "variabele interval (minuten)",
     "ctrl_click": "CTRL/CMD + Klik om flow te openen",

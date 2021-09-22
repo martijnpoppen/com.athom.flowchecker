@@ -17,9 +17,12 @@ function initializeSettings (err, data) {
         return;
     }
 
+    showHide(document.getElementById('interval_enabled'));
+
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
     document.getElementById('notification_broken_variable').checked = data['NOTIFICATION_BROKEN_VARIABLE'];
+    document.getElementById('interval_enabled').checked = data['INTERVAL_ENABLED'];
     document.getElementById('flows_overview').innerHTML =  `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><label>${data['BROKEN'].length}<label></div><div class="row"><label>${Homey.__("settings.flows_disabled")}</label><label>${data['DISABLED'].length}<label></div><div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><label>${data['BROKEN_VARIABLE'].length}<label></div><div class="row"><label>${Homey.__("settings.all_flows")}</label><label>${data['ALL_FLOWS']}<label></div><div class="row"><label>${Homey.__("settings.all_variables")}</label><label>${data['ALL_VARIABLES']}<label></div>`;
     document.getElementById('interval_flows').value = data['INTERVAL_FLOWS'];
     document.getElementById('interval_variables').value = (data['INTERVAL_FLOWS'] * 10);
@@ -34,6 +37,13 @@ function initializeSettings (err, data) {
 
 function updateValue() {
     document.getElementById('interval_variables').value = (document.getElementById('interval_flows').value * 10);
+}
+
+function showHide(chkBox) {
+    var interval_flows = document.getElementById("interval_flows_row");
+    var interval_variables = document.getElementById("interval_variables_row");
+    interval_flows.style.display = chkBox.checked ? "flex" : "none";
+    interval_variables.style.display = chkBox.checked ? "flex" : "none";
 }
 
 function flowMapper(data, flows) {
@@ -57,6 +67,7 @@ function initSave(_settings) {
             NOTIFICATION_BROKEN: document.getElementById('notification_broken').checked,
             NOTIFICATION_DISABLED: document.getElementById('notification_disabled').checked,
             NOTIFICATION_BROKEN_VARIABLE: document.getElementById('notification_broken_variable').checked,
+            INTERVAL_ENABLED: document.getElementById('interval_enabled').checked,
             BROKEN: _settings['BROKEN'],
             DISABLED: _settings['DISABLED'],
             BROKEN_VARIABLE: _settings['BROKEN_VARIABLE'],
@@ -65,7 +76,7 @@ function initSave(_settings) {
             ALL_VARIABLES: _settings['ALL_VARIABLES'],
             HOMEY_ID: _settings['HOMEY_ID']
         }
-
+        
         // ----------------------------------------------
 
         button.disabled = true;
@@ -102,6 +113,7 @@ function initClear(_settings) {
         document.getElementById('notification_broken').checked = true;
         document.getElementById('notification_disabled').checked = false;
         document.getElementById('notification_broken_variable').checked = true;
+        document.getElementById('interval_enabled').checked = false;
         document.getElementById('interval_flows').value = 3;
         document.getElementById('interval_variables').value = 30;
 
@@ -109,6 +121,7 @@ function initClear(_settings) {
             NOTIFICATION_BROKEN: true,
             NOTIFICATION_DISABLED: false,
             NOTIFICATION_BROKEN_VARIABLE: true,
+            INTERVAL_ENABLED: false,
             BROKEN: [],
             DISABLED: [],
             BROKEN_VARIABLE: [],

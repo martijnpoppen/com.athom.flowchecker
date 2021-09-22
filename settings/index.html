@@ -15,6 +15,7 @@
             display: block;
         }
 
+        #interval_settings .row,
         #flows_overview .row, 
         #flows_settings .row {
             display: flex;
@@ -46,13 +47,20 @@
             <label for="notification_broken_variable" data-i18n="settings.notification_broken_variable"></label>
             <input id="notification_broken_variable" type="checkbox" value="" />
         </div>
-
+    
+        <fieldset id="interval_settings">
+        <legend data-i18n="settings.interval"></legend>
         <div class="field row">
+            <label for="interval_enabled" data-i18n="settings.interval_enabled"></label>
+            <input id="interval_enabled" type="checkbox" value="" onclick="showHide(this)" />
+        </div>
+
+        <div class="field row" id="interval_flows_row">
             <label for="interval_flows" data-i18n="settings.interval_flows"></label>
             <input id="interval_flows" type="number" min="3" step="1" value="" oninput="updateValue()" />
         </div>
 
-        <div class="field row">
+        <div class="field row" id="interval_variables_row">
             <label for="interval_variables" data-i18n="settings.interval_variables"></label>
             <input disabled id="interval_variables" type="number" value="" />
         </div>

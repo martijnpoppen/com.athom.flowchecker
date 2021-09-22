@@ -77,6 +77,13 @@ class App extends Homey.App {
                 ALL_VARIABLES: 0
             });
         }
+
+        if(!this.appSettings.INTERVAL_ENABLED) {
+            await this.updateSettings({
+                ...this.appSettings,
+                INTERVAL_ENABLED: true
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -105,7 +112,7 @@ class App extends Homey.App {
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
 
-      if(oldSettings.INTERVAL_FLOWS) {
+      if(oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED) {
         this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
         if(settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
             this.setFindFlowsInterval(true);
@@ -185,7 +192,7 @@ class App extends Homey.App {
             await this.findLogic('BROKEN_VARIABLE');
         }
 
-        if(initial) {
+        if(initial && this.appSettings.INTERVAL_ENABLED) {
             await sleep(9000);
             await this.setFindFlowsInterval();
         }

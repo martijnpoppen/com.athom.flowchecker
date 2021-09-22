@@ -1,9 +1,11 @@
 {
   "settings": {
-    "title": "Settings",
+    "title": "Notification Settings",
     "notification_broken": "Notify when flow breaks",
     "notification_disabled": "Notify when flow gets disabled",
     "notification_broken_variable": "Notify when flow has broken variables",
+    "interval": "Interval settings",
+    "interval_enabled": "Automatic flows check",
     "interval_flows": "flow interval (minutes)",
     "interval_variables": "variable interval (minutes)",
     "ctrl_click": "CTRL/CMD + Click to open flow",
