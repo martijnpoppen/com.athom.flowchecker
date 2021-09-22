@@ -88,5 +88,8 @@
   },
   "1.6.5": {
     "en": "FIX: hidden fields in settings page"
+  },
+  "1.6.6": {
+    "en": "FIX: Move buttons in settings page | FIX: German language"
   }
 }
