@@ -9,6 +9,11 @@
             font-size: 14px !important;
         }
 
+        .spacer {
+            display: block;
+            margin: 60px auto;
+        }
+
         .red {
             color: red !important;
             margin-bottom: 10px;
@@ -28,6 +33,15 @@
         #flows_broken_variable .row {
             display: flex;
             justify-content: space-between;
+        }
+
+        .fixed {
+            background-color: white;
+            border-top: 1px solid #1d1d1d;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -66,12 +80,6 @@
         </div>
     </fieldset>
 
-    <p id="error" style="color: red;"></p>
-    <p id="loading" style="color: #0000FF;"></p>
-    <p id="success" style="color: #5fd225;"></p>
-    <button id="save" class="right">Save</button>
-    <button id="clear" class="left">Default settings</button>
-
     <fieldset>
         <legend data-i18n="settings.flows_overview"></legend>
         <div class="field">
@@ -100,6 +108,15 @@
         </div>
     </fieldset>
 
+    <div class="spacer">&nbsp;</div>
+
+    <div class="row fixed">
+        <p id="error" style="color: red;"></p>
+        <p id="loading" style="color: #0000FF;"></p>
+        <p id="success" style="color: #5fd225;"></p>
+        <button id="save" class="right">Save</button>
+        <button id="clear" class="left">Default settings</button>
+    </div>
     
     <script src="./settings.js"></script>
 
