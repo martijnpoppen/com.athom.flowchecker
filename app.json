@@ -224,7 +224,7 @@
         "title": {
           "en": "Update broken flows and variables",
           "nl": "Update kapotte flows en variabelen",
-          "de": "Update Beschädigte Flows und Flows mit beschädigten Variablen"
+          "de": "Update beschädigte Flows und Flows mit beschädigten Variablen"
         }
       },
       {
@@ -232,12 +232,12 @@
         "title": {
           "en": "Set Flow interval",
           "nl": "Stel Flow interval in",
-          "de": "Flow intervall einstellen"
+          "de": "Flow Prüfungsintervall einstellen"
         },
         "titleFormatted": {
           "en": "Set Flow check interval to [[minutes]] minutes",
           "nl": "Stel Flow check interval in op [[minutes]] minuten",
-          "de": "Flow check intervall einstellen auf [[minutes]] Minuten"
+          "de": "Flow Prüfungsintervall einstellen auf [[minutes]] Minuten"
         },
         "args": [
           {
