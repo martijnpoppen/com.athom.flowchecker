@@ -94,5 +94,11 @@
   },
   "1.6.7": {
     "en": "FIX: layout settings page"
+  },
+  "1.7.0": {
+    "en": "NEW: add app variables + improve logic handling"
+  },
+  "1.7.1": {
+    "en": "NEW: extend settings with variable breakdown"
   }
 }
