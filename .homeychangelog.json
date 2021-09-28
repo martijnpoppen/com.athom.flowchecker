@@ -100,5 +100,8 @@
   },
   "1.7.1": {
     "en": "NEW: extend settings with variable breakdown"
+  },
+  "1.7.2": {
+    "en": "i18n change"
   }
 }
