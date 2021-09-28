@@ -235,48 +235,66 @@ class App extends Homey.App {
 
         let homeyDevices = Object.values(await this._api.devices.getDevices());
         homeyDevices = homeyDevices.map((f) => (`homey:device:${f.id}`));
-        
+
+        let homeyApps = Object.values(await this._api.apps.getApps());
+        homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
+
         const flows = Object.values(await this._api.flow.getFlows());
         
         let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
             let logicVariables = [];
-            let logicDevices = [];
+            let deviceVariables = [];
+            let appVariables = [];
             const trigger = flow.trigger;
             const conditions = flow.conditions;
             const actions = flow.actions;
 
             [trigger, ...conditions, ...actions].forEach(f => {
-                if(f.uri && f.uri === 'homey:manager:logic' && f.args && f.args.variable && f.args.variable.id) {
-                    logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
-                } else if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
+                if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
                     logicVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
-                    logicDevices.push(f.droptoken.split('|')[0]);
-                } else if(f.args) {
+                    deviceVariables.push(f.droptoken.split('|')[0]);
+                } else if(f.droptoken && f.droptoken.includes('homey:app:')) {
+                    appVariables.push(f.droptoken.split('|')[0]);
+                } 
+                
+                if(f.args) {
+                    if(f.uri && f.uri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
+                        logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
+                    }
+
                     const argsArray = f.args && Object.values(f.args) || [];
                     if (!argsArray || !argsArray.length) return false;
     
                     const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
-                    const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));                
+                    const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
+                    const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));                    
 
                     if(logicVar) {
-                        const actionArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
-                        logicVariables = [...logicVariables, ...actionArray];
-                    } else if(logicDevice) {
-                        const actionArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
-                        logicDevices = [...logicDevices, ...actionArray];
+                        const varArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
+                        logicVariables = [...logicVariables, ...varArray];
+                    }
+
+                    if(logicDevice) {
+                        const varArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
+                        deviceVariables = [...deviceVariables, ...varArray];
+                    }
+                    
+                    if(logicApp) {
+                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).map(l => `homey:app:${l}`);
+                        appVariables = [...appVariables, ...varArray];
                     }
                 }
             });
 
-            this.ALL_VARIABLES = this.ALL_VARIABLES+logicVariables.length+logicDevices.length;
+            
+            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length;
+            this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
 
-            if(logicVariables.length) {
-                return !homeyVariables.some(r=> logicVariables.indexOf(r) >= 0);
-            } else if(logicDevices.length) {
-                return !homeyDevices.some(r=> logicDevices.indexOf(r) >= 0);
-            }
-
+            if(logicVariables.length && !homeyVariables.some((r) => logicVariables.indexOf(r) >= 0)) return true;
+            if(deviceVariables.length && !homeyDevices.some((r) => deviceVariables.indexOf(r) >= 0)) return true;
+            if(appVariables.length && !homeyApps.some((r) => appVariables.indexOf(r) >= 0)) return true;
+             
             return false;
         });
         
