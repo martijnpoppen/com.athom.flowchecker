@@ -103,5 +103,8 @@
   },
   "1.7.2": {
     "en": "i18n change"
+  },
+  "1.8.0": {
+    "en": "NEW: add Better Logic support - (variable and flowcards check)"
   }
 }
