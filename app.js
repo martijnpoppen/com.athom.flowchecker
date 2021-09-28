@@ -78,6 +78,13 @@ class App extends Homey.App {
             });
         }
 
+        if(!this.appSettings.ALL_VARIABLES_OBJ) {
+            await this.updateSettings({
+                ...this.appSettings,
+                ALL_VARIABLES_OBJ: {}
+            });
+        }
+
         if(!this.appSettings.INTERVAL_ENABLED) {
             await this.updateSettings({
                 ...this.appSettings,
@@ -95,6 +102,7 @@ class App extends Homey.App {
           NOTIFICATION_BROKEN_VARIABLE: true,
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
+          ALL_VARIABLES_OBJ: {},
           HOMEY_ID: ''
         });
       }
@@ -290,6 +298,11 @@ class App extends Homey.App {
             
             const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length;
             this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
+            this.ALL_VARIABLES_OBJ = {
+                logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
+                device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
+                app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length
+            }
 
             if(logicVariables.length && !homeyVariables.some((r) => logicVariables.indexOf(r) >= 0)) return true;
             if(deviceVariables.length && !homeyDevices.some((r) => deviceVariables.indexOf(r) >= 0)) return true;
@@ -304,11 +317,23 @@ class App extends Homey.App {
         await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
 
         if (flowArray.length !== filteredFlows.length) {
-            await this.updateSettings({...this.appSettings, [key]: [...new Set(filteredFlows)], ALL_FLOWS: flows.length, ALL_VARIABLES: this.ALL_VARIABLES});
+            await this.updateSettings({
+                ...this.appSettings, 
+                [key]: [...new Set(filteredFlows)], 
+                ALL_FLOWS: flows.length, 
+                ALL_VARIABLES: this.ALL_VARIABLES, 
+                ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
+            });
+
             await this[`token_${key}`].setValue(filteredFlows.length);
             await this.checkFlowDiff(key, filteredFlows, flowArray)
         } else {
-            await this.updateSettings({...this.appSettings, ALL_FLOWS: flows.length, ALL_VARIABLES: this.ALL_VARIABLES});
+            await this.updateSettings({
+                ...this.appSettings, 
+                ALL_FLOWS: flows.length, 
+                ALL_VARIABLES: this.ALL_VARIABLES,
+                ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
+            });
         }
     }
 

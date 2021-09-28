@@ -14,6 +14,9 @@
     "flows_disabled": "uitgeschakelde flows",
     "flows_broken_variable": "flows met kapotte variabele",
     "all_flows": "alle flows",
-    "all_variables": "alle variabelen (logic + apparaten)"
+    "all_variables": "alle variabelen",
+    "all_variables_logic": "-- logic",
+    "all_variables_device": "-- apparaten",
+    "all_variables_app": "-- apps"
   }
 }

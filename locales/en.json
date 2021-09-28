@@ -14,6 +14,9 @@
     "flows_disabled": "disabled flows",
     "flows_broken_variable": "flows with broken variable",
     "all_flows": "all flows",
-    "all_variables": "all variables (logic + devices)"
+    "all_variables": "all variables",
+    "all_variables_logic": "-- logic",
+    "all_variables_device": "-- devices",
+    "all_variables_app": "-- apps"
   }
 }
