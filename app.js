@@ -7,6 +7,7 @@ const flowActions = require('./lib/flows/actions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
+const externalAppKey = 'net.i-dev.betterlogic'
 
 class App extends Homey.App {
   log() {
@@ -235,6 +236,7 @@ class App extends Homey.App {
     async findLogic(key) {
         const flowArray = this.appSettings[key];
         this.ALL_VARIABLES = 0;
+        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0 };
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
@@ -247,12 +249,20 @@ class App extends Homey.App {
         let homeyApps = Object.values(await this._api.apps.getApps());
         homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
 
+        let betterLogic = []
+        
+        if(homeyApps.includes(`homey:app:${externalAppKey}`)) {
+            betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKey});
+            betterLogic = betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKey}|${f.name}`)) : [];
+        }
+
         const flows = Object.values(await this._api.flow.getFlows());
         
         let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
             let logicVariables = [];
             let deviceVariables = [];
             let appVariables = [];
+            let blVariables = [];
             const trigger = flow.trigger;
             const conditions = flow.conditions;
             const actions = flow.actions;
@@ -262,13 +272,19 @@ class App extends Homey.App {
                     logicVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
                     deviceVariables.push(f.droptoken.split('|')[0]);
+                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKey}`)) {
+                    blVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:app:')) {
                     appVariables.push(f.droptoken.split('|')[0]);
-                } 
+                }
                 
                 if(f.args) {
                     if(f.uri && f.uri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
                         logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
+                    }
+
+                    if(f.uri && f.uri === `homey:app:${externalAppKey}` && f.args.variable && f.args.variable.name) {
+                        blVariables.push(`homey:app:${externalAppKey}|${f.args.variable.name}`);
                     }
 
                     const argsArray = f.args && Object.values(f.args) || [];
@@ -276,7 +292,8 @@ class App extends Homey.App {
     
                     const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
                     const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
-                    const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));                    
+                    const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));
+                    const logicBL = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKey}`));                    
 
                     if(logicVar) {
                         const varArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
@@ -289,24 +306,31 @@ class App extends Homey.App {
                     }
                     
                     if(logicApp) {
-                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).map(l => `homey:app:${l}`);
+                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).filter(l => l !== externalAppKey).map(l => `homey:app:${l}`);
                         appVariables = [...appVariables, ...varArray];
                     }
+
+                    if(logicBL) {
+                        const varArray = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKey}`));
+                        blVariables = [...blVariables, ...varArray];
+                    } 
                 }
             });
 
-            
-            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length;
+            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length;
+
             this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
             this.ALL_VARIABLES_OBJ = {
                 logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
                 device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
-                app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length
+                app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
+                bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length
             }
 
-            if(logicVariables.length && !homeyVariables.some((r) => logicVariables.indexOf(r) >= 0)) return true;
-            if(deviceVariables.length && !homeyDevices.some((r) => deviceVariables.indexOf(r) >= 0)) return true;
-            if(appVariables.length && !homeyApps.some((r) => appVariables.indexOf(r) >= 0)) return true;
+            if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) return true;
+            if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)) return true;
+            if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) return true;
+            if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) return true;
              
             return false;
         });
