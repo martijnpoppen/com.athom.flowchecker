@@ -101,6 +101,8 @@ class App extends Homey.App {
           NOTIFICATION_BROKEN: true,
           NOTIFICATION_DISABLED: false,
           NOTIFICATION_BROKEN_VARIABLE: true,
+          INTERVAL_FLOWS: 3,
+          INTERVAL_ENABLED: true,
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
           ALL_VARIABLES_OBJ: {},
@@ -127,7 +129,7 @@ class App extends Homey.App {
             this.setFindFlowsInterval(true);
         }
       }
-    } catch (error) {
+    } catch (err) {
       this.error(err);
     }
   }
