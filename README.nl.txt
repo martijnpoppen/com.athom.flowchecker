@@ -7,7 +7,8 @@ Huidige functies:
 - Notificatie kapotte variabelen in flows (standaard ingeschakeld)
 - Overzicht kapotte flows
 - Overzicht uitgeschakelde flows
-- Overzicht kapotte variabelen in flows
+- Overzicht kapotte variabelen in flows (logic, apparaten, apps, Better Logic)
+- Better Logic ondersteuning
 
 Meer info op de community pagina:
 - Link in onderaan App Store pagina
