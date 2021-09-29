@@ -109,5 +109,8 @@
   },
   "1.8.1": {
     "en": "NEW: add Better Logic support - (variable and flowcards check)"
+  },
+  "1.8.2": {
+    "en": "Small code fix"
   }
 }
