@@ -51,6 +51,7 @@ class App extends Homey.App {
       });
 
       this.interval = 0;
+      this.debug = true;
 
       if (settingsInitialized) {
         this.log("[initSettings] - Found settings key", _settingsKey);
@@ -243,10 +244,17 @@ class App extends Homey.App {
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
         let homeyVariables = Object.values(await this._api.logic.getVariables());
+        if(this.debug) {
+            this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables);
+        }
         homeyVariables = homeyVariables.map((f) => (`homey:manager:logic|${f.id}`));
 
         let homeyDevices = Object.values(await this._api.devices.getDevices());
         homeyDevices = homeyDevices.map((f) => (`homey:device:${f.id}`));
+
+        if(this.debug) {
+            this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices);
+        }
 
         let homeyApps = Object.values(await this._api.apps.getApps());
         homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
@@ -255,6 +263,11 @@ class App extends Homey.App {
         
         if(homeyApps.includes(`homey:app:${externalAppKey}`)) {
             betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKey});
+            
+            if(this.debug) {
+                this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices);
+            }
+
             betterLogic = betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKey}|${f.name}`)) : [];
         }
 
@@ -327,6 +340,16 @@ class App extends Homey.App {
                 device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
                 app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
                 bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length
+            }
+
+            if(this.debug && variablesLength) {
+                this.log(`[findLogic] ---------------------START---------------------------`) 
+                this.log(`[findLogic]`, flow.name);
+                if(logicVariables.length) this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
+                if(deviceVariables.length) this.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
+                if(appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
+                if(blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
+                this.log(`[findLogic] ---------------------END---------------------------`);
             }
 
             if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) return true;
