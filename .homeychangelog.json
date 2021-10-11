@@ -118,5 +118,8 @@
   },
   "1.9.0": {
     "en": "NEW: optimized variable checker for Devices"
+  },
+  "1.9.1": {
+    "en": "FIX: automatic flowchecks went to true on restart"
   }
 }

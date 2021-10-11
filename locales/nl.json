@@ -18,6 +18,7 @@
     "all_variables_logic": "-- logic",
     "all_variables_device": "-- apparaten",
     "all_variables_app": "-- apps",
-    "all_variables_bl": "-- Better Logic"
+    "all_variables_bl": "-- Better Logic",
+    "all_variables_fu": "-- Flow Utilities"
   }
 }

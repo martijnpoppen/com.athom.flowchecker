@@ -7,7 +7,8 @@ const flowActions = require('./lib/flows/actions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
-const externalAppKey = 'net.i-dev.betterlogic'
+const externalAppKeyBL = 'net.i-dev.betterlogic'
+const externalAppKeyFU = 'com.athom.comparison'
 
 class App extends Homey.App {
   log() {
@@ -57,22 +58,21 @@ class App extends Homey.App {
         this.log("[initSettings] - Found settings key", _settingsKey);
         this.appSettings = this.homey.settings.get(_settingsKey);
 
-        if(!this.appSettings.BROKEN_VARIABLE) {
+        if(!('BROKEN_VARIABLE' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 BROKEN_VARIABLE: [],
                 NOTIFICATION_BROKEN_VARIABLE: true
               });
         }
-
-        if(!this.appSettings.INTERVAL_FLOWS) {
+        if(!('INTERVAL_FLOWS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 INTERVAL_FLOWS: 3
             });
         }
 
-        if(!this.appSettings.ALL_FLOWS) {
+        if(!('ALL_FLOWS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 ALL_FLOWS: 0,
@@ -80,14 +80,14 @@ class App extends Homey.App {
             });
         }
 
-        if(!this.appSettings.ALL_VARIABLES_OBJ) {
+        if(!('ALL_VARIABLES_OBJ' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 ALL_VARIABLES_OBJ: {}
             });
         }
 
-        if(!this.appSettings.INTERVAL_ENABLED) {
+        if(!('INTERVAL_ENABLED' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 INTERVAL_ENABLED: true
@@ -238,37 +238,46 @@ class App extends Homey.App {
 
     async findLogic(key) {
         const flowArray = this.appSettings[key];
+        const flowTokens = await this._api.flowToken.getFlowTokens();
+        
         this.ALL_VARIABLES = 0;
-        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0 };
+        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0 };
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
-        let homeyVariables = Object.values(await this._api.logic.getVariables());
-        if(this.debug) {
-            this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables);
-        }
-        homeyVariables = homeyVariables.map((f) => (`homey:manager:logic|${f.id}`));
+        const homeyVariables = flowTokens.filter(f => f.uri === `homey:manager:logic`).map(f => `${f.uri}|${f.id}`);
+        this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables, homeyVariables.length);
+        
+        const homeyDevices = flowTokens.filter(f => f.uri.startsWith(`homey:device`)).map(f => `${f.uri}|${f.id}`);
+        this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
 
-        let homeyDevices = Object.values(await this._api.devices.getDevices());
-        homeyDevices = homeyDevices.map((f) => (`homey:device:${f.id}`));
-
-        if(this.debug) {
-            this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices);
-        }
 
         let homeyApps = Object.values(await this._api.apps.getApps());
         homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
 
-        let betterLogic = []
+        let betterLogic = [];
+        let flowUtils = [];
         
-        if(homeyApps.includes(`homey:app:${externalAppKey}`)) {
-            betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKey});
+        if(homeyApps.includes(`homey:app:${externalAppKeyBL}`)) {
+            betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKeyBL});
             
             if(this.debug) {
-                this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices);
+                this.log(`[findLogic] ${key} - betterLogic: `, betterLogic);
             }
 
-            betterLogic = betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKey}|${f.name}`)) : [];
+            betterLogic = betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKeyBL}|${f.name}`)) : [];
+        }
+
+        if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
+            const flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU});
+            flowUtils = flowTokens.filter(f => f.uri === `homey:app:${externalAppKeyFU}`).map(f => f.id);
+            flowUtils = flowUtilsSettings ? [...flowUtilsSettings.VARIABLES, ...flowUtils] : flowUtils;
+            
+            if(this.debug) {
+                this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
+            }
+
+            flowUtils = flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
         }
 
         const flows = Object.values(await this._api.flow.getFlows());
@@ -278,6 +287,7 @@ class App extends Homey.App {
             let deviceVariables = [];
             let appVariables = [];
             let blVariables = [];
+            let fuVariables = [];
             const trigger = flow.trigger;
             const conditions = flow.conditions;
             const actions = flow.actions;
@@ -286,9 +296,11 @@ class App extends Homey.App {
                 if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
                     logicVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
-                    deviceVariables.push(f.droptoken.split('|')[0]);
-                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKey}`)) {
+                    deviceVariables.push(f.droptoken);
+                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyBL}`)) {
                     blVariables.push(f.droptoken);
+                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyFU}`)) {
+                    fuVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:app:')) {
                     appVariables.push(f.droptoken.split('|')[0]);
                 }
@@ -298,8 +310,12 @@ class App extends Homey.App {
                         logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
                     }
 
-                    if(f.uri && f.uri === `homey:app:${externalAppKey}` && f.args.variable && f.args.variable.name) {
-                        blVariables.push(`homey:app:${externalAppKey}|${f.args.variable.name}`);
+                    if(f.uri && f.uri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
+                        blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
+                    }
+
+                    if(f.uri && f.uri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
+                        fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                     }
 
                     const argsArray = f.args && Object.values(f.args) || [];
@@ -308,7 +324,8 @@ class App extends Homey.App {
                     const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
                     const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
                     const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));
-                    const logicBL = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKey}`));                    
+                    const logicBL = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyBL}`));                    
+                    const logicFU = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyFU}`));                    
 
                     if(logicVar) {
                         const varArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
@@ -316,30 +333,36 @@ class App extends Homey.App {
                     }
 
                     if(logicDevice) {
-                        const varArray = logicDevice.match(/(?<=\[(homey:device:))(.*?)(?=\|)/g).map(l => `homey:device:${l}`);
+                        const varArray = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:device'));
                         deviceVariables = [...deviceVariables, ...varArray];
                     }
                     
                     if(logicApp) {
-                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).filter(l => l !== externalAppKey).map(l => `homey:app:${l}`);
+                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`);
                         appVariables = [...appVariables, ...varArray];
                     }
 
                     if(logicBL) {
-                        const varArray = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKey}`));
+                        const varArray = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKeyBL}`));
                         blVariables = [...blVariables, ...varArray];
+                    } 
+
+                    if(logicFU) {
+                        const varArray = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKeyFU}`));
+                        fuVariables = [...fuVariables, ...varArray];
                     } 
                 }
             });
 
-            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length;
+            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length+fuVariables.length;
 
             this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
             this.ALL_VARIABLES_OBJ = {
                 logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
                 device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
                 app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
-                bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length
+                bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length,
+                fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length
             }
 
             if(this.debug && variablesLength) {
@@ -349,6 +372,7 @@ class App extends Homey.App {
                 if(deviceVariables.length) this.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
                 if(appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
                 if(blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
+                if(fuVariables.length) this.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
                 this.log(`[findLogic] ---------------------END---------------------------`);
             }
 
@@ -356,6 +380,7 @@ class App extends Homey.App {
             if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)) return true;
             if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) return true;
             if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) return true;
+            if(fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) return true;
              
             return false;
         });

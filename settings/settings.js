@@ -30,7 +30,8 @@ function initializeSettings (err, data) {
                                                            <div class="row"><label>${Homey.__("settings.all_variables_logic")}</label><label>${data["ALL_VARIABLES_OBJ"]["logic"] || 0}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_device")}</label><label>${data["ALL_VARIABLES_OBJ"]["device"] || 0}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_app")}</label><label>${data["ALL_VARIABLES_OBJ"]["app"] || 0}<label></div>
-                                                           <div class="row"><label>${Homey.__("settings.all_variables_bl")}</label><label>${data["ALL_VARIABLES_OBJ"]["bl"] || 0}<label></div>`;
+                                                           <div class="row"><label>${Homey.__("settings.all_variables_bl")}</label><label>${data["ALL_VARIABLES_OBJ"]["bl"] || 0}<label></div>
+                                                           <div class="row"><label>${Homey.__("settings.all_variables_fu")}</label><label>${data["ALL_VARIABLES_OBJ"]["fu"] || 0}<label></div>`;
     document.getElementById('interval_flows').value = data['INTERVAL_FLOWS'];
     document.getElementById('interval_variables').value = (data['INTERVAL_FLOWS'] * 10);
     if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  flowMapper(data, data['BROKEN'])
