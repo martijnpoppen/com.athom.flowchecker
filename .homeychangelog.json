@@ -121,5 +121,8 @@
   },
   "1.9.1": {
     "en": "FIX: automatic flowchecks went to true on restart"
+  },
+  "1.10.0": {
+    "en": "NEW: add Flow Utilities support | NEW: improved search for FlowTokens"
   }
 }
