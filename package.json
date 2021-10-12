@@ -1,10 +1,10 @@
 {
-  "name": "com.athom.flowchecker",
+  "name": "com.flowchecker",
   "version": "1.0.0",
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/martijnpoppen/com.athom.flowchecker"
+    "url": "https://github.com/martijnpoppen/com.flowchecker"
   },
   "dependencies": {
     "athom-api": "^3.6.5"

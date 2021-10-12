@@ -1,5 +1,5 @@
 {
-  "id": "com.athom.flowchecker",
+  "id": "com.flowchecker",
   "version": "1.10.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
@@ -81,7 +81,7 @@
   "bugs": {
     "url": "https://community.athom.com/t/app-flowchecker/50986"
   },
-  "source": "https://github.com/martijnpoppen/com.athom.flowchecker",
+  "source": "https://github.com/martijnpoppen/com.flowchecker",
   "homeyCommunityTopicId": 50986,
   "support": "https://community.athom.com/t/app-flowchecker/50986",
   "api": {
