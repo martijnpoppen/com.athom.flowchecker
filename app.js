@@ -8,7 +8,7 @@ const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = 'net.i-dev.betterlogic';
-const externalAppKeyFU = 'com.athom.flow.utilities';
+const externalAppKeyFU = "com.flow.utilities";
 
 class App extends Homey.App {
   log() {
