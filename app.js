@@ -7,8 +7,8 @@ const flowActions = require('./lib/flows/actions');
 const { sleep } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
-const externalAppKeyBL = 'net.i-dev.betterlogic'
-const externalAppKeyFU = 'com.athom.comparison'
+const externalAppKeyBL = 'net.i-dev.betterlogic';
+const externalAppKeyFU = 'com.athom.flow.utilities';
 
 class App extends Homey.App {
   log() {
@@ -255,6 +255,7 @@ class App extends Homey.App {
         let homeyApps = Object.values(await this._api.apps.getApps());
         homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
 
+        // -------------APP SPECIFIC -----------------------
         let betterLogic = [];
         let flowUtils = [];
         
