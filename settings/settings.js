@@ -59,7 +59,7 @@ function flowMapper(data, flows) {
     let html = `<label class="red">${Homey.__("settings.ctrl_click")}</label>`;
     const homey_id = data['HOMEY_ID'];
     flows.sort((a,b) =>  a.name.localeCompare(b.name)).forEach((f) => {
-        html += `<div class="row"><label><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${f.name}</a></label</div>`;
+        html += `<div class="row"><label><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${escapeHtml(f.name)}</a></label</div>`;
     });
 
     return html;
@@ -156,3 +156,12 @@ function initClear(_settings) {
         });
     });
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
