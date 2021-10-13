@@ -127,5 +127,8 @@
   },
   "1.10.1": {
     "en": "Change Flow Utilities app id"
+  },
+  "1.10.2": {
+    "en": "FIX: < and > causing settings page to break."
   }
 }
