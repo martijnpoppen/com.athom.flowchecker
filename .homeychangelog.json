@@ -124,5 +124,8 @@
   },
   "1.10.0": {
     "en": "NEW: add Flow Utilities support | NEW: improved search for FlowTokens"
+  },
+  "1.10.1": {
+    "en": "Change Flow Utilities app id"
   }
 }
