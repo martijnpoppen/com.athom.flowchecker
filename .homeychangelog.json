@@ -130,5 +130,8 @@
   },
   "1.10.2": {
     "en": "FIX: < and > causing settings page to break."
+  },
+  "1.11.0": {
+    "en": "NEW: add unused flows and unused logic | flowcards for enable/disable interval"
   }
 }

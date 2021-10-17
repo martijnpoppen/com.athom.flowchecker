@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -168,6 +168,62 @@
         ]
       },
       {
+        "id": "trigger_UNUSED_FLOWS",
+        "title": {
+          "en": "A flow became unused",
+          "nl": "Een flow is ongebruikt geworden",
+          "de": "A flow became unused"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow",
+              "de": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_UNUSED_LOGIC",
+        "title": {
+          "en": "A logic variable became unused",
+          "nl": "Een logic variabele is ongebruikt geworden",
+          "de": "A logic variable became unused"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Logic",
+              "nl": "Logic",
+              "de": "Logic"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID"
+            }
+          }
+        ]
+      },
+      {
         "id": "trigger_FIXED",
         "title": {
           "en": "A flow started working again",
@@ -182,6 +238,34 @@
               "en": "Flow",
               "nl": "Flow",
               "de": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_FIXED_LOGIC",
+        "title": {
+          "en": "A logic variable started working again",
+          "nl": "Een logic variabele is actief geworden",
+          "de": "Ein logic variable wurde wieder aktiviert"
+        },
+        "tokens": [
+          {
+            "name": "logic",
+            "type": "string",
+            "title": {
+              "en": "Logic",
+              "nl": "Logic",
+              "de": "Logic"
             }
           },
           {
@@ -220,6 +304,22 @@
           "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
           "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden"
         }
+      },
+      {
+        "id": "condition_UNUSED_FLOWS",
+        "title": {
+          "en": "There !{{are|aren't}} unused flows",
+          "nl": "Er !{{zijn|zijn geen}} ongebruikte flows",
+          "de": "There !{{are|aren't}} unused flows"
+        }
+      },
+      {
+        "id": "condition_UNUSED_LOGIC",
+        "title": {
+          "en": "There !{{are|aren't}} unusued logic variables",
+          "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
+          "de": "There !{{are|aren't}} unusued logic variables"
+        }
       }
     ],
     "actions": [
@@ -256,6 +356,22 @@
             }
           }
         ]
+      },
+      {
+        "id": "action_disable_flow_interval",
+        "title": {
+          "en": "Disable Flow interval",
+          "nl": "Zet Flow interval uit",
+          "de": "Deaktivieren Flow Prüfungsintervall"
+        }
+      },
+      {
+        "id": "action_enable_flow_interval",
+        "title": {
+          "en": "Enable Flow interval",
+          "nl": "Zet Flow interval aan",
+          "de": "Aktivieren Flow Prüfungsintervall"
+        }
       }
     ]
   }
