@@ -4,6 +4,8 @@
     "notification_broken": "Notify when flow breaks",
     "notification_disabled": "Notify when flow gets disabled",
     "notification_broken_variable": "Notify when flow has broken variables",
+    "notification_unused_flows": "Notify when flow is unused",
+    "notification_unused_logic": "Notify when a logic variable is unused",
     "interval": "Interval settings",
     "interval_enabled": "Automatic flows check",
     "interval_flows": "flow interval (minutes)",
@@ -19,6 +21,9 @@
     "all_variables_device": "-- devices",
     "all_variables_app": "-- apps",
     "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities"
+    "all_variables_fu": "-- Flow Utilities",
+    "unused_flows": "unused flows",
+    "unused_flows_description": "Unused flows or flows with a 'This flow has started' trigger",
+    "unused_logic variable": "unused logic variable"
   }
 }

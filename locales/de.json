@@ -4,6 +4,8 @@
     "notification_broken": "Benachrichtigen, wenn ein Flow beschädigt wird",
     "notification_disabled": "Benachrichtigen, wenn ein Flow deaktiviert wird",
     "notification_broken_variable": "Benachrichtigen, wenn ein Flow beschädigte Variablen hat",
+    "notification_unused_flows": "Notify when flow is unused",
+    "notification_unused_logic": "Notify when a logic variable is unused",
     "interval": "Einstellungen Prüfungsintervall",
     "interval_enabled": "Automatische Flow Kontrolle",
     "interval_flows": "flow intervall (Minuten)",
@@ -19,6 +21,9 @@
     "all_variables_device": "-- Geräte",
     "all_variables_app": "-- Apps",
     "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities"
+    "all_variables_fu": "-- Flow Utilities",
+    "unused_flows": "unused flows",
+    "unused_flows_description": "Unused flows or flows with a programmatic trigger",
+    "unused_logic variable": "unused logic variable"
   }
 }

@@ -93,15 +93,29 @@ class App extends Homey.App {
                 INTERVAL_ENABLED: true
             });
         }
+
+        if(!('UNUSED_FLOWS' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
+                UNUSED_FLOWS: [],
+                UNUSED_LOGIC: [],
+                NOTIFICATION_UNUSED_FLOWS: false,
+                NOTIFICATION_UNUSED_LOGIC: false
+              });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
           BROKEN: [],
           DISABLED: [],
           BROKEN_VARIABLE: [],
+          UNUSED_FLOWS: [],
+          UNUSED_LOGIC: [],
           NOTIFICATION_BROKEN: true,
           NOTIFICATION_DISABLED: false,
           NOTIFICATION_BROKEN_VARIABLE: true,
+          NOTIFICATION_UNUSED_FLOWS: false,
+          NOTIFICATION_UNUSED_LOGIC: false,
           INTERVAL_FLOWS: 3,
           INTERVAL_ENABLED: true,
           ALL_FLOWS: 0,
@@ -161,11 +175,23 @@ class App extends Homey.App {
         title: this.homey.__("settings.all_flows")
       });
 
+      this.token_UNUSED_FLOWS = await this.homey.flow.createToken("token_UNUSED_FLOWS", {
+        type: "number",
+        title: this.homey.__("settings.unused_flows")
+      });
+
+      this.token_UNUSED_LOGIC = await this.homey.flow.createToken("token_UNUSED_LOGIC", {
+        type: "number",
+        title: this.homey.__("settings.unused_logic")
+      });
+
       await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
       await this.token_DISABLED.setValue(this.appSettings.DISABLED.length);
       await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
       await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
       await this.token_ALL_FLOWS.setValue(this.appSettings.ALL_FLOWS);
+      await this.token_UNUSED_FLOWS.setValue(this.appSettings.UNUSED_FLOWS.length);
+      await this.token_UNUSED_LOGIC.setValue(this.appSettings.UNUSED_LOGIC.length);
   }
 
   async setHomeyInfo() {
@@ -198,10 +224,12 @@ class App extends Homey.App {
       try {
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
+        await this.findFlows('UNUSED_FLOWS');
 
         if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
             this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
             await this.findLogic('BROKEN_VARIABLE');
+            await this.findUnusedLogic('UNUSED_LOGIC');
         }
 
         if(initial && this.appSettings.INTERVAL_ENABLED) {
@@ -225,6 +253,10 @@ class App extends Homey.App {
           flows = Object.values(await this._api.flow.getFlows({ filter: { broken: true } }));
         } else if(key === 'DISABLED') {
           flows = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
+        } else if(key === 'UNUSED_FLOWS') {
+            const allFlows = Object.values(await this._api.flow.getFlows());
+            const triggers = flows.flatMap(f => f.actions.filter(a => a.uri === 'homey:manager:flow' && a.id === 'programmatic_trigger').flatMap(a => a.args.flow))
+            flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.find(t => t.id === f.id))
         }
 
         flows = flows.map((f) => ({name: f.name, id: f.id}));
@@ -242,6 +274,7 @@ class App extends Homey.App {
         
         this.ALL_VARIABLES = 0;
         this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0 };
+        this.LOGIC_VARIABLES = [];
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
@@ -365,6 +398,7 @@ class App extends Homey.App {
                 bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length,
                 fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length
             }
+            this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
 
             if(this.debug && variablesLength) {
                 this.log(`[findLogic] ---------------------START---------------------------`) 
@@ -412,7 +446,24 @@ class App extends Homey.App {
         }
     }
 
-    async checkFlowDiff(key, flows, flowArray) {
+    async findUnusedLogic(key) {
+        const logicArray = this.appSettings[key];
+        const homeyVariables = Object.values(await this._api.logic.getVariables());
+        const logicVariables = this.LOGIC_VARIABLES;
+        
+        this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);
+        let logic = homeyVariables.filter((r) => logicVariables.indexOf(`homey:manager:logic|${r.id}`) === -1);
+
+        logic = logic.map((f) => ({name: f.name, id: f.id}));
+    
+        if (logicArray.length !== logic.length) {
+          await this.updateSettings({...this.appSettings, [key]: [...new Set(logic)]});
+          await this[`token_${key}`].setValue(logic.length);
+          await this.checkFlowDiff(key, logic, logicArray, true);
+        }
+    }
+
+    async checkFlowDiff(key, flows, flowArray, logic = false) {
       try {
         const flowDiff = flows.filter(({ id: id1 }) => !flowArray.some(({ id: id2 }) => id2 === id1));
         const flowDiffReverse = flowArray.filter(({ id: id1 }) => !flows.some(({ id: id2 }) => id2 === id1));
@@ -429,7 +480,13 @@ class App extends Homey.App {
           });
         }
 
-        if(flowDiffReverse.length) {
+        if(flowDiffReverse.length && logic) {
+            flowDiffReverse.forEach(async logic =>  {
+              await this.homey.flow.getTriggerCard(`trigger_FIXED_LOGIC`).trigger({logic: logic.name, id: logic.id})
+                  .catch( this.error )
+                  .then(this.log(`[flowDiff] FIXED_LOGIC - Triggered: "${logic.name} | ${logic.id}"`)); 
+            });
+        } else if(flowDiffReverse.length) {
             flowDiffReverse.forEach(async flow =>  {
               await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id})
                   .catch( this.error )
@@ -439,7 +496,6 @@ class App extends Homey.App {
       } catch (error) {
         this.error(error);
       }
-     
     }
 
     async setNotification(key, flow, type) {

@@ -4,6 +4,8 @@
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
     "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
+    "notification_unused_flows": "Notificatie als een flow ongebruikt is",
+    "notification_unused_logic": "Notificatie als een logic variabele ongebruikt is",
     "interval": "Interval instellingen",
     "interval_enabled": "Automatisch flows checken",
     "interval_flows": "flow interval (minuten)",
@@ -19,6 +21,9 @@
     "all_variables_device": "-- apparaten",
     "all_variables_app": "-- apps",
     "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities"
+    "all_variables_fu": "-- Flow Utilities",
+    "unused_flows": "ongebruikte flows",
+    "unused_flows_description": "Ongebruikte flows of flows met een 'Deze flow is gestart' trigger",
+    "unused_logic": "ongebruikte logic variabelen"
   }
 }
