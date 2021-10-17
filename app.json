@@ -316,9 +316,9 @@
       {
         "id": "condition_UNUSED_LOGIC",
         "title": {
-          "en": "There !{{are|aren't}} unusued logic variables",
+          "en": "There !{{are|aren't}} unused logic variables",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
-          "de": "There !{{are|aren't}} unusued logic variables"
+          "de": "There !{{are|aren't}} unused logic variables"
         }
       }
     ],
