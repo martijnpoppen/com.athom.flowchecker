@@ -136,5 +136,8 @@
   },
   "1.11.1": {
     "en": "FIX: locale issue"
+  },
+  "1.12.0": {
+    "en": "NEW: add folders to flow notifcation and settings"
   }
 }
