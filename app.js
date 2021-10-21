@@ -222,6 +222,8 @@ class App extends Homey.App {
   
     async findFlowDefects(initial = false, force = false) {
       try {
+        this.FOLDERS = Object.values(await this._api.flow.getFlowFolders());
+
         await this.findFlows('BROKEN');
         await this.findFlows('DISABLED');
         await this.findFlows('UNUSED_FLOWS');
@@ -259,13 +261,16 @@ class App extends Homey.App {
             flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.find(t => t.id === f.id))
         }
 
-        flows = flows.map((f) => ({name: f.name, id: f.id}));
-    
-        if (flowArray.length !== flows.length) {
-          await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
-          await this[`token_${key}`].setValue(flows.length);
-          await this.checkFlowDiff(key, flows, flowArray);
-        }
+        flows = flows.map((f) => {
+            const folder = this.FOLDERS.find(t => t.id === f.folder);
+            const folderName = folder ? folder.name : null;
+
+            return {name: f.name, id: f.id, folder: folderName };
+        });
+
+        await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
+        await this[`token_${key}`].setValue(flows.length);
+        await this.checkFlowDiff(key, flows, flowArray);
     }
 
     async findLogic(key) {
@@ -420,30 +425,26 @@ class App extends Homey.App {
             return false;
         });
         
-        filteredFlows = filteredFlows.map((f) => ({name: f.name, id: f.id}));
+        filteredFlows = filteredFlows.map((f) => {
+            const folder = this.FOLDERS.find(t => t.id === f.folder);
+            const folderName = folder ? folder.name : null;
+
+            return {name: f.name, id: f.id, folder: folderName };
+        });
 
         await this.token_ALL_FLOWS.setValue(flows.length);
         await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
 
-        if (flowArray.length !== filteredFlows.length) {
-            await this.updateSettings({
-                ...this.appSettings, 
-                [key]: [...new Set(filteredFlows)], 
-                ALL_FLOWS: flows.length, 
-                ALL_VARIABLES: this.ALL_VARIABLES, 
-                ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
-            });
+        await this.updateSettings({
+            ...this.appSettings, 
+            [key]: [...new Set(filteredFlows)], 
+            ALL_FLOWS: flows.length, 
+            ALL_VARIABLES: this.ALL_VARIABLES, 
+            ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
+        });
 
-            await this[`token_${key}`].setValue(filteredFlows.length);
-            await this.checkFlowDiff(key, filteredFlows, flowArray)
-        } else {
-            await this.updateSettings({
-                ...this.appSettings, 
-                ALL_FLOWS: flows.length, 
-                ALL_VARIABLES: this.ALL_VARIABLES,
-                ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
-            });
-        }
+        await this[`token_${key}`].setValue(filteredFlows.length);
+        await this.checkFlowDiff(key, filteredFlows, flowArray)
     }
 
     async findUnusedLogic(key) {
@@ -473,7 +474,7 @@ class App extends Homey.App {
   
         if(flowDiff.length) {
           flowDiff.forEach(async flow =>  {
-            await this.setNotification(key, flow.name, 'Flow');
+            await this.setNotification(key, flow.name, flow.folder, 'Flow');
             await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
                 .catch( this.error )
                 .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
@@ -498,11 +499,12 @@ class App extends Homey.App {
       }
     }
 
-    async setNotification(key, flow, type) {
+    async setNotification(key, flow, folderName, type) {
       try {
         if(this.appSettings[`NOTIFICATION_${key}`]) {
+            const folder = folderName ? `| Folder: **${folderName}**` : '';
             await this.homey.notifications.createNotification({
-            excerpt: `FlowChecker -  Event: ${key} - ${type}: **${flow}**`,
+            excerpt: `FlowChecker -  Event: ${key} - ${type}: **${flow}** ${folder}`,
             });
         }
       } catch (error) {

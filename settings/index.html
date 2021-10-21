@@ -30,9 +30,19 @@
 
         #flows_broken .row, 
         #flows_disabled .row, 
-        #flows_broken_variable .row {
+        #flows_broken_variable .row,
+        #flows_unused .row,
+        #logic_unused .row {
             display: flex;
             justify-content: space-between;
+        }
+
+        #flows_broken br:first-of-type, 
+        #flows_disabled br:first-of-type, 
+        #flows_broken_variable br:first-of-type,
+        #flows_unused br:first-of-type,
+        #logic_unused br:first-of-type {
+            display: none;
         }
 
         .fixed {
@@ -42,6 +52,10 @@
             bottom: 0;
             right: 0;
             left: 0;
+        }
+
+        .m-l {
+            margin-left: 8px;
         }
     </style>
 </head>

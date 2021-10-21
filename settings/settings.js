@@ -64,8 +64,13 @@ function showHide(chkBox) {
 function flowMapper(data, flows) {
     let html = `<label class="red">${Homey.__("settings.ctrl_click")}</label>`;
     const homey_id = data['HOMEY_ID'];
-    flows.sort((a,b) =>  a.name.localeCompare(b.name)).forEach((f) => {
-        html += `<div class="row"><label><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${escapeHtml(f.name)}</a></label</div>`;
+    let folder = null;
+    flows.sort((a,b) => a.folder && a.folder.localeCompare(b.folder) || a.name.localeCompare(b.name)).forEach((f) => {
+        if(f.folder !== folder && f.folder !== null) {
+            html += `<br><div class="row"><label class="flow-map"><strong>${f.folder}</strong></label></div>`;
+            folder = f.folder;
+        }
+        html += `<div class="row"><label class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${escapeHtml(f.name)}</a></label></div>`;
     });
 
     return html;
@@ -74,7 +79,7 @@ function flowMapper(data, flows) {
 function logicMapper(data, flows) {
     let html = ``;
     flows.sort((a,b) =>  a.name.localeCompare(b.name)).forEach((f) => {
-        html += `<div class="row"><label>${escapeHtml(f.name)}</label</div>`;
+        html += `<div class="row"><label class="flow-map">${escapeHtml(f.name)}</label</div>`;
     });
 
     return html;
