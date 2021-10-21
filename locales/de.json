@@ -24,6 +24,6 @@
     "all_variables_fu": "-- Flow Utilities",
     "unused_flows": "unused flows",
     "unused_flows_description": "Unused flows or flows with a programmatic trigger",
-    "unused_logic variable": "unused logic variable"
+    "unused_logic": "unused logic variable"
   }
 }
