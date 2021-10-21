@@ -133,5 +133,8 @@
   },
   "1.11.0": {
     "en": "NEW: add unused flows and unused logic | flowcards for enable/disable interval"
+  },
+  "1.11.1": {
+    "en": "FIX: locale issue"
   }
 }
