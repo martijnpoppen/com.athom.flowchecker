@@ -200,7 +200,7 @@
         "title": {
           "en": "A logic variable became unused",
           "nl": "Een logic variabele is ongebruikt geworden",
-          "de": "A logic variable became unused"
+          "de": "Eine Logik Variable wurde nutzlos"
         },
         "tokens": [
           {
@@ -209,7 +209,7 @@
             "title": {
               "en": "Logic",
               "nl": "Logic",
-              "de": "Logic"
+              "de": "Logik"
             }
           },
           {
@@ -256,7 +256,7 @@
         "title": {
           "en": "A logic variable started working again",
           "nl": "Een logic variabele is actief geworden",
-          "de": "Ein logic variable wurde wieder aktiviert"
+          "de": "Ein Logik Variable wurde wieder aktiviert"
         },
         "tokens": [
           {
@@ -265,7 +265,7 @@
             "title": {
               "en": "Logic",
               "nl": "Logic",
-              "de": "Logic"
+              "de": "Logik"
             }
           },
           {
@@ -310,7 +310,7 @@
         "title": {
           "en": "There !{{are|aren't}} unused flows",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte flows",
-          "de": "There !{{are|aren't}} unused flows"
+          "de": "Ungenutzte Flows !{{sind|sind nicht}} vorhanden"
         }
       },
       {
@@ -318,7 +318,7 @@
         "title": {
           "en": "There !{{are|aren't}} unused logic variables",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
-          "de": "There !{{are|aren't}} unused logic variables"
+          "de": "Ungenutzte Logik Variablen !{{sind|sind nicht}} vorhanden"
         }
       }
     ],
@@ -328,7 +328,7 @@
         "title": {
           "en": "Update broken flows and variables",
           "nl": "Update kapotte flows en variabelen",
-          "de": "Update beschädigte Flows und Flows mit beschädigten Variablen"
+          "de": "Update beschädigter Flows und Flows mit beschädigten Variablen"
         }
       },
       {
@@ -362,7 +362,7 @@
         "title": {
           "en": "Disable Flow interval",
           "nl": "Zet Flow interval uit",
-          "de": "Deaktivieren Flow Prüfungsintervall"
+          "de": "Flow Prüfungsintervall deaktivieren"
         }
       },
       {
@@ -370,7 +370,7 @@
         "title": {
           "en": "Enable Flow interval",
           "nl": "Zet Flow interval aan",
-          "de": "Aktivieren Flow Prüfungsintervall"
+          "de": "Flow Prüfungsintervall aktivieren"
         }
       }
     ]
