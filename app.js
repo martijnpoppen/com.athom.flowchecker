@@ -257,8 +257,8 @@ class App extends Homey.App {
           flows = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
         } else if(key === 'UNUSED_FLOWS') {
             const allFlows = Object.values(await this._api.flow.getFlows());
-            const triggers = flows.flatMap(f => f.actions.filter(a => a.uri === 'homey:manager:flow' && a.id === 'programmatic_trigger').flatMap(a => a.args.flow))
-            flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.find(t => t.id === f.id))
+            const triggers = allFlows.flatMap(f => f.actions.filter(a => a.uri === 'homey:manager:flow' && a.id === 'programmatic_trigger').flatMap(a => a.args.flow.id))
+            flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.includes(f.id))
         }
 
         flows = flows.map((f) => {
@@ -466,18 +466,21 @@ class App extends Homey.App {
 
     async checkFlowDiff(key, flows, flowArray, logic = false) {
       try {
-        const flowDiff = flows.filter(({ id: id1 }) => !flowArray.some(({ id: id2 }) => id2 === id1));
-        const flowDiffReverse = flowArray.filter(({ id: id1 }) => !flows.some(({ id: id2 }) => id2 === id1));
+        let flowDiff = flows.filter(({ id: id1 }) => !flowArray.some(({ id: id2 }) => id2 === id1));
+        let flowDiffReverse = flowArray.filter(({ id: id1 }) => !flows.some(({ id: id2 }) => id2 === id1));
 
         this.log(`[flowDiff] ${key} - flowDiff: `, flowDiff);
         this.log(`[flowDiff] ${key} - flowDiffReverse: `, flowDiffReverse);
   
         if(flowDiff.length) {
-          flowDiff.forEach(async flow =>  {
+          flowDiff.forEach(async (flow, index) =>  {
             await this.setNotification(key, flow.name, flow.folder, 'Flow');
-            await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
-                .catch( this.error )
-                .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
+
+            if(index < 10) {
+                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
+                    .catch( this.error )
+                    .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
+            }
           });
         }
 
@@ -488,10 +491,13 @@ class App extends Homey.App {
                   .then(this.log(`[flowDiff] FIXED_LOGIC - Triggered: "${logic.name} | ${logic.id}"`)); 
             });
         } else if(flowDiffReverse.length) {
-            flowDiffReverse.forEach(async flow =>  {
-              await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id})
-                  .catch( this.error )
-                  .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
+            flowDiffReverse.forEach(async (flow, index) =>  {
+
+                if(index < 10) {
+                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id})
+                        .catch( this.error )
+                        .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
+                }
             });
         }
       } catch (error) {
