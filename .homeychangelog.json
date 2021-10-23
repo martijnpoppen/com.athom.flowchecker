@@ -148,5 +148,8 @@
   },
   "1.12.3": {
     "en": "FIX: rate_limit issue & unused flows only show unused & German language"
+  },
+  "1.12.4": {
+    "en": "FIX: small issue on startup of app"
   }
 }
