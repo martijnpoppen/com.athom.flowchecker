@@ -142,5 +142,11 @@
   },
   "1.12.1": {
     "en": "NEW: add folders to flow notifcation and settings"
+  },
+  "1.12.2": {
+    "en": "FIX: rate_limit issue & unused flows only show unused"
+  },
+  "1.12.3": {
+    "en": "FIX: rate_limit issue & unused flows only show unused & German language"
   }
 }
