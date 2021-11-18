@@ -36,6 +36,7 @@ class App extends Homey.App {
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.setHomeyInfo();
     await this.createTokens();
+
     await sleep(15000);
     await this.findFlowDefects(true);
   }
@@ -103,6 +104,14 @@ class App extends Homey.App {
                 NOTIFICATION_UNUSED_LOGIC: false
               });
         }
+
+
+        if(!('INTERVAL_ENABLED' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
+                CHECK_ON_STARTUP: false
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -116,7 +125,7 @@ class App extends Homey.App {
           NOTIFICATION_BROKEN_VARIABLE: true,
           NOTIFICATION_UNUSED_FLOWS: false,
           NOTIFICATION_UNUSED_LOGIC: false,
-          INTERVAL_FLOWS: 3,
+          INTERVAL_FLOWS: 5,
           INTERVAL_ENABLED: true,
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
@@ -224,14 +233,16 @@ class App extends Homey.App {
       try {
         this.FOLDERS = Object.values(await this._api.flow.getFlowFolders());
 
-        await this.findFlows('BROKEN');
-        await this.findFlows('DISABLED');
-        await this.findFlows('UNUSED_FLOWS');
+        if(!initial || this.appSettings.CHECK_ON_STARTUP) {
+            await this.findFlows('BROKEN');
+            await this.findFlows('DISABLED');
+            await this.findFlows('UNUSED_FLOWS');
 
-        if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
-            this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
-            await this.findLogic('BROKEN_VARIABLE');
-            await this.findUnusedLogic('UNUSED_LOGIC');
+            if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
+                this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
+                await this.findLogic('BROKEN_VARIABLE');
+                await this.findUnusedLogic('UNUSED_LOGIC');
+            }
         }
 
         if(initial && this.appSettings.INTERVAL_ENABLED) {

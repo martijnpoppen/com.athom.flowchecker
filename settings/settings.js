@@ -23,6 +23,7 @@ function initializeSettings (err, data) {
     document.getElementById('notification_unused_flows').checked = data['NOTIFICATION_UNUSED_FLOWS'];
     document.getElementById('notification_unused_logic').checked = data['NOTIFICATION_UNUSED_LOGIC'];
     document.getElementById('interval_enabled').checked = data['INTERVAL_ENABLED'];
+    document.getElementById('check_on_startup').checked = data['CHECK_ON_STARTUP'];
     document.getElementById("flows_overview").innerHTML = `<div class="row"><label>${Homey.__("settings.flows_broken")}</label><label>${data["BROKEN"].length}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.flows_disabled")}</label><label>${data["DISABLED"].length}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.flows_broken_variable")}</label><label>${data["BROKEN_VARIABLE"].length}<label></div>
@@ -103,6 +104,7 @@ function initSave(_settings) {
             NOTIFICATION_UNUSED_FLOWS: document.getElementById('notification_unused_flows').checked,
             NOTIFICATION_UNUSED_LOGIC: document.getElementById('notification_unused_logic').checked,
             INTERVAL_ENABLED: document.getElementById('interval_enabled').checked,
+            CHECK_ON_STARTUP: document.getElementById('check_on_startup').checked,
             BROKEN: _settings['BROKEN'],
             DISABLED: _settings['DISABLED'],
             BROKEN_VARIABLE: _settings['BROKEN_VARIABLE'],
@@ -155,9 +157,10 @@ function initClear(_settings) {
         document.getElementById('notification_broken_variable').checked = true;
         document.getElementById('notification_unused_flows').checked = false;
         document.getElementById('notification_unused_logic').checked = false;
-        document.getElementById('interval_enabled').checked = false;
-        document.getElementById('interval_flows').value = 3;
-        document.getElementById('interval_variables').value = 30;
+        document.getElementById('interval_enabled').checked = true;
+        document.getElementById('check_on_startup').checked = false;
+        document.getElementById('interval_flows').value = 5;
+        document.getElementById('interval_variables').value = 50;
 
         const settings = {
             NOTIFICATION_BROKEN: true,
@@ -165,7 +168,8 @@ function initClear(_settings) {
             NOTIFICATION_BROKEN_VARIABLE: true,
             NOTIFICATION_UNUSED_FLOWS: false,
             NOTIFICATION_UNUSED_LOGIC: false,
-            INTERVAL_ENABLED: false,
+            INTERVAL_ENABLED: true,
+            CHECK_ON_STARTUP: false,
             BROKEN: [],
             DISABLED: [],
             BROKEN_VARIABLE: [],

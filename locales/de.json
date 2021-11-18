@@ -8,6 +8,7 @@
     "notification_unused_logic": "Benachrichtigen bei ungenutzten Logik Variablen",
     "interval": "Einstellungen Prüfungsintervall",
     "interval_enabled": "Automatische Flow Kontrolle",
+    "check_on_startup": "Führen Sie Flowcheck nach dem Starten der Anwendung aus.",
     "interval_flows": "Flow Intervall (Minuten)",
     "interval_variables": "Variablen Intervall (Minuten)",
     "ctrl_click": "CTRL/CMD + Klicken zum Öffnen des Flows",

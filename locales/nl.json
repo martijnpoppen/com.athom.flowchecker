@@ -8,6 +8,7 @@
     "notification_unused_logic": "Notificatie als een logic variabele ongebruikt is",
     "interval": "Interval instellingen",
     "interval_enabled": "Automatisch flows checken",
+    "check_on_startup": "Draai Flow check na opstarten van de app.",
     "interval_flows": "flow interval (minuten)",
     "interval_variables": "variabele interval (minuten)",
     "ctrl_click": "CTRL/CMD + Klik om flow te openen",

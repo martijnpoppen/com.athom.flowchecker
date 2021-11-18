@@ -151,5 +151,8 @@
   },
   "1.12.4": {
     "en": "FIX: small issue on startup of app"
+  },
+  "1.13.0": {
+    "en": "NEW: add 'Run flow check on startup' to settings. Prevent false positives after Homey Reboot"
   }
 }

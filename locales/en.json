@@ -8,6 +8,7 @@
     "notification_unused_logic": "Notify when a logic variable is unused",
     "interval": "Interval settings",
     "interval_enabled": "Automatic flows check",
+    "check_on_startup": "Run Flow check on start of app.",
     "interval_flows": "flow interval (minutes)",
     "interval_variables": "variable interval (minutes)",
     "ctrl_click": "CTRL/CMD + Click to open flow",
