@@ -11,11 +11,34 @@ function onHomeyReady(Homey) {
     Homey.ready();
 }
 
+function setPage(evt, tabPage)
+{
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].className = tabcontent[i].className.replace(" active", "");
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabPage).className += " active";
+    evt.currentTarget.className += " active";
+}
+
 function initializeSettings (err, data) {
     if (err || !data) {
         document.getElementById('error').innerHTML = err;
         return;
     }
+
+    console.log(Homey);
 
     document.getElementById('notification_broken').checked = data['NOTIFICATION_BROKEN'];
     document.getElementById('notification_disabled').checked = data['NOTIFICATION_DISABLED'];
@@ -44,6 +67,7 @@ function initializeSettings (err, data) {
     if(data['BROKEN_VARIABLE'].length) document.getElementById('flows_broken_variable').innerHTML =  flowMapper(data, data['BROKEN_VARIABLE'])
     if(data['UNUSED_FLOWS'].length) document.getElementById('flows_unused').innerHTML = flowMapper(data, data['UNUSED_FLOWS'])
     if(data['UNUSED_LOGIC'].length) document.getElementById('logic_unused').innerHTML = logicMapper(data, data['UNUSED_LOGIC'])
+    if(data['FOLDERS'].length) document.getElementById('filtered_folders').innerHTML = filterMapper(data, data['FOLDERS'])
 
     showHide(document.getElementById('interval_enabled'));
     initSave(data);
@@ -90,12 +114,33 @@ function logicMapper(data, flows) {
     return html;
 }
 
+
+function filterMapper(data, filters) {
+    let html = ``;
+
+    const filtered_folders = data['FILTERED_FOLDERS'];
+
+    filters.sort((a,b) =>  a.name.localeCompare(b.name)).forEach((f) => {
+        html += `<div class="field row"><label for="${f.id}">${escapeHtml(f.name)}</label><input id="${f.id}" type="checkbox" ${checked(filtered_folders, f.id)} /></div>`;
+    });
+
+    return html;
+}
+
+function checked(filtered_folders, id) {
+    return filtered_folders.includes(id) ? 'checked' : '';
+}
+
 function initSave(_settings) {
     document.getElementById('save').addEventListener('click', function (e) {
         const error = document.getElementById('error');
         const loading = document.getElementById('loading');
         const success = document.getElementById('success');
         const button = document.getElementById('save');
+
+        const filtered_folders = [];
+        const filtered_folders_inputs = document.querySelectorAll('#filtered_folders input:checked');
+        filtered_folders_inputs.forEach(f => f.id && filtered_folders.push(f.id));
 
         const settings = {
             NOTIFICATION_BROKEN: document.getElementById('notification_broken').checked,
@@ -114,6 +159,8 @@ function initSave(_settings) {
             ALL_FLOWS: _settings['ALL_FLOWS'],
             ALL_VARIABLES: _settings['ALL_VARIABLES'],
             ALL_VARIABLES_OBJ: _settings['ALL_VARIABLES_OBJ'],
+            FOLDERS: _settings['FOLDERS'],
+            FILTERED_FOLDERS: filtered_folders,
             HOMEY_ID: _settings['HOMEY_ID']
         }
         
@@ -152,6 +199,7 @@ function initClear(_settings) {
         document.getElementById('flows_overview').innerHTML = '';
         document.getElementById('flows_unused').innerHTML = '';
         document.getElementById('logic_unused').innerHTML = '';
+        document.getElementById('filtered_folders').innerHTML = '';
         document.getElementById('notification_broken').checked = true;
         document.getElementById('notification_disabled').checked = false;
         document.getElementById('notification_broken_variable').checked = true;
@@ -179,6 +227,8 @@ function initClear(_settings) {
             ALL_FLOWS: 0,
             ALL_VARIABLES: 0,
             ALL_VARIABLES_OBJ: {},
+            FOLDERS: [],
+            FILTERED_FOLDERS: [],
             HOMEY_ID: _settings['HOMEY_ID']
         }
 

@@ -112,6 +112,14 @@ class App extends Homey.App {
                 CHECK_ON_STARTUP: false
             });
         }
+
+        if(!('FOLDERS' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
+                FOLDERS: [],
+                FILTERED_FOLDERS: []
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -228,10 +236,15 @@ class App extends Homey.App {
       this.log(`[onPollInterval]`, this.appSettings.INTERVAL_FLOWS, REFRESH_INTERVAL);
       this.onPollInterval = this.homey.setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
     }
+
+    async setFolders() {
+        const FOLDERS = Object.values(await this._api.flow.getFlowFolders());
+        await this.updateSettings({...this.appSettings, 'FOLDERS': [...new Set(FOLDERS)]});
+    }
   
     async findFlowDefects(initial = false, force = false) {
       try {
-        this.FOLDERS = Object.values(await this._api.flow.getFlowFolders());
+        await this.setFolders();
 
         if(!initial || this.appSettings.CHECK_ON_STARTUP) {
             await this.findFlows('BROKEN');
@@ -272,8 +285,8 @@ class App extends Homey.App {
             flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.includes(f.id))
         }
 
-        flows = flows.map((f) => {
-            const folder = this.FOLDERS.find(t => t.id === f.folder);
+        flows = flows.filter(f => !this.appSettings.FILTERED_FOLDERS.includes(f.folder)).map((f) => {
+            const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
             const folderName = folder ? folder.name : null;
 
             return {name: f.name, id: f.id, folder: folderName };
@@ -332,15 +345,16 @@ class App extends Homey.App {
 
         const flows = Object.values(await this._api.flow.getFlows());
         
-        let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
+        const FILTERED_FOLDERS = ['4b67728b-a2c8-4ac4-a2cf-c1f8ade60459'];
+
+        let filteredFlows = flows.filter(f => !f.broken && !FILTERED_FOLDERS.includes(f.folder)).filter(flow =>  {
             let logicVariables = [];
             let deviceVariables = [];
             let appVariables = [];
             let blVariables = [];
             let fuVariables = [];
-            const trigger = flow.trigger;
-            const conditions = flow.conditions;
-            const actions = flow.actions;
+            const { trigger, conditions, actions } = flow;
+
 
             [trigger, ...conditions, ...actions].forEach(f => {
                 if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
@@ -437,7 +451,7 @@ class App extends Homey.App {
         });
         
         filteredFlows = filteredFlows.map((f) => {
-            const folder = this.FOLDERS.find(t => t.id === f.folder);
+            const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
             const folderName = folder ? folder.name : null;
 
             return {name: f.name, id: f.id, folder: folderName };

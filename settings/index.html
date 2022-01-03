@@ -22,7 +22,8 @@
 
         #interval_settings .row,
         #flows_overview .row, 
-        #flows_settings .row {
+        #flows_settings .row,
+        #filtered_folders .row {
             display: flex;
             justify-content: space-between;
             margin: 10px auto;
@@ -57,100 +58,163 @@
         .m-l {
             margin-left: 8px;
         }
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            margin-bottom: 20px;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #000;
+            color: white;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #1d1d1d;
+            color: white;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;           
+            border-top: none;
+        }
+
+        .tabcontent.active {
+            display: block;           
+        }
     </style>
 </head>
 
 <body>
-    <fieldset id="flows_settings">
-        <legend data-i18n="settings.title"></legend>
-        <div class="field row">
-            <label for="notification_broken" data-i18n="settings.notification_broken"></label>
-            <input id="notification_broken" type="checkbox" value="" />
-        </div>
-        <div class="field row">
-            <label for="notification_disabled" data-i18n="settings.notification_disabled"></label>
-            <input id="notification_disabled" type="checkbox" value="" />
-        </div>
-        <div class="field row">
-            <label for="notification_broken_variable" data-i18n="settings.notification_broken_variable"></label>
-            <input id="notification_broken_variable" type="checkbox" value="" />
-        </div>
+    <div class="tab">
+        <button class="tablinks active" onclick="setPage(event, 'settings')" data-i18n="settings.menu_settings"></button>
+        <button class="tablinks" onclick="setPage(event, 'overview')" data-i18n="settings.menu_overview"></button>
+        <button class="tablinks" onclick="setPage(event, 'flows')" data-i18n="settings.menu_flows"></button>
+        <button class="tablinks" onclick="setPage(event, 'filters')" data-i18n="settings.menu_filters"></button>
+    </div>
+    <div id="settings" class="tabcontent active">
+        <fieldset id="flows_settings">
+            <legend data-i18n="settings.title"></legend>
+            <div class="field row">
+                <label for="notification_broken" data-i18n="settings.notification_broken"></label>
+                <input id="notification_broken" type="checkbox" value="" />
+            </div>
+            <div class="field row">
+                <label for="notification_disabled" data-i18n="settings.notification_disabled"></label>
+                <input id="notification_disabled" type="checkbox" value="" />
+            </div>
+            <div class="field row">
+                <label for="notification_broken_variable" data-i18n="settings.notification_broken_variable"></label>
+                <input id="notification_broken_variable" type="checkbox" value="" />
+            </div>
 
-        <div class="field row">
-            <label for="notification_unused_flows" data-i18n="settings.notification_unused_flows"></label>
-            <input id="notification_unused_flows" type="checkbox" value="" />
-        </div>
+            <div class="field row">
+                <label for="notification_unused_flows" data-i18n="settings.notification_unused_flows"></label>
+                <input id="notification_unused_flows" type="checkbox" value="" />
+            </div>
 
-        <div class="field row">
-            <label for="notification_unused_logic" data-i18n="settings.notification_unused_logic"></label>
-            <input id="notification_unused_logic" type="checkbox" value="" />
-        </div>
-    </fieldset>
-    <fieldset id="interval_settings">
-        <legend data-i18n="settings.interval"></legend>
-        <div class="field row">
-            <label for="check_on_startup" data-i18n="settings.check_on_startup"></label>
-            <input id="check_on_startup" type="checkbox" value="" />
-        </div>
-        <div class="field row">
-            <label for="interval_enabled" data-i18n="settings.interval_enabled"></label>
-            <input id="interval_enabled" type="checkbox" value="" onclick="showHide(this)" />
-        </div>
+            <div class="field row">
+                <label for="notification_unused_logic" data-i18n="settings.notification_unused_logic"></label>
+                <input id="notification_unused_logic" type="checkbox" value="" />
+            </div>
+        </fieldset>
+        <fieldset id="interval_settings">
+            <legend data-i18n="settings.interval"></legend>
+            <div class="field row">
+                <label for="check_on_startup" data-i18n="settings.check_on_startup"></label>
+                <input id="check_on_startup" type="checkbox" value="" />
+            </div>
+            <div class="field row">
+                <label for="interval_enabled" data-i18n="settings.interval_enabled"></label>
+                <input id="interval_enabled" type="checkbox" value="" onclick="showHide(this)" />
+            </div>
 
-        <div class="field row" id="interval_flows_row">
-            <label for="interval_flows" data-i18n="settings.interval_flows"></label>
-            <input id="interval_flows" type="number" min="3" step="1" value="" oninput="updateValue()" />
-        </div>
+            <div class="field row" id="interval_flows_row">
+                <label for="interval_flows" data-i18n="settings.interval_flows"></label>
+                <input id="interval_flows" type="number" min="3" step="1" value="" oninput="updateValue()" />
+            </div>
 
-        <div class="field row" id="interval_variables_row">
-            <label for="interval_variables" data-i18n="settings.interval_variables"></label>
-            <input disabled id="interval_variables" type="number" value="" />
-        </div>
-    </fieldset>
+            <div class="field row" id="interval_variables_row">
+                <label for="interval_variables" data-i18n="settings.interval_variables"></label>
+                <input disabled id="interval_variables" type="number" value="" />
+            </div>
+        </fieldset>
+    </div>
 
+    <div id="overview" class="tabcontent">
     <fieldset>
         <legend data-i18n="settings.flows_overview"></legend>
         <div class="field">
             <div id="flows_overview"></div>
         </div>
     </fieldset>
+    </div>
 
-    <fieldset>
-        <legend data-i18n="settings.flows_broken"></legend>
-        <div class="field row">
-            <div id="flows_broken"></div>
-        </div>
-    </fieldset>
+    <div id="flows" class="tabcontent">
+        <fieldset>
+            <legend data-i18n="settings.flows_broken"></legend>
+            <div class="field row">
+                <div id="flows_broken"></div>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <legend data-i18n="settings.flows_disabled"></legend>
-        <div class="field row">
-            <div id="flows_disabled"></div>
-        </div>
-    </fieldset>
+        <fieldset>
+            <legend data-i18n="settings.flows_disabled"></legend>
+            <div class="field row">
+                <div id="flows_disabled"></div>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <legend data-i18n="settings.flows_broken_variable"></legend>
-        <div class="field row">
-            <div id="flows_broken_variable"></div>
-        </div>
-    </fieldset>
+        <fieldset>
+            <legend data-i18n="settings.flows_broken_variable"></legend>
+            <div class="field row">
+                <div id="flows_broken_variable"></div>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <legend data-i18n="settings.unused_flows"></legend>
-        <label data-i18n="settings.unused_flows_description"></label>
-        <div class="field row">
-            <div id="flows_unused"></div>
-        </div>
-    </fieldset>
+        <fieldset>
+            <legend data-i18n="settings.unused_flows"></legend>
+            <label data-i18n="settings.unused_flows_description"></label>
+            <div class="field row">
+                <div id="flows_unused"></div>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <legend data-i18n="settings.unused_logic"></legend>
-        <label data-i18n="settings.unused_logic_description"></label>
-        <div class="field row">
-            <div id="logic_unused"></div>
-        </div>
-    </fieldset>
+        <fieldset>
+            <legend data-i18n="settings.unused_logic"></legend>
+            <label data-i18n="settings.unused_logic_description"></label>
+            <div class="field row">
+                <div id="logic_unused"></div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div id="filters" class="tabcontent">
+        <fieldset>
+            <legend data-i18n="settings.filtered_folders"></legend>
+            <label class="red" data-i18n="settings.filtered_folders_description"></label>
+            <div class="field row">
+                <div id="filtered_folders"></div>
+            </div>
+        </fieldset>
+    </div>
 
     <div class="spacer">&nbsp;</div>
 

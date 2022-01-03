@@ -1,6 +1,10 @@
 {
   "settings": {
     "title": "Notificatie instellingen",
+    "menu_settings": "Instellingen",
+    "menu_flows": "Flows",
+    "menu_overview": "Overzicht",
+    "menu_filters": "Filters",
     "notification_broken": "Notificatie als een flow kapot gaat",
     "notification_disabled": "Notificatie als een flow uitgezet wordt",
     "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
@@ -23,6 +27,8 @@
     "all_variables_app": "-- apps",
     "all_variables_bl": "-- Better Logic",
     "all_variables_fu": "-- Flow Utilities",
+    "filtered_folders": "Map Filters",
+    "filtered_folders_description": "Geselecteerde mappen worden uitgesloten tijdens de check",
     "unused_flows": "ongebruikte flows",
     "unused_flows_description": "Ongebruikte flows of flows met een 'Deze flow is gestart' trigger",
     "unused_logic": "ongebruikte logic variabelen"

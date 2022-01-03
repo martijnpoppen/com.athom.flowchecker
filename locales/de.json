@@ -1,6 +1,10 @@
 {
   "settings": {
     "title": "Einstellungen",
+    "menu_settings": "Einstellungen",
+    "menu_flows": "Flows",
+    "menu_overview": "Übersicht",
+    "menu_filters": "Filters",
     "notification_broken": "Benachrichtigen bei beschädigten Flows",
     "notification_disabled": "Benachrichtigen deaktivierten Flows",
     "notification_broken_variable": "Benachrichtigen bei beschädigten Variablen",
@@ -23,6 +27,8 @@
     "all_variables_app": "-- Apps",
     "all_variables_bl": "-- Better Logic",
     "all_variables_fu": "-- Flow Utilities",
+    "filtered_folders": "Filter für Ordner",
+    "filtered_folders_description": "Ausgewählte Ordner werden bei der Prüfung ausgeschlossen",
     "unused_flows": "Ungenutzte Flows",
     "unused_flows_description": "Ungenutzte Flows oder Flows mit einem 'Dieser Flow wurde gestartet'-Trigger",
     "unused_logic": "Ungenutzte Logik Variablen"

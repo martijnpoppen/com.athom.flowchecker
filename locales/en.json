@@ -1,6 +1,10 @@
 {
   "settings": {
     "title": "Notification Settings",
+    "menu_settings": "Settings",
+    "menu_flows": "Flows",
+    "menu_overview": "Overview",
+    "menu_filters": "Filters",
     "notification_broken": "Notify when flow breaks",
     "notification_disabled": "Notify when flow gets disabled",
     "notification_broken_variable": "Notify when flow has broken variables",
@@ -23,6 +27,8 @@
     "all_variables_app": "-- apps",
     "all_variables_bl": "-- Better Logic",
     "all_variables_fu": "-- Flow Utilities",
+    "filtered_folders": "Filtered folders",
+    "filtered_folders_description": "Selected folders are excluded during the check",
     "unused_flows": "unused flows",
     "unused_flows_description": "Unused flows or flows with a 'This flow has started' trigger",
     "unused_logic": "unused logic variable"
