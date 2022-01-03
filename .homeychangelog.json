@@ -154,5 +154,8 @@
   },
   "1.13.0": {
     "en": "NEW: add 'Run flow check on startup' to settings. Prevent false positives after Homey Reboot"
+  },
+  "1.14.0": {
+    "en": "NEW: add folder filter (excluded from flowcheck) - NEW: improved settings page"
   }
 }
