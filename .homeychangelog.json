@@ -160,5 +160,8 @@
   },
   "1.14.1": {
     "en": "Improve app page"
+  },
+  "1.15.0": {
+    "en": "NEW: Change the app description to give more meaning to the app & NEW: Swedish translation"
   }
 }
