@@ -6,12 +6,12 @@ Aktuelle Funktionen:
 - Benachrichtigung über deaktivierte Flows (standardmäßig deaktiviert)
 - Benachrichtigung über Flows mit beschädigten Variablen (standardmäßig aktiviert)
 - Benachrichtigung über ungenutzte Flows
-- Benachrichtigung über ungenutzte Logik Variablen
+- Benachrichtigung über ungenutzte Logik-Variablen
 - Übersicht über beschädigte Flows
 - Übersicht über deaktivierte Flows
 - Übersicht über Flows mit beschädigten Variablen, (Logik, Geräte, Apps, Better Logic, Flow Utilities)
 - Übersicht über ungenutzte Flows
-- Übersicht über ungenutzte Logik Variablen
+- Übersicht über ungenutzte Logik-Variablen
 - Unterstützung von Better Logic und Flow Utilities
 
 Weitere Informationen in der Community:
