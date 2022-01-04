@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -76,7 +76,7 @@
         "name": "🇩🇪 Dirk Göbel"
       },
       {
-        "name": "sv Magnus Claesson"
+        "name": "🇸🇪 Magnus Claesson"
       }
     ]
   },
