@@ -16,7 +16,7 @@
   "description": {
     "en": "Detect broken Flows and Logic Variables",
     "nl": "Detecteer kapotte Flows en Logic variabelen",
-    "de": "Erkennen von beschädigten Flows und Logikvariablen",
+    "de": "Beschädigte Flows und Logik-Variablen erkennen",
     "sv": "Upptäck trasiga flöden och logiska variabler"
   },
   "tags": {
