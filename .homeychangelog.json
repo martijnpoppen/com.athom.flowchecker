@@ -172,5 +172,8 @@
   },
   "1.15.3": {
     "en": "FIX: improve german Language"
+  },
+  "1.15.4": {
+    "en": "FIX: folder filter no initialized properly"
   }
 }
