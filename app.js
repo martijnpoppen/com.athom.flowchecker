@@ -116,7 +116,13 @@ class App extends Homey.App {
         if(!('FOLDERS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
-                FOLDERS: [],
+                FOLDERS: []
+            });
+        }
+
+        if(!('FILTERED_FOLDERS' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
                 FILTERED_FOLDERS: []
             });
         }
