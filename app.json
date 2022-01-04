@@ -13,9 +13,9 @@
     "de": "Flow Checker"
   },
   "description": {
-    "en": "Get insight in your Homey Flows",
-    "nl": "Krijg inzicht in Homey Flows",
-    "de": "Erhalten Sie Einblick in Homey Flows"
+    "en": "Detect broken Flows and Logic Variables",
+    "nl": "Detecteer kapotte Flows en Logic variabelen",
+    "de": "Erkennen von beschädigten Flows und Logikvariablen"
   },
   "tags": {
     "en": [
@@ -35,6 +35,10 @@
       "Homey",
       "Athom",
       "Better Logic",
+      "Flow Utilities",
+      "Filters",
+      "Notifications",
+      "Flow start",
       "Logic",
       "Apps",
       "Devices"
