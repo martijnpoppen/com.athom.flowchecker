@@ -166,5 +166,8 @@
   },
   "1.15.1": {
     "en": "NEW: Change the app description to give more meaning to the app & NEW: Swedish translation"
+  },
+  "1.15.2": {
+    "en": "FIX: improve german Language"
   }
 }
