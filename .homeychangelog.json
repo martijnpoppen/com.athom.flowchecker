@@ -157,5 +157,8 @@
   },
   "1.14.0": {
     "en": "NEW: add folder filter (excluded from flowcheck) - NEW: improved settings page"
+  },
+  "1.14.1": {
+    "en": "Improve app page"
   }
 }
