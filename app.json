@@ -189,7 +189,7 @@
         "title": {
           "en": "A flow became unused",
           "nl": "Een flow is ongebruikt geworden",
-          "de": "A flow became unused",
+          "de": "Ein Flow wurde nutzlos",
           "sv": "Ett flow blir oanvänt"
         },
         "tokens": [
@@ -220,7 +220,7 @@
         "title": {
           "en": "A logic variable became unused",
           "nl": "Een logic variabele is ongebruikt geworden",
-          "de": "Eine Logik Variable wurde nutzlos",
+          "de": "Eine Logik-Variable wurde nutzlos",
           "sv": "En logisk variabel blir oanvänd"
         },
         "tokens": [
@@ -282,7 +282,7 @@
         "title": {
           "en": "A logic variable started working again",
           "nl": "Een logic variabele is actief geworden",
-          "de": "Ein Logik Variable wurde wieder aktiviert",
+          "de": "Eine Logik-Variable wurde wieder aktiviert",
           "sv": "En logisk variabel börjar fungera igen"
         },
         "tokens": [
@@ -351,7 +351,7 @@
         "title": {
           "en": "There !{{are|aren't}} unused logic variables",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
-          "de": "Ungenutzte Logik Variablen !{{sind|sind nicht}} vorhanden",
+          "de": "Ungenutzte Logik-Variablen !{{sind|sind nicht}} vorhanden",
           "sv": "Det !{{finns|finns inga}} oanvända logiska variabler"
         }
       }
@@ -377,7 +377,7 @@
         "titleFormatted": {
           "en": "Set Flow check interval to [[minutes]] minutes",
           "nl": "Stel Flow check interval in op [[minutes]] minuten",
-          "de": "Flow Prüfungsintervall einstellen auf [[minutes]] Minuten",
+          "de": "Flow Prüfungsintervall auf [[minutes]] Minuten einstellen",
           "sv": "Ställ in intervall för flow-kontroll till [[minutes]] minuter"
         },
         "args": [
