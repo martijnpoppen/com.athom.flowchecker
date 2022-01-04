@@ -10,12 +10,14 @@
   "name": {
     "en": "Flow Checker",
     "nl": "Flow Checker",
-    "de": "Flow Checker"
+    "de": "Flow Checker",
+    "sv": "Flow Checker"
   },
   "description": {
     "en": "Detect broken Flows and Logic Variables",
     "nl": "Detecteer kapotte Flows en Logic variabelen",
-    "de": "Erkennen von beschädigten Flows und Logikvariablen"
+    "de": "Erkennen von beschädigten Flows und Logikvariablen",
+    "sv": "Upptäck trasiga flöden och logiska variabler"
   },
   "tags": {
     "en": [
@@ -72,6 +74,9 @@
       },
       {
         "name": "🇩🇪 Dirk Göbel"
+      },
+      {
+        "name": "sv Magnus Claesson"
       }
     ]
   },
@@ -101,7 +106,8 @@
         "title": {
           "en": "A flow is broken",
           "nl": "Een flow is kapot gegaan",
-          "de": "Ein Flow ist beschädigt"
+          "de": "Ein Flow ist beschädigt",
+          "sv": "Ett flow är trasigt"
         },
         "tokens": [
           {
@@ -110,7 +116,8 @@
             "title": {
               "en": "Flow",
               "nl": "Flow",
-              "de": "Flow"
+              "de": "Flow",
+              "sv": "Flow"
             }
           },
           {
@@ -119,7 +126,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -129,7 +137,8 @@
         "title": {
           "en": "A flow is disabled",
           "nl": "Een flow is uitgezet",
-          "de": "Ein Flow ist deaktiviert"
+          "de": "Ein Flow ist deaktiviert",
+          "sv": "Ett flow är inaktiverat"
         },
         "tokens": [
           {
@@ -138,7 +147,8 @@
             "title": {
               "en": "Flow",
               "nl": "Flow",
-              "de": "Flow"
+              "de": "Flow",
+              "sv": "Flow"
             }
           }
         ]
@@ -148,7 +158,8 @@
         "title": {
           "en": "A flow has a broken variable",
           "nl": "Een flow heeft een kapotte variabele",
-          "de": "Ein Flow hat eine beschädigte Variable"
+          "de": "Ein Flow hat eine beschädigte Variable",
+          "sv": "Ett flow har en trasig variabel"
         },
         "tokens": [
           {
@@ -157,7 +168,8 @@
             "title": {
               "en": "Flow",
               "nl": "Flow",
-              "de": "Flow"
+              "de": "Flow",
+              "sv": "Flow"
             }
           },
           {
@@ -166,7 +178,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -176,7 +189,8 @@
         "title": {
           "en": "A flow became unused",
           "nl": "Een flow is ongebruikt geworden",
-          "de": "A flow became unused"
+          "de": "A flow became unused",
+          "sv": "Ett flow blir oanvänt"
         },
         "tokens": [
           {
@@ -185,7 +199,8 @@
             "title": {
               "en": "Flow",
               "nl": "Flow",
-              "de": "Flow"
+              "de": "Flow",
+              "sv": "Flow"
             }
           },
           {
@@ -194,7 +209,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -204,7 +220,8 @@
         "title": {
           "en": "A logic variable became unused",
           "nl": "Een logic variabele is ongebruikt geworden",
-          "de": "Eine Logik Variable wurde nutzlos"
+          "de": "Eine Logik Variable wurde nutzlos",
+          "sv": "En logisk variabel blir oanvänd"
         },
         "tokens": [
           {
@@ -213,7 +230,8 @@
             "title": {
               "en": "Logic",
               "nl": "Logic",
-              "de": "Logik"
+              "de": "Logik",
+              "sv": "Logik"
             }
           },
           {
@@ -222,7 +240,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -232,7 +251,8 @@
         "title": {
           "en": "A flow started working again",
           "nl": "Een flow is actief geworden",
-          "de": "Ein Flow wurde wieder aktiviert"
+          "de": "Ein Flow wurde wieder aktiviert",
+          "sv": "Ett flow börjar fungera igen"
         },
         "tokens": [
           {
@@ -241,7 +261,8 @@
             "title": {
               "en": "Flow",
               "nl": "Flow",
-              "de": "Flow"
+              "de": "Flow",
+              "sv": "Flow"
             }
           },
           {
@@ -250,7 +271,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -260,7 +282,8 @@
         "title": {
           "en": "A logic variable started working again",
           "nl": "Een logic variabele is actief geworden",
-          "de": "Ein Logik Variable wurde wieder aktiviert"
+          "de": "Ein Logik Variable wurde wieder aktiviert",
+          "sv": "En logisk variabel börjar fungera igen"
         },
         "tokens": [
           {
@@ -269,7 +292,8 @@
             "title": {
               "en": "Logic",
               "nl": "Logic",
-              "de": "Logik"
+              "de": "Logik",
+              "sv": "Logik"
             }
           },
           {
@@ -278,7 +302,8 @@
             "title": {
               "en": "ID",
               "nl": "ID",
-              "de": "ID"
+              "de": "ID",
+              "sv": "ID"
             }
           }
         ]
@@ -290,7 +315,8 @@
         "title": {
           "en": "There !{{are|aren't}} broken flows",
           "nl": "Er !{{zijn|zijn geen}} kapotte flows",
-          "de": "Beschädigte Flows !{{sind|sind nicht}} vorhanden"
+          "de": "Beschädigte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} trasiga flows"
         }
       },
       {
@@ -298,7 +324,8 @@
         "title": {
           "en": "There !{{are|aren't}} disabled flows",
           "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
-          "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden"
+          "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} inaktiva flows"
         }
       },
       {
@@ -306,7 +333,8 @@
         "title": {
           "en": "There !{{are|aren't}} flows with broken variables",
           "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
-          "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden"
+          "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} flows med trasiga variabler"
         }
       },
       {
@@ -314,7 +342,8 @@
         "title": {
           "en": "There !{{are|aren't}} unused flows",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte flows",
-          "de": "Ungenutzte Flows !{{sind|sind nicht}} vorhanden"
+          "de": "Ungenutzte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} oanvända flows"
         }
       },
       {
@@ -322,7 +351,8 @@
         "title": {
           "en": "There !{{are|aren't}} unused logic variables",
           "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
-          "de": "Ungenutzte Logik Variablen !{{sind|sind nicht}} vorhanden"
+          "de": "Ungenutzte Logik Variablen !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} oanvända logiska variabler"
         }
       }
     ],
@@ -332,7 +362,8 @@
         "title": {
           "en": "Update broken flows and variables",
           "nl": "Update kapotte flows en variabelen",
-          "de": "Update beschädigter Flows und Flows mit beschädigten Variablen"
+          "de": "Update beschädigter Flows und Flows mit beschädigten Variablen",
+          "sv": "Uppdatera trasiga flows och variabler"
         }
       },
       {
@@ -340,12 +371,14 @@
         "title": {
           "en": "Set Flow interval",
           "nl": "Stel Flow interval in",
-          "de": "Flow Prüfungsintervall einstellen"
+          "de": "Flow Prüfungsintervall einstellen",
+          "sv": "Ställ in flow-intervall"
         },
         "titleFormatted": {
           "en": "Set Flow check interval to [[minutes]] minutes",
           "nl": "Stel Flow check interval in op [[minutes]] minuten",
-          "de": "Flow Prüfungsintervall einstellen auf [[minutes]] Minuten"
+          "de": "Flow Prüfungsintervall einstellen auf [[minutes]] Minuten",
+          "sv": "Ställ in intervall för flow-kontroll till [[minutes]] minuter"
         },
         "args": [
           {
@@ -356,7 +389,8 @@
             "placeholder": {
               "en": "Minutes",
               "nl": "Minuten",
-              "de": "Minuten"
+              "de": "Minuten",
+              "sv": "Minuter"
             }
           }
         ]
@@ -366,7 +400,8 @@
         "title": {
           "en": "Disable Flow interval",
           "nl": "Zet Flow interval uit",
-          "de": "Flow Prüfungsintervall deaktivieren"
+          "de": "Flow Prüfungsintervall deaktivieren",
+          "sv": "Inaktivera flow-intervall"
         }
       },
       {
@@ -374,7 +409,8 @@
         "title": {
           "en": "Enable Flow interval",
           "nl": "Zet Flow interval aan",
-          "de": "Flow Prüfungsintervall aktivieren"
+          "de": "Flow Prüfungsintervall aktivieren",
+          "sv": "Aktivera flow-intervall"
         }
       }
     ]
