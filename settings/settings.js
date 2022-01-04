@@ -167,7 +167,7 @@ function initSave(_settings) {
         // ----------------------------------------------
 
         button.disabled = true;
-        loading.innerHTML = '<i class="fa fa-spinner fa-spin fa-fw"></i>Saving...';
+        loading.innerHTML = `<i class="fa fa-spinner fa-spin fa-fw"></i>${Homey.__("settings.saving")}`;
         error.innerHTML = "";
         success.innerHTML = "";
 
@@ -180,7 +180,7 @@ function initSave(_settings) {
             } else {
                 loading.innerHTML = "";
                 error.innerHTML = "";
-                success.innerHTML = "Saved.";
+                success.innerHTML = `${Homey.__("settings.saved")}`;
             }
         });
     });
@@ -241,7 +241,7 @@ function initClear(_settings) {
             } else {
                 loading.innerHTML = "";
                 error.innerHTML = "";
-                success.innerHTML = "Cleared & Saved.";
+                success.innerHTML = `${Homey.__("settings.clear_and_saved")}`;
             }
         });
     });
