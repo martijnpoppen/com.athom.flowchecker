@@ -32,8 +32,10 @@
     "unused_flows": "unused flows",
     "unused_flows_description": "Unused flows or flows with a 'This flow has started' trigger",
     "unused_logic": "unused logic variable",
-    "saving": "Saving...",
-    "saved": "Saved.",
-    "clear_and_saved": "Clear and saved."
+    "config_saving": "Saving...",
+    "config_saved": "Saved.",
+    "config_clear_and_saved": "Clear and saved.",
+    "config_save": "Save",
+    "config_default_settings": "Default settings"
   }
 }

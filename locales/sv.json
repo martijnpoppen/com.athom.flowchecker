@@ -32,8 +32,10 @@
     "unused_flows": "Oanvända flows",
     "unused_flows_description": "Oanvända flows eller flows med utlösaren 'Detta flow har startat'",
     "unused_logic": "Oanvända logiska variabler",
-    "saving": "Sparar...",
-    "saved": "Sparad.",
-    "clear_and_saved": "Rensat och sparat."
+    "config_saving": "Sparar...",
+    "config_saved": "Sparad.",
+    "config_clear_and_saved": "Rensat och sparat.",
+    "config_save": "Spara",
+    "config_default_settings": "Återställ inställningar"
   }
 }
