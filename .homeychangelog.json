@@ -175,5 +175,11 @@
   },
   "1.15.4": {
     "en": "FIX: folder filter no initialized properly"
+  },
+  "1.15.5": {
+    "en": "FIX: check on startup for new install"
+  },
+  "1.16.0": {
+    "en": "NEW: find nested logic variables in other apps THEN cards to prevent false positives"
   }
 }
