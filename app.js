@@ -4,7 +4,7 @@ const Homey = require("homey");
 const HomeyAPI = require("athom-api").HomeyAPI;
 const flowConditions = require('./lib/flows/conditions');
 const flowActions = require('./lib/flows/actions');
-const { sleep } = require('./lib/helpers');
+const { sleep, flattenObj } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = 'net.i-dev.betterlogic';
@@ -106,7 +106,7 @@ class App extends Homey.App {
         }
 
 
-        if(!('INTERVAL_ENABLED' in this.appSettings)) {
+        if(!('CHECK_ON_STARTUP' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 CHECK_ON_STARTUP: false
@@ -141,6 +141,7 @@ class App extends Homey.App {
           NOTIFICATION_UNUSED_LOGIC: false,
           INTERVAL_FLOWS: 5,
           INTERVAL_ENABLED: true,
+          CHECK_ON_STARTUP: false,
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
           ALL_VARIABLES_OBJ: {},
@@ -350,10 +351,8 @@ class App extends Homey.App {
         }
 
         const flows = Object.values(await this._api.flow.getFlows());
-        
-        const FILTERED_FOLDERS = ['4b67728b-a2c8-4ac4-a2cf-c1f8ade60459'];
 
-        let filteredFlows = flows.filter(f => !f.broken && !FILTERED_FOLDERS.includes(f.folder)).filter(flow =>  {
+        let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
             let logicVariables = [];
             let deviceVariables = [];
             let appVariables = [];
@@ -388,7 +387,7 @@ class App extends Homey.App {
                         fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                     }
 
-                    const argsArray = f.args && Object.values(f.args) || [];
+                    const argsArray = f.args && flattenObj(f.args) || []
                     if (!argsArray || !argsArray.length) return false;
     
                     const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
@@ -398,27 +397,32 @@ class App extends Homey.App {
                     const logicFU = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyFU}`));                    
 
                     if(logicVar) {
-                        const varArray = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:manager:logic'));
+                        const match = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                        const varArray = match ? match.filter(l => l.includes('homey:manager:logic')) : [];
                         logicVariables = [...logicVariables, ...varArray];
                     }
 
                     if(logicDevice) {
-                        const varArray = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes('homey:device'));
+                        const match = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                        const varArray = match ? match.filter(l => l.includes('homey:device')) : [];
                         deviceVariables = [...deviceVariables, ...varArray];
                     }
                     
                     if(logicApp) {
-                        const varArray = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g).filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`);
+                        const match = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
+                        const varArray = match ? match.filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`) : [];
                         appVariables = [...appVariables, ...varArray];
                     }
 
                     if(logicBL) {
-                        const varArray = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKeyBL}`));
+                        const match = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g)
+                        const varArray = match ? match.filter(l => l.includes(`homey:app:${externalAppKeyBL}`)) : [];
                         blVariables = [...blVariables, ...varArray];
                     } 
 
                     if(logicFU) {
-                        const varArray = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g).filter(l => l.includes(`homey:app:${externalAppKeyFU}`));
+                        const match = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                        const varArray = match ? match .filter(l => l.includes(`homey:app:${externalAppKeyFU}`)): [];
                         fuVariables = [...fuVariables, ...varArray];
                     } 
                 }
