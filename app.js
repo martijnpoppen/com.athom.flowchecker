@@ -145,6 +145,8 @@ class App extends Homey.App {
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
           ALL_VARIABLES_OBJ: {},
+          FOLDERS: [],
+          FILTERED_FOLDERS: [],
           HOMEY_ID: ''
         });
       }
@@ -387,8 +389,10 @@ class App extends Homey.App {
                         fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                     }
 
-                    const argsArray = f.args && flattenObj(f.args) || []
+                    let argsArray = f.args && Object.values(f.args) || [];
                     if (!argsArray || !argsArray.length) return false;
+
+                    argsArray = flattenObj(f.args);
     
                     const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
                     const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
