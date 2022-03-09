@@ -187,5 +187,8 @@
   },
   "1.16.2": {
     "en": "FIX: findLogic"
+  },
+  "1.16.3": {
+    "en": "FIX: nested logic"
   }
 }
