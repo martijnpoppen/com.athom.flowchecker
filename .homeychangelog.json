@@ -190,5 +190,8 @@
   },
   "1.16.3": {
     "en": "FIX: nested logic"
+  },
+  "1.16.4": {
+    "en": "FIX: false positives due to error in check"
   }
 }
