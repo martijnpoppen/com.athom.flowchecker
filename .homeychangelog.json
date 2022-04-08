@@ -196,5 +196,8 @@
   },
   "1.16.5": {
     "en": "FIX: error in vr-checker"
+  },
+  "1.16.6": {
+    "en": "FIX: false positives due to error in check"
   }
 }
