@@ -199,5 +199,8 @@
   },
   "1.16.6": {
     "en": "FIX: false positives due to error in check"
+  },
+  "1.16.7": {
+    "en": "FIX: Homey 7.4.x - reduce logging due to nodejs 16 update"
   }
 }
