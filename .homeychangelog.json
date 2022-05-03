@@ -202,5 +202,8 @@
   },
   "1.16.7": {
     "en": "FIX: Homey 7.4.x - reduce logging due to nodejs 16 update"
+  },
+  "1.17.0": {
+    "en": "NEW: add type and folder tokens to trigger cards"
   }
 }
