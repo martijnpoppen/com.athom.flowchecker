@@ -159,7 +159,7 @@ class App extends Homey.App {
     try {
       const oldSettings = this.appSettings;
       
-      this.log("[updateSettings] - New settings:", settings);
+      this.log("[updateSettings] - New settings:");
       this.appSettings = settings;
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
@@ -516,7 +516,7 @@ class App extends Homey.App {
             await this.setNotification(key, flow.name, flow.folder, 'Flow');
 
             if(index < 10) {
-                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id})
+                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id, type: key, folder: flow.folder})
                     .catch( this.error )
                     .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
             }
@@ -533,7 +533,7 @@ class App extends Homey.App {
             flowDiffReverse.forEach(async (flow, index) =>  {
 
                 if(index < 10) {
-                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id})
+                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id, type: key, folder: flow.folder})
                         .catch( this.error )
                         .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
                 }
