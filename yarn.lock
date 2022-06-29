@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-athom-api@^3.6.5:
-  version "3.6.5"
-  resolved "https://registry.yarnpkg.com/athom-api/-/athom-api-3.6.5.tgz#ced9e4cea713ac707c40adf43ce39ca2c4573403"
-  integrity sha512-2VGp5zdc8OlGY5ucAembNikrqd9hWeXSTFLvL5WkBmbFLT79ID6yxYgNTIY27tXVz6e/8Wro0AC6KTHOZVqACw==
+athom-api@^3.7.7:
+  version "3.7.7"
+  resolved "https://registry.yarnpkg.com/athom-api/-/athom-api-3.7.7.tgz#c5be327fbcb433dd854b205b192676ad7bccd397"
+  integrity sha512-Z3UmmvkEa66Gpq/dS0F1X21cN8L9umR2/pMdinNpZfUqNd9GIg7vRsp4yXpTFBmBRhxtb5sCaQOd+55e7I2j6g==

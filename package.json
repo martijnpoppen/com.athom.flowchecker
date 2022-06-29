@@ -7,6 +7,6 @@
     "url": "https://github.com/martijnpoppen/com.athom.flowchecker"
   },
   "dependencies": {
-    "athom-api": "^3.6.5"
+    "athom-api": "^3.7.7"
   }
 }

@@ -66,6 +66,7 @@ class App extends Homey.App {
                 NOTIFICATION_BROKEN_VARIABLE: true
               });
         }
+
         if(!('INTERVAL_FLOWS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
@@ -164,7 +165,7 @@ class App extends Homey.App {
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
 
-      if(oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED) {
+      if(oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
         this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
         if(settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
             this.setFindFlowsInterval(true);
@@ -285,9 +286,13 @@ class App extends Homey.App {
         let flows = [];
 
         if(key === 'BROKEN') {
-          flows = Object.values(await this._api.flow.getFlows({ filter: { broken: true } }));
+            const f = Object.values(await this._api.flow.getFlows({ filter: { broken: true } }));
+            const af = Object.values(await this._api.flow.getAdvancedFlows({ filter: { broken: true } }));
+            flows = [...f, ...af];
         } else if(key === 'DISABLED') {
-          flows = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
+            const f = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
+            const af = Object.values(await this._api.flow.getAdvancedFlows({ filter: { enabled: false } }));
+            flows = [...f, ...af];
         } else if(key === 'UNUSED_FLOWS') {
             const allFlows = Object.values(await this._api.flow.getFlows());
             const triggers = allFlows.flatMap(f => f.actions.filter(a => a.uri === 'homey:manager:flow' && a.id === 'programmatic_trigger').flatMap(a => a.args.flow.id))
@@ -352,7 +357,9 @@ class App extends Homey.App {
             flowUtils = flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
         }
 
-        const flows = Object.values(await this._api.flow.getFlows());
+        const f = [];
+        const af = Object.values(await this._api.flow.getAdvancedFlows());
+        const flows = [...f, ...af];
 
         let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
             let logicVariables = [];
@@ -360,10 +367,16 @@ class App extends Homey.App {
             let appVariables = [];
             let blVariables = [];
             let fuVariables = [];
-            const { trigger, conditions, actions } = flow;
+            let cards = []
 
+            if(flow.cards) {
+                cards = Object.values(flow.cards);
+            } else {
+                const { trigger, conditions, actions } = flow;
+                cards = [trigger, ...conditions, ...actions];
+            }
 
-            [trigger, ...conditions, ...actions].forEach(f => {
+            cards.forEach(f => {
                 if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
                     logicVariables.push(f.droptoken);
                 } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
@@ -379,13 +392,19 @@ class App extends Homey.App {
                 if(f.args) {
                     if(f.uri && f.uri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
                         logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
+                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
+                        logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
                     }
 
                     if(f.uri && f.uri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
                         blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
+                    } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
+                        blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
                     }
 
                     if(f.uri && f.uri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
+                        fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
+                    }else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
                         fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                     }
 
@@ -466,7 +485,7 @@ class App extends Homey.App {
         
         filteredFlows = filteredFlows.map((f) => {
             const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
-            const folderName = folder ? folder.name : null;
+            const folderName = folder ? folder.name : 'unknown';
 
             return {name: f.name, id: f.id, folder: folderName };
         });
@@ -516,7 +535,8 @@ class App extends Homey.App {
             await this.setNotification(key, flow.name, flow.folder, 'Flow');
 
             if(index < 10) {
-                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id, type: key, folder: flow.folder})
+                const folder = flow.folder ? flow.folder : 'unknown';
+                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id, type: key, folder})
                     .catch( this.error )
                     .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
             }
@@ -533,7 +553,8 @@ class App extends Homey.App {
             flowDiffReverse.forEach(async (flow, index) =>  {
 
                 if(index < 10) {
-                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id, type: key, folder: flow.folder})
+                    const folder = flow.folder ? flow.folder : 'unknown';
+                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id, type: key, folder})
                         .catch( this.error )
                         .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
                 }
