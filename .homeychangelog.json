@@ -208,5 +208,8 @@
   },
   "1.17.1": {
     "en": "NEW: add type and folder tokens to trigger cards"
+  },
+  "1.18.0": {
+    "en": "NEW: support advanced flows | FIX: errors"
   }
 }
