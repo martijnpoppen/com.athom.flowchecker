@@ -211,5 +211,8 @@
   },
   "1.18.0": {
     "en": "NEW: support advanced flows | FIX: errors"
+  },
+  "1.18.1": {
+    "en": "FIX: errors when BetterLogic doesn't contain variables"
   }
 }
