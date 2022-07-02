@@ -165,7 +165,7 @@ class App extends Homey.App {
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
 
-      if(oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
+      if(oldSettings && oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
         this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
         if(settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
             this.setFindFlowsInterval(true);
@@ -342,7 +342,7 @@ class App extends Homey.App {
                 this.log(`[findLogic] ${key} - betterLogic: `, betterLogic);
             }
 
-            betterLogic = betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKeyBL}|${f.name}`)) : [];
+            betterLogic = betterLogic && betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKeyBL}|${f.name}`)) : [];
         }
 
         if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
@@ -354,10 +354,10 @@ class App extends Homey.App {
                 this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
             }
 
-            flowUtils = flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
+            flowUtils = flowUtils && flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
         }
 
-        const f = [];
+        const f = Object.values(await this._api.flow.getFlows());
         const af = Object.values(await this._api.flow.getAdvancedFlows());
         const flows = [...f, ...af];
 
