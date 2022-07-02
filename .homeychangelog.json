@@ -217,5 +217,8 @@
   },
   "1.18.2": {
     "en": "FIX: settings issue"
+  },
+  "1.18.3": {
+    "en": "FIX: unused logic advanced flows"
   }
 }
