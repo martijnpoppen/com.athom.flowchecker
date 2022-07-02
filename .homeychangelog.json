@@ -214,5 +214,8 @@
   },
   "1.18.1": {
     "en": "FIX: errors when BetterLogic doesn't contain variables"
+  },
+  "1.18.2": {
+    "en": "FIX: settings issue"
   }
 }
