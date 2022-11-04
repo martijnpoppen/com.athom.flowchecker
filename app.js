@@ -53,7 +53,7 @@ class App extends Homey.App {
       });
 
       this.interval = 0;
-      this.debug = true;
+      this.debug = false;
 
       if (settingsInitialized) {
         this.log("[initSettings] - Found settings key", _settingsKey);
@@ -314,6 +314,7 @@ class App extends Homey.App {
     async findLogic(key) {
         const flowArray = this.appSettings[key];
         const flowTokens = await this._api.flowToken.getFlowTokens();
+        const screensavers = await this._api.ledring.getScreensavers();
         
         this.ALL_VARIABLES = 0;
         this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0 };
@@ -326,6 +327,9 @@ class App extends Homey.App {
         
         const homeyDevices = flowTokens.filter(f => f.uri.startsWith(`homey:device`)).map(f => `${f.uri}|${f.id}`);
         this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
+
+        const homeyScreensavers = screensavers.map(f => f.id);
+        this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers, homeyScreensavers.length);
 
 
         let homeyApps = Object.values(await this._api.apps.getApps());
@@ -357,6 +361,7 @@ class App extends Homey.App {
             flowUtils = flowUtils && flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
         }
 
+        const logicMessages = [];
         const f = Object.values(await this._api.flow.getFlows());
         const af = Object.values(await this._api.flow.getAdvancedFlows());
         const flows = [...f, ...af];
@@ -367,6 +372,7 @@ class App extends Homey.App {
             let appVariables = [];
             let blVariables = [];
             let fuVariables = [];
+            let screensaverVariables = [];
             let cards = []
 
             if(flow.cards) {
@@ -406,6 +412,18 @@ class App extends Homey.App {
                         fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                     }else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
                         fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
+                    }
+
+                    if(f.uri && f.uri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
+                        appVariables.push(`${f.args.screensaver.uri}`);
+                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
+                        appVariables.push(`${f.args.screensaver.uri}`);
+                    }
+
+                    if(f.uri && f.uri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
+                        screensaverVariables.push(`${f.args.screensaver.id}`);
+                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
+                        screensaverVariables.push(`${f.args.screensaver.id}`);
                     }
 
                     let argsArray = f.args && Object.values(f.args) || [];
@@ -474,20 +492,40 @@ class App extends Homey.App {
                 this.log(`[findLogic] ---------------------END---------------------------`);
             }
 
-            if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) return true;
-            if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)) return true;
-            if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) return true;
-            if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) return true;
-            if(fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) return true;
+            if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
+                logicMessages.push({id: flow.id, msg: 'Logic variable'});
+                return true;
+            }
+            if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)){
+                logicMessages.push({id: flow.id, msg: 'Device variable'});
+                return true;
+            }
+            if(screensaverVariables.length && screensaverVariables.some((r) => homeyScreensavers.indexOf(r) === -1)) {
+                logicMessages.push({id: flow.id, msg: 'Screensaver missing'});
+                return true;
+            }
+            if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) {
+                logicMessages.push({id: flow.id, msg: 'BetterLogic'});
+                return true;
+            }
+            if(fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) {
+                logicMessages.push({id: flow.id, msg: 'Flow Utillities'});
+                return true;
+            }
+            if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) {
+                logicMessages.push({id: flow.id, msg: 'Broken app'});
+                return true;
+            }
              
             return false;
         });
         
         filteredFlows = filteredFlows.map((f) => {
             const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
+            const logicMessage = logicMessages.find(m => m.id === f.id);
             const folderName = folder ? folder.name : 'unknown';
 
-            return {name: f.name, id: f.id, folder: folderName };
+            return {name: f.name, id: f.id, folder: folderName, logicMessage: logicMessage.msg };
         });
 
         await this.token_ALL_FLOWS.setValue(flows.length);
@@ -532,7 +570,8 @@ class App extends Homey.App {
   
         if(flowDiff.length) {
           flowDiff.forEach(async (flow, index) =>  {
-            await this.setNotification(key, flow.name, flow.folder, 'Flow');
+            const logicMessage = flow.logicMessage ? flow.logicMessage : false
+            await this.setNotification(key, flow.name, flow.folder, 'Flow', logicMessage);
 
             if(index < 10) {
                 const folder = flow.folder ? flow.folder : 'unknown';
@@ -565,12 +604,13 @@ class App extends Homey.App {
       }
     }
 
-    async setNotification(key, flow, folderName, type) {
+    async setNotification(key, flow, folderName, type, logicMessage = false) {
       try {
         if(this.appSettings[`NOTIFICATION_${key}`]) {
             const folder = folderName ? `| Folder: **${folderName}**` : '';
+            const logicMsg = logicMessage ? `| Reason: **${logicMessage}**` : '';
             await this.homey.notifications.createNotification({
-            excerpt: `FlowChecker -  Event: ${key} - ${type}: **${flow}** ${folder}`,
+            excerpt: `FlowChecker -  Event: ${key} - ${type}: **${flow}** ${folder} ${logicMsg}`,
             });
         }
       } catch (error) {
