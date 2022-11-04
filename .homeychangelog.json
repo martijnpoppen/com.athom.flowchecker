@@ -220,5 +220,8 @@
   },
   "1.18.3": {
     "en": "FIX: unused logic advanced flows"
+  },
+  "1.19.0": {
+    "en": "NEW: Check for broken/missing screensavers | NEW: add reason to broken logic"
   }
 }

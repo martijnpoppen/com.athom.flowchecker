@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.18.3",
+  "version": "1.19.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -83,6 +83,9 @@
   "contributing": {
     "donate": {
       "paypal": {
+        "username": "martijnpoppen"
+      },
+      "bunq": {
         "username": "martijnpoppen"
       }
     }
