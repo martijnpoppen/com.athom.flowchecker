@@ -1,6 +1,6 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
