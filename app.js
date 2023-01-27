@@ -1,7 +1,7 @@
 "use strict";
 
 const Homey = require("homey");
-const HomeyAPI = require("athom-api").HomeyAPI;
+const { HomeyAPIApp } = require('homey-api');
 const flowConditions = require('./lib/flows/conditions');
 const flowActions = require('./lib/flows/actions');
 const { sleep, flattenObj } = require('./lib/helpers');
@@ -9,6 +9,7 @@ const { sleep, flattenObj } = require('./lib/helpers');
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = 'net.i-dev.betterlogic';
 const externalAppKeyFU = "com.flow.utilities";
+const Homey2023 = Homey.platform === 'local' && Homey.platformVersion === 2
 
 class App extends Homey.App {
   log() {
@@ -28,7 +29,12 @@ class App extends Homey.App {
 
     this.log("[onInit] - Loaded settings", this.appSettings);
 
-    this._api = await HomeyAPI.forCurrentHomey(this.homey);
+    // this._api = await HomeyAPI.forCurrentHomey(this.homey);
+
+    this._api = new HomeyAPIApp({
+        homey: this.homey,
+        debug: false,
+    });
 
     await flowConditions.init(this.homey);
     await flowActions.init(this.homey);
@@ -127,6 +133,13 @@ class App extends Homey.App {
                 FILTERED_FOLDERS: []
             });
         }
+
+        if(!('ALL_SCREENSAVERS' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
+                ALL_SCREENSAVERS: 0
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -145,6 +158,7 @@ class App extends Homey.App {
           CHECK_ON_STARTUP: false,
           ALL_FLOWS: 0,
           ALL_VARIABLES: 0,
+          ALL_SCREENSAVERS: 0,
           ALL_VARIABLES_OBJ: {},
           FOLDERS: [],
           FILTERED_FOLDERS: [],
@@ -202,6 +216,11 @@ class App extends Homey.App {
         title: this.homey.__("settings.all_flows")
       });
 
+      this.token_ALL_SCREENSAVERS = await this.homey.flow.createToken("token_ALL_SCREENSAVERS", {
+        type: "number",
+        title: this.homey.__("settings.all_screensavers")
+      });
+
       this.token_UNUSED_FLOWS = await this.homey.flow.createToken("token_UNUSED_FLOWS", {
         type: "number",
         title: this.homey.__("settings.unused_flows")
@@ -217,6 +236,7 @@ class App extends Homey.App {
       await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
       await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
       await this.token_ALL_FLOWS.setValue(this.appSettings.ALL_FLOWS);
+      await this.token_ALL_SCREENSAVERS.setValue(this.appSettings.ALL_SCREENSAVERS);
       await this.token_UNUSED_FLOWS.setValue(this.appSettings.UNUSED_FLOWS.length);
       await this.token_UNUSED_LOGIC.setValue(this.appSettings.UNUSED_LOGIC.length);
   }
@@ -286,12 +306,13 @@ class App extends Homey.App {
         let flows = [];
 
         if(key === 'BROKEN') {
-            const f = Object.values(await this._api.flow.getFlows({ filter: { broken: true } }));
-            const af = Object.values(await this._api.flow.getAdvancedFlows({ filter: { broken: true } }));
+            const f = Object.values(await this._api.flow.getFlows()).filter(flow => flow.broken);
+            const af = Object.values(await this._api.flow.getAdvancedFlows()).filter(aflow => aflow.broken);;
+            
             flows = [...f, ...af];
         } else if(key === 'DISABLED') {
-            const f = Object.values(await this._api.flow.getFlows({ filter: { enabled: false } }));
-            const af = Object.values(await this._api.flow.getAdvancedFlows({ filter: { enabled: false } }));
+            const f = Object.values(await this._api.flow.getFlows()).filter(flow => !flow.enabled);
+            const af = Object.values(await this._api.flow.getAdvancedFlows()).filter(aflow => !aflow.enabled);;
             flows = [...f, ...af];
         } else if(key === 'UNUSED_FLOWS') {
             const allFlows = Object.values(await this._api.flow.getFlows());
@@ -313,11 +334,11 @@ class App extends Homey.App {
 
     async findLogic(key) {
         const flowArray = this.appSettings[key];
-        const flowTokens = await this._api.flowToken.getFlowTokens();
-        const screensavers = await this._api.ledring.getScreensavers();
+        const flowTokens = await this._api.flowtoken.getFlowTokens();
+        const screensavers = Homey2023 ? [] : await this._api.ledring.getScreensavers();
         
         this.ALL_VARIABLES = 0;
-        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0 };
+        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
         this.LOGIC_VARIABLES = [];
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
@@ -477,7 +498,8 @@ class App extends Homey.App {
                 device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
                 app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
                 bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length,
-                fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length
+                fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length,
+                screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
             }
             this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
 
@@ -489,6 +511,7 @@ class App extends Homey.App {
                 if(appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
                 if(blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
                 if(fuVariables.length) this.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
+                if(screensaverVariables.length) this.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
                 this.log(`[findLogic] ---------------------END---------------------------`);
             }
 
@@ -529,12 +552,14 @@ class App extends Homey.App {
         });
 
         await this.token_ALL_FLOWS.setValue(flows.length);
+        await this.token_ALL_SCREENSAVERS.setValue(homeyScreensavers.length);
         await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
 
         await this.updateSettings({
             ...this.appSettings, 
             [key]: [...new Set(filteredFlows)], 
             ALL_FLOWS: flows.length, 
+            ALL_SCREENSAVERS: homeyScreensavers.length, 
             ALL_VARIABLES: this.ALL_VARIABLES, 
             ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
         });

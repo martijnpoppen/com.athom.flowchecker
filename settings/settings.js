@@ -54,12 +54,14 @@ function initializeSettings (err, data) {
                                                            <div class="row"><label>${Homey.__("settings.unused_logic")}</label><label>${data["UNUSED_LOGIC"].length}<label></div>
                                                            <hr />
                                                            <div class="row"><label>${Homey.__("settings.all_flows")}</label><label>${data["ALL_FLOWS"]}<label></div>
+                                                           <div class="row"><label>${Homey.__("settings.all_screensavers")}</label><label>${data["ALL_SCREENSAVERS"]}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables")}</label><label>${data["ALL_VARIABLES"]}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_logic")}</label><label>${data["ALL_VARIABLES_OBJ"]["logic"] || 0}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_device")}</label><label>${data["ALL_VARIABLES_OBJ"]["device"] || 0}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_app")}</label><label>${data["ALL_VARIABLES_OBJ"]["app"] || 0}<label></div>
                                                            <div class="row"><label>${Homey.__("settings.all_variables_bl")}</label><label>${data["ALL_VARIABLES_OBJ"]["bl"] || 0}<label></div>
-                                                           <div class="row"><label>${Homey.__("settings.all_variables_fu")}</label><label>${data["ALL_VARIABLES_OBJ"]["fu"] || 0}<label></div>`;
+                                                           <div class="row"><label>${Homey.__("settings.all_variables_fu")}</label><label>${data["ALL_VARIABLES_OBJ"]["fu"] || 0}<label></div>
+                                                           <div class="row"><label>${Homey.__("settings.all_variables_screensavers")}</label><label>${data["ALL_VARIABLES_OBJ"]["screensavers"] || 0}<label></div>`;
     document.getElementById('interval_flows').value = data['INTERVAL_FLOWS'];
     document.getElementById('interval_variables').value = (data['INTERVAL_FLOWS'] * 10);
     if(data['BROKEN'].length) document.getElementById('flows_broken').innerHTML =  flowMapper(data, data['BROKEN'])
@@ -157,6 +159,7 @@ function initSave(_settings) {
             UNUSED_LOGIC: _settings['UNUSED_LOGIC'],
             INTERVAL_FLOWS: document.getElementById('interval_flows').value,
             ALL_FLOWS: _settings['ALL_FLOWS'],
+            ALL_SCREENSAVERS: _settings['ALL_SCREENSAVERS'],
             ALL_VARIABLES: _settings['ALL_VARIABLES'],
             ALL_VARIABLES_OBJ: _settings['ALL_VARIABLES_OBJ'],
             FOLDERS: _settings['FOLDERS'],
@@ -225,6 +228,7 @@ function initClear(_settings) {
             UNUSED_LOGIC: [],
             INTERVAL_FLOWS: 3,
             ALL_FLOWS: 0,
+            ALL_SCREENSAVERS: 0,
             ALL_VARIABLES: 0,
             ALL_VARIABLES_OBJ: {},
             FOLDERS: [],
