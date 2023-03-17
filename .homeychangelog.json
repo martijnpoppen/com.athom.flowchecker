@@ -226,5 +226,8 @@
   },
   "1.20.0": {
     "en": "NEW: migrate from athom-api to homey-api | NEW: add screensaver count in settings page"
+  },
+  "1.21.0": {
+    "en": "NEW: update to Homey-Api v3"
   }
 }
