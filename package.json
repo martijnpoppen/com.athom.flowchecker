@@ -7,6 +7,6 @@
     "url": "https://github.com/martijnpoppen/com.athom.flowchecker"
   },
   "dependencies": {
-    "homey-api": "^1.10.7"
+    "homey-api": "^3.0.0-rc.11"
   }
 }

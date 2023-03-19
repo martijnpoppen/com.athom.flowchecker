@@ -1,10 +1,10 @@
 "use strict";
 
 const Homey = require("homey");
-const { HomeyAPIApp } = require('homey-api');
+const { HomeyAPI } = require('homey-api');
 const flowConditions = require('./lib/flows/conditions');
 const flowActions = require('./lib/flows/actions');
-const { sleep, flattenObj } = require('./lib/helpers');
+const { sleep, flattenObj, replaceLast } = require('./lib/helpers');
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = 'net.i-dev.betterlogic';
@@ -29,11 +29,9 @@ class App extends Homey.App {
 
     this.log("[onInit] - Loaded settings", this.appSettings);
 
-    // this._api = await HomeyAPI.forCurrentHomey(this.homey);
-
-    this._api = new HomeyAPIApp({
+    this._api = await HomeyAPI.createAppAPI({
         homey: this.homey,
-        debug: false,
+        debug: false
     });
 
     await flowConditions.init(this.homey);
@@ -316,8 +314,14 @@ class App extends Homey.App {
             flows = [...f, ...af];
         } else if(key === 'UNUSED_FLOWS') {
             const allFlows = Object.values(await this._api.flow.getFlows());
-            const triggers = allFlows.flatMap(f => f.actions.filter(a => a.uri === 'homey:manager:flow' && a.id === 'programmatic_trigger').flatMap(a => a.args.flow.id))
-            flows = allFlows.filter(f => f.trigger.uri === 'homey:manager:flow' && f.trigger.id === 'programmatic_trigger' && !triggers.includes(f.id))
+            const allAFFlows = Object.values(await this._api.flow.getAdvancedFlows());
+
+            const actions = allFlows.flatMap(f => f.actions.filter(a => a.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
+            const AFactions = allAFFlows.flatMap(flow => Object.values(flow.cards).filter(f => f.type === 'action' && f.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
+            const triggers = allFlows.filter(f => f.trigger.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id));
+            const AFtriggers = allAFFlows.filter(flow => Object.values(flow.cards).some(f => f.type === 'trigger' && f.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id)));
+
+            flows = [...triggers, ...AFtriggers];
         }
 
         flows = flows.filter(f => !this.appSettings.FILTERED_FOLDERS.includes(f.folder)).map((f) => {
@@ -334,19 +338,19 @@ class App extends Homey.App {
 
     async findLogic(key) {
         const flowArray = this.appSettings[key];
-        const flowTokens = await this._api.flowtoken.getFlowTokens();
+        const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens());
         const screensavers = Homey2023 ? [] : await this._api.ledring.getScreensavers();
-        
+
         this.ALL_VARIABLES = 0;
         this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
         this.LOGIC_VARIABLES = [];
 
         this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
-        const homeyVariables = flowTokens.filter(f => f.uri === `homey:manager:logic`).map(f => `${f.uri}|${f.id}`);
+        const homeyVariables = flowTokens.filter(f => f.id.includes(`homey:manager:logic`)).map(f => `homey:manager:logic|${f.id.split('homey:manager:logic:')[1]}`);
         this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables, homeyVariables.length);
         
-        const homeyDevices = flowTokens.filter(f => f.uri.startsWith(`homey:device`)).map(f => `${f.uri}|${f.id}`);
+        const homeyDevices = flowTokens.filter(f => f.id.includes(`homey:device`)).map(f => `${replaceLast(f.id, ':', '|')}`);
         this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
 
         const homeyScreensavers = screensavers.map(f => f.id);
@@ -372,14 +376,12 @@ class App extends Homey.App {
 
         if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
             const flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU});
-            flowUtils = flowTokens.filter(f => f.uri === `homey:app:${externalAppKeyFU}`).map(f => f.id);
+            flowUtils = flowTokens.filter(f => f.id.includes(`homey:app:${externalAppKeyFU}`)).map(f => `${replaceLast(f.id, ':', '|')}`);
             flowUtils = flowUtilsSettings ? [...flowUtilsSettings.VARIABLES, ...flowUtils] : flowUtils;
             
             if(this.debug) {
                 this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
             }
-
-            flowUtils = flowUtils && flowUtils.length ? flowUtils.map((f) => (`homey:app:${externalAppKeyFU}|${f}`)) : [];
         }
 
         const logicMessages = [];
@@ -417,31 +419,31 @@ class App extends Homey.App {
                 }
                 
                 if(f.args) {
-                    if(f.uri && f.uri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
+                    if(f.id && f.id.includes('homey:manager:logic') && f.args.variable && f.args.variable.id) {
                         logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
                     } else if(f.ownerUri && f.ownerUri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
                         logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
                     }
 
-                    if(f.uri && f.uri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
-                        blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
+                    if(f.id && f.id.includes(`homey:app:${externalAppKeyBL}`) && f.args.variable && f.args.variable.name) {
+                        blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
                     } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
-                        blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
+                        blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
                     }
 
-                    if(f.uri && f.uri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
-                        fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
-                    }else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
-                        fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
+                    if(f.id && f.id.includes(`homey:app:${externalAppKeyFU}`) && f.args.variable && f.args.variable.name) {
+                        fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
+                    } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
+                        fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
                     }
 
-                    if(f.uri && f.uri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
+                    if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
                         appVariables.push(`${f.args.screensaver.uri}`);
                     } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
                         appVariables.push(`${f.args.screensaver.uri}`);
                     }
 
-                    if(f.uri && f.uri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
+                    if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.id) {
                         screensaverVariables.push(`${f.args.screensaver.id}`);
                     } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
                         screensaverVariables.push(`${f.args.screensaver.id}`);
@@ -501,6 +503,8 @@ class App extends Homey.App {
                 fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length,
                 screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
             }
+
+
             this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
 
             if(this.debug && variablesLength) {
@@ -514,7 +518,7 @@ class App extends Homey.App {
                 if(screensaverVariables.length) this.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
                 this.log(`[findLogic] ---------------------END---------------------------`);
             }
-
+            
             if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
                 logicMessages.push({id: flow.id, msg: 'Logic variable'});
                 return true;
@@ -572,7 +576,7 @@ class App extends Homey.App {
         const logicArray = this.appSettings[key];
         const homeyVariables = Object.values(await this._api.logic.getVariables());
         const logicVariables = this.LOGIC_VARIABLES;
-        
+
         this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);
         let logic = homeyVariables.filter((r) => logicVariables.indexOf(`homey:manager:logic|${r.id}`) === -1);
 
