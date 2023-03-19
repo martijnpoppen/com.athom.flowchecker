@@ -229,5 +229,8 @@
   },
   "1.21.0": {
     "en": "NEW: update to Homey-Api v3"
+  },
+  "1.21.1": {
+    "en": "NEW: update to Homey-Api v3"
   }
 }
