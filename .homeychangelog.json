@@ -241,5 +241,8 @@
   },
   "1.21.4": {
     "en": "NEW: update to Homey-Api v3  (RC21) (HP2023)"
+  },
+  "1.21.5": {
+    "en": "NEW: update to Homey-Api v3  (RC20) (HP2023)"
   }
 }
