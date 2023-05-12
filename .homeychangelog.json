@@ -244,5 +244,8 @@
   },
   "1.21.5": {
     "en": "NEW: update to Homey-Api v3  (RC20) (HP2023)"
+  },
+  "1.21.6": {
+    "en": "FIX: catch API errors (HP23)"
   }
 }
