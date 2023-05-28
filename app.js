@@ -9,7 +9,6 @@ const { sleep, flattenObj, replaceLast } = require('./lib/helpers');
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = 'net.i-dev.betterlogic';
 const externalAppKeyFU = "com.flow.utilities";
-const Homey2023 = Homey.platform === 'local' && Homey.platformVersion === 2
 
 class App extends Homey.App {
   log() {
@@ -23,11 +22,11 @@ class App extends Homey.App {
   // -------------------- INIT ----------------------
 
   async onInit() {
-    this.log(`${this.homey.manifest.id} - ${this.homey.manifest.version} started...`);
+    this.log(`[onInit] ${this.homey.manifest.id} - ${this.homey.manifest.version} started...`);
 
     await this.initSettings();
 
-    this.log("[onInit] - Loaded settings", this.appSettings);
+    this.log("[onInit] - Loaded settings", {...this.appSettings, FOLDERS: 'LOG'});
 
     this._api = await HomeyAPI.createAppAPI({
         homey: this.homey,
@@ -138,6 +137,13 @@ class App extends Homey.App {
                 ALL_SCREENSAVERS: 0
             });
         }
+
+        if(!('HOMEY_VERSION' in this.appSettings)) {
+            await this.updateSettings({
+                ...this.appSettings,
+                HOMEY_VERSION: Homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
+            });
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -241,13 +247,14 @@ class App extends Homey.App {
 
   async setHomeyInfo() {
       try {
-        const homeyInfo = await this._api.system.getInfo();
+        const homeyInfo = await this._api.system.getInfo().catch(e => { console.log(e); return ''});
+
         await this.updateSettings({
             ...this.appSettings,
             HOMEY_ID: homeyInfo.cloudId || ''
         });
       } catch (error) {
-        this.error(error);
+        this.error('[setHomeyInfo]', error);
       }
   }
 
@@ -266,8 +273,13 @@ class App extends Homey.App {
     }
 
     async setFolders() {
-        const FOLDERS = Object.values(await this._api.flow.getFlowFolders());
-        await this.updateSettings({...this.appSettings, 'FOLDERS': [...new Set(FOLDERS)]});
+        try {
+            const FOLDERS = Object.values(await this._api.flow.getFlowFolders().catch(e => { console.log(e); return {}}));
+            await this.updateSettings({...this.appSettings, 'FOLDERS': [...new Set(FOLDERS)]});
+        } catch (error) {
+            this.error('[setFolders]', error);
+        }
+      
     }
   
     async findFlowDefects(initial = false, force = false) {
@@ -298,294 +310,306 @@ class App extends Homey.App {
     }
 
     async findFlows(key) {
-        const flowArray = this.appSettings[key];
+        try {
+            const flowArray = this.appSettings[key];
 
-        this.log(`[findFlows] ${key} - FlowArray: `, flowArray);
-        let flows = [];
+            this.log(`[findFlows] ${key} - FlowArray: `, flowArray);
+            let flows = [];
 
-        if(key === 'BROKEN') {
-            const f = Object.values(await this._api.flow.getFlows()).filter(flow => flow.broken);
-            const af = Object.values(await this._api.flow.getAdvancedFlows()).filter(aflow => aflow.broken);;
-            
-            flows = [...f, ...af];
-        } else if(key === 'DISABLED') {
-            const f = Object.values(await this._api.flow.getFlows()).filter(flow => !flow.enabled);
-            const af = Object.values(await this._api.flow.getAdvancedFlows()).filter(aflow => !aflow.enabled);;
-            flows = [...f, ...af];
-        } else if(key === 'UNUSED_FLOWS') {
-            const allFlows = Object.values(await this._api.flow.getFlows());
-            const allAFFlows = Object.values(await this._api.flow.getAdvancedFlows());
+            if(key === 'BROKEN') {
+                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => flow.broken);
+                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => aflow.broken);;
+                
+                flows = [...f, ...af];
+            } else if(key === 'DISABLED') {
+                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => !flow.enabled);
+                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => !aflow.enabled);;
+                flows = [...f, ...af];
+            } else if(key === 'UNUSED_FLOWS') {
+                const allFlows = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
+                const allAFFlows = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
 
-            const actions = allFlows.flatMap(f => f.actions.filter(a => a.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
-            const AFactions = allAFFlows.flatMap(flow => Object.values(flow.cards).filter(f => f.type === 'action' && f.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
-            const triggers = allFlows.filter(f => f.trigger.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id));
-            const AFtriggers = allAFFlows.filter(flow => Object.values(flow.cards).some(f => f.type === 'trigger' && f.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id)));
+                const actions = allFlows.flatMap(f => f.actions.filter(a => a.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
+                const AFactions = allAFFlows.flatMap(flow => Object.values(flow.cards).filter(f => f.type === 'action' && f.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
+                const triggers = allFlows.filter(f => f.trigger.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id));
+                const AFtriggers = allAFFlows.filter(flow => Object.values(flow.cards).some(f => f.type === 'trigger' && f.id.includes('homey:manager:flow:programmatic_trigger') && !actions.includes(f.id) && !AFactions.includes(f.id)));
 
-            flows = [...triggers, ...AFtriggers];
+                flows = [...triggers, ...AFtriggers];
+            }
+
+            flows = flows.filter(f => !this.appSettings.FILTERED_FOLDERS.includes(f.folder)).map((f) => {
+                const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
+                const folderName = folder ? folder.name : null;
+
+                return {name: f.name, id: f.id, folder: folderName };
+            });
+
+            await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
+            await this[`token_${key}`].setValue(flows.length);
+            await this.checkFlowDiff(key, flows, flowArray);
+        } catch (error) {
+            this.error('[findFlows]', error);
         }
-
-        flows = flows.filter(f => !this.appSettings.FILTERED_FOLDERS.includes(f.folder)).map((f) => {
-            const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
-            const folderName = folder ? folder.name : null;
-
-            return {name: f.name, id: f.id, folder: folderName };
-        });
-
-        await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
-        await this[`token_${key}`].setValue(flows.length);
-        await this.checkFlowDiff(key, flows, flowArray);
     }
 
     async findLogic(key) {
-        const flowArray = this.appSettings[key];
-        const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens());
-        const screensavers = Homey2023 ? [] : await this._api.ledring.getScreensavers();
+        try {
+            const flowArray = this.appSettings[key];
+            const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
+            const screensavers = await this._api.ledring.getScreensavers().catch(e => { console.log(e); return []});
 
-        this.ALL_VARIABLES = 0;
-        this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
-        this.LOGIC_VARIABLES = [];
+            this.ALL_VARIABLES = 0;
+            this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
+            this.LOGIC_VARIABLES = [];
 
-        this.log(`[findLogic] ${key} - flowArray: `, flowArray);
+            this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
-        const homeyVariables = flowTokens.filter(f => f.id.includes(`homey:manager:logic`)).map(f => `homey:manager:logic|${f.id.split('homey:manager:logic:')[1]}`);
-        this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables, homeyVariables.length);
-        
-        const homeyDevices = flowTokens.filter(f => f.id.includes(`homey:device`)).map(f => `${replaceLast(f.id, ':', '|')}`);
-        this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
-
-        const homeyScreensavers = screensavers.map(f => f.id);
-        this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers, homeyScreensavers.length);
-
-
-        let homeyApps = Object.values(await this._api.apps.getApps());
-        homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
-
-        // -------------APP SPECIFIC -----------------------
-        let betterLogic = [];
-        let flowUtils = [];
-        
-        if(homeyApps.includes(`homey:app:${externalAppKeyBL}`)) {
-            betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKeyBL});
+            const homeyVariables = flowTokens.filter(f => f.id.includes(`homey:manager:logic`)).map(f => `homey:manager:logic|${f.id.split('homey:manager:logic:')[1]}`);
+            this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables, homeyVariables.length);
             
-            if(this.debug) {
-                this.log(`[findLogic] ${key} - betterLogic: `, betterLogic);
-            }
+            const homeyDevices = flowTokens.filter(f => f.id.includes(`homey:device`)).map(f => `${replaceLast(f.id, ':', '|')}`);
+            this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
 
-            betterLogic = betterLogic && betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKeyBL}|${f.name}`)) : [];
-        }
+            const homeyScreensavers = screensavers.map(f => f.id);
+            this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers, homeyScreensavers.length);
 
-        if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
-            const flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU});
-            flowUtils = flowTokens.filter(f => f.id.includes(`homey:app:${externalAppKeyFU}`)).map(f => `${replaceLast(f.id, ':', '|')}`);
-            flowUtils = flowUtilsSettings ? [...flowUtilsSettings.VARIABLES, ...flowUtils] : flowUtils;
+
+            let homeyApps = Object.values(await this._api.apps.getApps().catch(e => { console.log(e); return {}}));
+            homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
+
+            // -------------APP SPECIFIC -----------------------
+            let betterLogic = [];
+            let flowUtils = [];
             
-            if(this.debug) {
-                this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
-            }
-        }
-
-        const logicMessages = [];
-        const f = Object.values(await this._api.flow.getFlows());
-        const af = Object.values(await this._api.flow.getAdvancedFlows());
-        const flows = [...f, ...af];
-
-        let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
-            let logicVariables = [];
-            let deviceVariables = [];
-            let appVariables = [];
-            let blVariables = [];
-            let fuVariables = [];
-            let screensaverVariables = [];
-            let cards = []
-
-            if(flow.cards) {
-                cards = Object.values(flow.cards);
-            } else {
-                const { trigger, conditions, actions } = flow;
-                cards = [trigger, ...conditions, ...actions];
-            }
-
-            cards.forEach(f => {
-                if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
-                    logicVariables.push(f.droptoken);
-                } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
-                    deviceVariables.push(f.droptoken);
-                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyBL}`)) {
-                    blVariables.push(f.droptoken);
-                } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyFU}`)) {
-                    fuVariables.push(f.droptoken);
-                } else if(f.droptoken && f.droptoken.includes('homey:app:')) {
-                    appVariables.push(f.droptoken.split('|')[0]);
-                }
+            if(homeyApps.includes(`homey:app:${externalAppKeyBL}`)) {
+                betterLogic = await this._api.apps.getAppSetting({ name: 'variables', id: externalAppKeyBL}).catch(e => { console.log(e); return []});
                 
-                if(f.args) {
-                    if(f.id && f.id.includes('homey:manager:logic') && f.args.variable && f.args.variable.id) {
-                        logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
-                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
-                        logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
-                    }
+                if(this.debug) {
+                    this.log(`[findLogic] ${key} - betterLogic: `, betterLogic);
+                }
 
-                    if(f.id && f.id.includes(`homey:app:${externalAppKeyBL}`) && f.args.variable && f.args.variable.name) {
-                        blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
-                    } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
-                        blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
-                    }
+                betterLogic = betterLogic && betterLogic.length ? betterLogic.map((f) => (`homey:app:${externalAppKeyBL}|${f.name}`)) : [];
+            }
 
-                    if(f.id && f.id.includes(`homey:app:${externalAppKeyFU}`) && f.args.variable && f.args.variable.name) {
-                        fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
-                    } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
-                        fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
-                    }
+            if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
+                const flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU}).catch(e => { console.log(e); return []});;
+                flowUtils = flowTokens.filter(f => f.id.includes(`homey:app:${externalAppKeyFU}`)).map(f => `${replaceLast(f.id, ':', '|')}`);
+                flowUtils = flowUtilsSettings ? [...flowUtilsSettings.VARIABLES, ...flowUtils] : flowUtils;
+                
+                if(this.debug) {
+                    this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
+                }
+            }
 
-                    if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
-                        appVariables.push(`${f.args.screensaver.uri}`);
-                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
-                        appVariables.push(`${f.args.screensaver.uri}`);
-                    }
+            const logicMessages = [];
+            const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
+            const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
+            const flows = [...f, ...af];
 
-                    if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.id) {
-                        screensaverVariables.push(`${f.args.screensaver.id}`);
-                    } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
-                        screensaverVariables.push(`${f.args.screensaver.id}`);
-                    }
+            let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
+                let logicVariables = [];
+                let deviceVariables = [];
+                let appVariables = [];
+                let blVariables = [];
+                let fuVariables = [];
+                let screensaverVariables = [];
+                let cards = []
 
-                    let argsArray = f.args && Object.values(f.args) || [];
-                    if (!argsArray || !argsArray.length) return false;
+                if(flow.cards) {
+                    cards = Object.values(flow.cards);
+                } else {
+                    const { trigger, conditions, actions } = flow;
+                    cards = [trigger, ...conditions, ...actions];
+                }
 
-                    argsArray = flattenObj(f.args);
-    
-                    const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
-                    const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
-                    const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));
-                    const logicBL = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyBL}`));                    
-                    const logicFU = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyFU}`));                    
-
-                    if(logicVar) {
-                        const match = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-                        const varArray = match ? match.filter(l => l.includes('homey:manager:logic')) : [];
-                        logicVariables = [...logicVariables, ...varArray];
-                    }
-
-                    if(logicDevice) {
-                        const match = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-                        const varArray = match ? match.filter(l => l.includes('homey:device')) : [];
-                        deviceVariables = [...deviceVariables, ...varArray];
+                cards.forEach(f => {
+                    if(f.droptoken && f.droptoken.includes('homey:manager:logic')) {
+                        logicVariables.push(f.droptoken);
+                    } else if(f.droptoken && f.droptoken.includes('homey:device:')) {
+                        deviceVariables.push(f.droptoken);
+                    } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyBL}`)) {
+                        blVariables.push(f.droptoken);
+                    } else if(f.droptoken && f.droptoken.includes(`homey:app:${externalAppKeyFU}`)) {
+                        fuVariables.push(f.droptoken);
+                    } else if(f.droptoken && f.droptoken.includes('homey:app:')) {
+                        appVariables.push(f.droptoken.split('|')[0]);
                     }
                     
-                    if(logicApp) {
-                        const match = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
-                        const varArray = match ? match.filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`) : [];
-                        appVariables = [...appVariables, ...varArray];
+                    if(f.args) {
+                        if(f.id && f.id.includes('homey:manager:logic') && f.args.variable && f.args.variable.id) {
+                            logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
+                        } else if(f.ownerUri && f.ownerUri === 'homey:manager:logic' && f.args.variable && f.args.variable.id) {
+                            logicVariables.push(`homey:manager:logic|${f.args.variable.id}`);
+                        }
+
+                        if(f.id && f.id.includes(`homey:app:${externalAppKeyBL}`) && f.args.variable && f.args.variable.name) {
+                            blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
+                        } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
+                            blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
+                        }
+
+                        if(f.id && f.id.includes(`homey:app:${externalAppKeyFU}`) && f.args.variable && f.args.variable.name) {
+                            fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
+                        } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
+                            fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
+                        }
+
+                        if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
+                            appVariables.push(`${f.args.screensaver.uri}`);
+                        } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
+                            appVariables.push(`${f.args.screensaver.uri}`);
+                        }
+
+                        if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.id) {
+                            screensaverVariables.push(`${f.args.screensaver.id}`);
+                        } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
+                            screensaverVariables.push(`${f.args.screensaver.id}`);
+                        }
+
+                        let argsArray = f.args && Object.values(f.args) || [];
+                        if (!argsArray || !argsArray.length) return false;
+
+                        argsArray = flattenObj(f.args);
+        
+                        const logicVar = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:manager:logic'));                
+                        const logicDevice = argsArray.find(arg => typeof arg === 'string' && arg.includes('homey:device'));
+                        const logicApp = argsArray.find(arg =>typeof arg === 'string' && arg.includes('homey:app'));
+                        const logicBL = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyBL}`));                    
+                        const logicFU = argsArray.find(arg => typeof arg === 'string' && arg.includes(`homey:app:${externalAppKeyFU}`));                    
+
+                        if(logicVar) {
+                            const match = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                            const varArray = match ? match.filter(l => l.includes('homey:manager:logic')) : [];
+                            logicVariables = [...logicVariables, ...varArray];
+                        }
+
+                        if(logicDevice) {
+                            const match = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                            const varArray = match ? match.filter(l => l.includes('homey:device')) : [];
+                            deviceVariables = [...deviceVariables, ...varArray];
+                        }
+                        
+                        if(logicApp) {
+                            const match = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
+                            const varArray = match ? match.filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`) : [];
+                            appVariables = [...appVariables, ...varArray];
+                        }
+
+                        if(logicBL) {
+                            const match = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g)
+                            const varArray = match ? match.filter(l => l.includes(`homey:app:${externalAppKeyBL}`)) : [];
+                            blVariables = [...blVariables, ...varArray];
+                        } 
+
+                        if(logicFU) {
+                            const match = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                            const varArray = match ? match .filter(l => l.includes(`homey:app:${externalAppKeyFU}`)): [];
+                            fuVariables = [...fuVariables, ...varArray];
+                        } 
                     }
+                });
 
-                    if(logicBL) {
-                        const match = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g)
-                        const varArray = match ? match.filter(l => l.includes(`homey:app:${externalAppKeyBL}`)) : [];
-                        blVariables = [...blVariables, ...varArray];
-                    } 
+                const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length+fuVariables.length;
 
-                    if(logicFU) {
-                        const match = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-                        const varArray = match ? match .filter(l => l.includes(`homey:app:${externalAppKeyFU}`)): [];
-                        fuVariables = [...fuVariables, ...varArray];
-                    } 
+                this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
+                this.ALL_VARIABLES_OBJ = {
+                    logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
+                    device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
+                    app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
+                    bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length,
+                    fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length,
+                    screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
                 }
+
+
+                this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
+
+                if(this.debug && variablesLength) {
+                    this.log(`[findLogic] ---------------------START---------------------------`) 
+                    this.log(`[findLogic]`, flow.name);
+                    if(logicVariables.length) this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
+                    if(deviceVariables.length) this.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
+                    if(appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
+                    if(blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
+                    if(fuVariables.length) this.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
+                    if(screensaverVariables.length) this.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
+                    this.log(`[findLogic] ---------------------END---------------------------`);
+                }
+                
+                if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
+                    logicMessages.push({id: flow.id, msg: 'Logic variable'});
+                    return true;
+                }
+                if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)){
+                    logicMessages.push({id: flow.id, msg: 'Device variable'});
+                    return true;
+                }
+                if(screensaverVariables.length && screensaverVariables.some((r) => homeyScreensavers.indexOf(r) === -1)) {
+                    logicMessages.push({id: flow.id, msg: 'Screensaver missing'});
+                    return true;
+                }
+                if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) {
+                    logicMessages.push({id: flow.id, msg: 'BetterLogic'});
+                    return true;
+                }
+                if(fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) {
+                    logicMessages.push({id: flow.id, msg: 'Flow Utillities'});
+                    return true;
+                }
+                if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) {
+                    logicMessages.push({id: flow.id, msg: 'Broken app'});
+                    return true;
+                }
+                
+                return false;
+            });
+            
+            filteredFlows = filteredFlows.map((f) => {
+                const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
+                const logicMessage = logicMessages.find(m => m.id === f.id);
+                const folderName = folder ? folder.name : 'unknown';
+
+                return {name: f.name, id: f.id, folder: folderName, logicMessage: logicMessage.msg };
             });
 
-            const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length+fuVariables.length;
+            await this.token_ALL_FLOWS.setValue(flows.length);
+            await this.token_ALL_SCREENSAVERS.setValue(homeyScreensavers.length);
+            await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
 
-            this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
-            this.ALL_VARIABLES_OBJ = {
-                logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
-                device: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.device + deviceVariables.length : deviceVariables.length,
-                app: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.app + appVariables.length : appVariables.length,
-                bl: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.bl + blVariables.length : blVariables.length,
-                fu: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.fu + fuVariables.length : fuVariables.length,
-                screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
-            }
+            await this.updateSettings({
+                ...this.appSettings, 
+                [key]: [...new Set(filteredFlows)], 
+                ALL_FLOWS: flows.length, 
+                ALL_SCREENSAVERS: homeyScreensavers.length, 
+                ALL_VARIABLES: this.ALL_VARIABLES, 
+                ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
+            });
 
-
-            this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
-
-            if(this.debug && variablesLength) {
-                this.log(`[findLogic] ---------------------START---------------------------`) 
-                this.log(`[findLogic]`, flow.name);
-                if(logicVariables.length) this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
-                if(deviceVariables.length) this.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
-                if(appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
-                if(blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
-                if(fuVariables.length) this.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
-                if(screensaverVariables.length) this.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
-                this.log(`[findLogic] ---------------------END---------------------------`);
-            }
-            
-            if(logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
-                logicMessages.push({id: flow.id, msg: 'Logic variable'});
-                return true;
-            }
-            if(deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)){
-                logicMessages.push({id: flow.id, msg: 'Device variable'});
-                return true;
-            }
-            if(screensaverVariables.length && screensaverVariables.some((r) => homeyScreensavers.indexOf(r) === -1)) {
-                logicMessages.push({id: flow.id, msg: 'Screensaver missing'});
-                return true;
-            }
-            if(blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) {
-                logicMessages.push({id: flow.id, msg: 'BetterLogic'});
-                return true;
-            }
-            if(fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) {
-                logicMessages.push({id: flow.id, msg: 'Flow Utillities'});
-                return true;
-            }
-            if(appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) {
-                logicMessages.push({id: flow.id, msg: 'Broken app'});
-                return true;
-            }
-             
-            return false;
-        });
-        
-        filteredFlows = filteredFlows.map((f) => {
-            const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
-            const logicMessage = logicMessages.find(m => m.id === f.id);
-            const folderName = folder ? folder.name : 'unknown';
-
-            return {name: f.name, id: f.id, folder: folderName, logicMessage: logicMessage.msg };
-        });
-
-        await this.token_ALL_FLOWS.setValue(flows.length);
-        await this.token_ALL_SCREENSAVERS.setValue(homeyScreensavers.length);
-        await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
-
-        await this.updateSettings({
-            ...this.appSettings, 
-            [key]: [...new Set(filteredFlows)], 
-            ALL_FLOWS: flows.length, 
-            ALL_SCREENSAVERS: homeyScreensavers.length, 
-            ALL_VARIABLES: this.ALL_VARIABLES, 
-            ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
-        });
-
-        await this[`token_${key}`].setValue(filteredFlows.length);
-        await this.checkFlowDiff(key, filteredFlows, flowArray)
+            await this[`token_${key}`].setValue(filteredFlows.length);
+            await this.checkFlowDiff(key, filteredFlows, flowArray)
+        } catch (error) {
+            this.error('[findLogic]', error);
+        }
     }
 
     async findUnusedLogic(key) {
-        const logicArray = this.appSettings[key];
-        const homeyVariables = Object.values(await this._api.logic.getVariables());
-        const logicVariables = this.LOGIC_VARIABLES;
+        try {
+            const logicArray = this.appSettings[key];
+            const homeyVariables = Object.values(await this._api.logic.getVariables());
+            const logicVariables = this.LOGIC_VARIABLES;
 
-        this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);
-        let logic = homeyVariables.filter((r) => logicVariables.indexOf(`homey:manager:logic|${r.id}`) === -1);
+            this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);
+            let logic = homeyVariables.filter((r) => logicVariables.indexOf(`homey:manager:logic|${r.id}`) === -1);
 
-        logic = logic.map((f) => ({name: f.name, id: f.id}));
-    
-        if (logicArray.length !== logic.length) {
-          await this.updateSettings({...this.appSettings, [key]: [...new Set(logic)]});
-          await this[`token_${key}`].setValue(logic.length);
-          await this.checkFlowDiff(key, logic, logicArray, true);
+            logic = logic.map((f) => ({name: f.name, id: f.id}));
+        
+            if (logicArray.length !== logic.length) {
+            await this.updateSettings({...this.appSettings, [key]: [...new Set(logic)]});
+            await this[`token_${key}`].setValue(logic.length);
+            await this.checkFlowDiff(key, logic, logicArray, true);
+            }
+        } catch (error) {
+            this.error('[findUnusedLogic]', error);
         }
     }
 
@@ -629,7 +653,7 @@ class App extends Homey.App {
             });
         }
       } catch (error) {
-        this.error(error);
+        this.error('[checkFlowDiff]', error);
       }
     }
 

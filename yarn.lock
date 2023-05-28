@@ -94,10 +94,10 @@ has-cors@1.1.0:
   resolved "https://registry.yarnpkg.com/has-cors/-/has-cors-1.1.0.tgz#5e474793f7ea9843d1bb99c23eef49ff126fff39"
   integrity sha512-g5VNKdkFuUuVCP9gYfDJHjK2nqdQJ7aDLTnycnc2+RvsOQbuLdF5pm7vuE5J76SEBIQjs4kQY/BWq74JUmjbXA==
 
-homey-api@^3.0.0-rc.11:
-  version "3.0.0-rc.11"
-  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.0.0-rc.11.tgz#a561456c4fb1fb032cb6f75ef9f0d3ed2383b5db"
-  integrity sha512-Xhdw8VvY6BqX68gGOwL0DWaiDII0QYydtwsze0x1prQAKcVLpZKsNhlMpx1ZkscOKkcoiGZaCwLZiC2E827SpA==
+homey-api@^3.0.0-rc.20:
+  version "3.0.0-rc.20"
+  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.0.0-rc.20.tgz#792c4c7ffe0617a3bc224cd873acfec6ae4d723d"
+  integrity sha512-OAuOVxO/p2BChsPtPNk1ld2OUrJWEmGW/qakOsyn9pKioWVi4ihEDVgFezj5dsYgSBykkeXCugZkdyr/RHwc8w==
   dependencies:
     core-js "^3.19.1"
     node-fetch "^2.6.7"
