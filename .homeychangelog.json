@@ -250,5 +250,8 @@
   },
   "1.22.0": {
     "en": "NEW: update FlowChecker to Athom WebAPI V3"
+  },
+  "1.22.1": {
+    "en": "FIX: BetterLogic | FIX: Flow Utilities"
   }
 }
