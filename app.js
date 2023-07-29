@@ -324,6 +324,7 @@ class App extends Homey.App {
             } else if(key === 'DISABLED') {
                 const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => !flow.enabled);
                 const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => !aflow.enabled);;
+
                 flows = [...f, ...af];
             } else if(key === 'UNUSED_FLOWS') {
                 const allFlows = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
@@ -443,15 +444,15 @@ class App extends Homey.App {
                         }
 
                         if(f.id && f.id.includes(`homey:app:${externalAppKeyBL}`) && f.args.variable && f.args.variable.name) {
-                            blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
+                            blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
                         } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyBL}` && f.args.variable && f.args.variable.name) {
-                            blVariables.push(`homey:app:${externalAppKeyBL}:${f.args.variable.name}`);
+                            blVariables.push(`homey:app:${externalAppKeyBL}|${f.args.variable.name}`);
                         }
 
                         if(f.id && f.id.includes(`homey:app:${externalAppKeyFU}`) && f.args.variable && f.args.variable.name) {
-                            fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
+                            fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                         } else if(f.ownerUri && f.ownerUri === `homey:app:${externalAppKeyFU}` && f.args.variable && f.args.variable.name) {
-                            fuVariables.push(`homey:app:${externalAppKeyFU}:${f.args.variable.name}`);
+                            fuVariables.push(`homey:app:${externalAppKeyFU}|${f.args.variable.name}`);
                         }
 
                         if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.uri && f.args.screensaver.uri !== 'homey:manager:ledring') {
