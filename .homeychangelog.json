@@ -256,5 +256,8 @@
   },
   "1.22.2": {
     "en": "FIX: BetterLogic | FIX: Flow Utilities"
+  },
+  "1.22.3": {
+    "en": "FIX: debug Better Logic HP23"
   }
 }
