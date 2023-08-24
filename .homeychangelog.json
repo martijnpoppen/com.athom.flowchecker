@@ -283,5 +283,8 @@
   },
   "1.23.5": {
     "en": "FIX: is broken"
+  },
+  "1.23.6": {
+    "en": "FIX: revert isbroken check - error"
   }
 }
