@@ -141,7 +141,7 @@ class App extends Homey.App {
         if(!('HOMEY_VERSION' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
-                HOMEY_VERSION: Homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
+                HOMEY_VERSION: this.homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
             });
         }
       } else {
@@ -317,9 +317,8 @@ class App extends Homey.App {
             let flows = [];
 
             if(key === 'BROKEN') {
-                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => flow.broken);
-                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => aflow.broken);;
-                
+                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => flow.isBroken());
+                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => aflow.isBroken());
                 flows = [...f, ...af];
             } else if(key === 'DISABLED') {
                 const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => !flow.enabled);
@@ -357,7 +356,7 @@ class App extends Homey.App {
         try {
             const flowArray = this.appSettings[key];
             const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
-            const screensavers = await this._api.ledring.getScreensavers().catch(e => { console.log(e); return []});
+            const screensavers = this.homey.platformVersion === 2 ? [] : await this._api.ledring.getScreensavers().catch(e => { console.log(e); return []});
 
             this.ALL_VARIABLES = 0;
             this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
@@ -407,7 +406,7 @@ class App extends Homey.App {
             const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
             const flows = [...f, ...af];
 
-            let filteredFlows = flows.filter(f => !f.broken).filter(flow =>  {
+            let filteredFlows = flows.filter(f => !f.isBroken()).filter(flow =>  {
                 let logicVariables = [];
                 let deviceVariables = [];
                 let appVariables = [];
