@@ -265,5 +265,8 @@
   },
   "1.22.5": {
     "en": "FIX: broken flows"
+  },
+  "1.23.0": {
+    "en": "FIX: broken flows check"
   }
 }
