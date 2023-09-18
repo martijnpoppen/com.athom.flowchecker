@@ -286,5 +286,8 @@
   },
   "1.23.6": {
     "en": "FIX: revert isbroken check - error"
+  },
+  "1.24.0": {
+    "en": "NEW: isBroken check for Homey API v3"
   }
 }
