@@ -289,5 +289,8 @@
   },
   "1.24.0": {
     "en": "NEW: isBroken check for Homey API v3"
+  },
+  "1.24.1": {
+    "en": " NEW: isBroken check for Homey API v3"
   }
 }
