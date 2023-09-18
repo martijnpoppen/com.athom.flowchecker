@@ -317,9 +317,31 @@ class App extends Homey.App {
             let flows = [];
 
             if(key === 'BROKEN') {
-                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => flow.isBroken());
-                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => aflow.isBroken());
-                flows = [...f, ...af];
+                await this._api.flow.connect();
+                await this._api.flowtoken.connect();
+                await sleep(2000);
+                
+                // Fill all caches
+                const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
+                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
+                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
+                
+                const flowsArray = [...f, ...af];
+                let promises = [];
+                
+                // Add promises to array
+                for(let i = 0; i < flowsArray.length; i++) {
+                    promises.push(flowsArray[i].isBroken());
+                }
+                
+                // Resolve all promises
+                const brokenArray = await Promise.all(promises);
+
+                // add broken flows to array
+                for(let i = 0; i < brokenArray.length; i++) {
+
+                    if(brokenArray[i]) flows.push(flowsArray[i]);
+                }
             } else if(key === 'DISABLED') {
                 const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => !flow.enabled);
                 const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => !aflow.enabled);;
@@ -491,7 +513,7 @@ class App extends Homey.App {
                         
                         if(logicApp) {
                             const match = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
-                            const varArray = match ? match.filter(l => l !== externalAppKeyBL).map(l => `homey:app:${l}`) : [];
+                            const varArray = match ? match.filter(l => l !== externalAppKeyBL & l !== externalAppKeyFU).map(l => `homey:app:${l}`) : [];
                             appVariables = [...appVariables, ...varArray];
                         }
 
@@ -566,7 +588,7 @@ class App extends Homey.App {
             
             filteredFlows = filteredFlows.map((f) => {
                 const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
-                const logicMessage = logicMessages.find(m => m.id === f.id);
+                const logicMessage = logicMessages.find(m => m.id === f.id) || 'Unknown';
                 const folderName = folder ? folder.name : 'unknown';
 
                 return {name: f.name, id: f.id, folder: folderName, logicMessage: logicMessage.msg };

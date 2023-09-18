@@ -120,10 +120,10 @@ has-cors@1.1.0:
   resolved "https://registry.yarnpkg.com/has-cors/-/has-cors-1.1.0.tgz#5e474793f7ea9843d1bb99c23eef49ff126fff39"
   integrity sha512-g5VNKdkFuUuVCP9gYfDJHjK2nqdQJ7aDLTnycnc2+RvsOQbuLdF5pm7vuE5J76SEBIQjs4kQY/BWq74JUmjbXA==
 
-homey-api@^3.0.9:
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.0.9.tgz#1aad6c9757892e1db63030911d29cb059dd863cb"
-  integrity sha512-zaDGMlYIX7UqgRA4EKtLtbM4qMsH4ABYkBmuM6TdDhyuckEGa3TCKQLYeQSEtDDDlVRskCA04urj66197VXp0g==
+homey-api@^3.0.15:
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.0.15.tgz#09fbb5cd236c4113bc469b5b41a2c6f69f52dc08"
+  integrity sha512-hYcKE0eqyCk4kmYBFh2rIiqvaWNik3qnW1+F+Oy9fKWbrlHDn6ybzt7ZvU+cGucnqrvr6h0uFlpmxqHYvUVYMw==
   dependencies:
     core-js "^3.19.1"
     form-data "^4.0.0"
