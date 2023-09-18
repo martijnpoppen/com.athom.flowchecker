@@ -295,5 +295,8 @@
   },
   "1.24.2": {
     "en": "FIX: isbroken error"
+  },
+  "1.25.0": {
+    "en": "REVERT: isBroken check. crashing app on some homey versions"
   }
 }
