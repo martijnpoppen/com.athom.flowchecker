@@ -301,5 +301,8 @@
   },
   "1.25.1": {
     "en": "REVERT: isBroken check. crashing app on some homey versions"
+  },
+  "1.25.2": {
+    "en": "FIX: app error - update Athom API"
   }
 }
