@@ -304,5 +304,8 @@
   },
   "1.25.2": {
     "en": "FIX: app error - update Athom API"
+  },
+  "1.26.0": {
+    "en": "NEW: isBroken for HP19/HP23 (HomeyApi V3)"
   }
 }
