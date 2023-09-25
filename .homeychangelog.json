@@ -310,5 +310,8 @@
   },
   "1.26.1": {
     "en": "FIX: app error"
+  },
+  "1.26.2": {
+    "en": "FIX: HP version check | FIX: add logs to broken flow check"
   }
 }
