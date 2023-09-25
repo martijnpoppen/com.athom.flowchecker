@@ -307,5 +307,8 @@
   },
   "1.26.0": {
     "en": "NEW: isBroken for HP19/HP23 (HomeyApi V3)"
+  },
+  "1.26.1": {
+    "en": "FIX: app error"
   }
 }
