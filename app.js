@@ -138,12 +138,10 @@ class App extends Homey.App {
             });
         }
 
-        if(!('HOMEY_VERSION' in this.appSettings)) {
-            await this.updateSettings({
-                ...this.appSettings,
-                HOMEY_VERSION: this.homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
-            });
-        }
+        await this.updateSettings({
+            ...this.appSettings,
+            HOMEY_VERSION: this.homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
+        });
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -328,18 +326,27 @@ class App extends Homey.App {
                 
                 const flowsArray = [...f, ...af];
                 let promises = [];
+                let brokenArray = [];
                 
-                // Add promises to array
-                for(let i = 0; i < flowsArray.length; i++) {
-                    promises.push(flowsArray[i].isBroken());
+                try {
+                    // Add promises to array
+                    for(let i = 0; i < flowsArray.length; i++) {
+                        promises.push(flowsArray[i].isBroken());
+                    }
+                
+                    // Resolve all promises
+              
+                    brokenArray = await Promise.all(promises);
+                } catch (error) {
+                    brokenArray = [];
                 }
+
+                this.log(`[findFlows] ${key} - promises: `, promises.length);
+                this.log(`[findFlows] ${key} - brokenArray: `, brokenArray.length, brokenArray);
                 
-                // Resolve all promises
-                const brokenArray = await Promise.all(promises);
 
                 // add broken flows to array
                 for(let i = 0; i < brokenArray.length; i++) {
-
                     if(brokenArray[i]) flows.push(flowsArray[i]);
                 }
             } else if(key === 'DISABLED') {
@@ -424,11 +431,12 @@ class App extends Homey.App {
             }
 
             const logicMessages = [];
+
             const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
             const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
             const flows = [...f, ...af];
 
-            let filteredFlows = flows.filter(f => !f.isBroken()).filter(flow =>  {
+            let filteredFlows = flows.filter(flow =>  {
                 let logicVariables = [];
                 let deviceVariables = [];
                 let appVariables = [];
