@@ -272,7 +272,7 @@ class App extends Homey.App {
 
     async setFolders() {
         try {
-            const FOLDERS = Object.values(await this._api.flow.getFlowFolders().catch(e => { console.log(e); return {}}));
+            const FOLDERS = this.API_DATA.folders;
             await this.updateSettings({...this.appSettings, 'FOLDERS': [...new Set(FOLDERS)]});
         } catch (error) {
             this.error('[setFolders]', error);
@@ -282,6 +282,24 @@ class App extends Homey.App {
   
     async findFlowDefects(initial = false, force = false) {
       try {
+        await this._api.flow.connect();
+        await this._api.flowtoken.connect();
+        await sleep(2000);
+        
+        // Fill all caches
+        const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
+        const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
+        const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
+        const folders = Object.values(await this._api.flow.getFlowFolders().catch(e => { console.log(e); return {}}));
+        const apps = Object.values(await this._api.apps.getApps().catch(e => { console.log(e); return {}}));
+        const variables = Object.values(await this._api.logic.getVariables().catch(e => { console.log(e); return {}}));
+        const screensavers = Object.values(await this._api.ledring.getScreensavers().catch(e => { console.log(e); return []}))
+       
+
+        this.API_DATA = {
+            flowTokens, f, af, folders, apps, variables, screensavers
+        }
+
         await this.setFolders();
 
         if(!initial || this.appSettings.CHECK_ON_STARTUP) {
@@ -315,14 +333,7 @@ class App extends Homey.App {
             let flows = [];
 
             if(key === 'BROKEN') {
-                await this._api.flow.connect();
-                await this._api.flowtoken.connect();
-                await sleep(2000);
-                
-                // Fill all caches
-                const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
-                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
-                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
+               
                 
                 const flowsArray = [...f, ...af];
                 let promises = [];
@@ -350,13 +361,10 @@ class App extends Homey.App {
                     if(brokenArray[i]) flows.push(flowsArray[i]);
                 }
             } else if(key === 'DISABLED') {
-                const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}})).filter(flow => !flow.enabled);
-                const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}})).filter(aflow => !aflow.enabled);;
-
-                flows = [...f, ...af];
+                flows = [...this.API_DATA.f, ...this.API_DATA.af].filter(flow => !flow.enabled);
             } else if(key === 'UNUSED_FLOWS') {
-                const allFlows = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
-                const allAFFlows = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
+                const allFlows = this.API_DATA.f;
+                const allAFFlows = this.API_DATA.af;
 
                 const actions = allFlows.flatMap(f => f.actions.filter(a => a.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
                 const AFactions = allAFFlows.flatMap(flow => Object.values(flow.cards).filter(f => f.type === 'action' && f.id.includes('homey:manager:flow:programmatic_trigger')).flatMap(b => b.args.flow.id));
@@ -384,8 +392,8 @@ class App extends Homey.App {
     async findLogic(key) {
         try {
             const flowArray = this.appSettings[key];
-            const flowTokens = Object.values(await this._api.flowtoken.getFlowTokens().catch(e => { console.log(e); return {}}));
-            const screensavers = this.homey.platformVersion === 2 ? [] : await this._api.ledring.getScreensavers().catch(e => { console.log(e); return []});
+            const flowTokens = this.API_DATA.flowTokens;
+            const screensavers = this.API_DATA.screensavers
 
             this.ALL_VARIABLES = 0;
             this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
@@ -403,7 +411,7 @@ class App extends Homey.App {
             this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers, homeyScreensavers.length);
 
 
-            let homeyApps = Object.values(await this._api.apps.getApps().catch(e => { console.log(e); return {}}));
+            let homeyApps = this.API_DATA.apps
             homeyApps = homeyApps.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
 
             // -------------APP SPECIFIC -----------------------
@@ -431,10 +439,7 @@ class App extends Homey.App {
             }
 
             const logicMessages = [];
-
-            const f = Object.values(await this._api.flow.getFlows().catch(e => { console.log(e); return {}}));
-            const af = Object.values(await this._api.flow.getAdvancedFlows().catch(e => { console.log(e); return {}}));
-            const flows = [...f, ...af];
+            const flows = [...this.API_DATA.f, ...this.API_DATA.af];
 
             let filteredFlows = flows.filter(flow =>  {
                 let logicVariables = [];
@@ -625,7 +630,7 @@ class App extends Homey.App {
     async findUnusedLogic(key) {
         try {
             const logicArray = this.appSettings[key];
-            const homeyVariables = Object.values(await this._api.logic.getVariables());
+            const homeyVariables = this.API_DATA.variables;
             const logicVariables = this.LOGIC_VARIABLES;
 
             this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);

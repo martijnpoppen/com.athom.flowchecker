@@ -313,5 +313,8 @@
   },
   "1.26.2": {
     "en": "FIX: HP version check | FIX: add logs to broken flow check"
+  },
+  "1.26.3": {
+    "en": "OPT: update Athom API to 3.0.18"
   }
 }
