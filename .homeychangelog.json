@@ -319,5 +319,8 @@
   },
   "1.26.4": {
     "en": "FIX: combine all api calls together"
+  },
+  "1.26.5": {
+    "en": "FIX: error"
   }
 }
