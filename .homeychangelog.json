@@ -316,5 +316,8 @@
   },
   "1.26.3": {
     "en": "OPT: update Athom API to 3.0.18"
+  },
+  "1.26.4": {
+    "en": "FIX: combine all api calls together"
   }
 }
