@@ -335,7 +335,7 @@ class App extends Homey.App {
             if(key === 'BROKEN') {
                
                 
-                const flowsArray = [...f, ...af];
+                const flowsArray = [...this.API_DATA.f, ...this.API_DATA.af];
                 let promises = [];
                 let brokenArray = [];
                 
@@ -393,7 +393,7 @@ class App extends Homey.App {
         try {
             const flowArray = this.appSettings[key];
             const flowTokens = this.API_DATA.flowTokens;
-            const screensavers = this.API_DATA.screensavers
+            const screensavers = this.appSettings.HOMEY_VERSION === 'Homey2023' ? [] : this.API_DATA.screensavers;
 
             this.ALL_VARIABLES = 0;
             this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
