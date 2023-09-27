@@ -328,5 +328,8 @@
   },
   "1.26.7": {
     "en": "FIX: disable screensavers on HP23"
+  },
+  "1.26.8": {
+    "en": "FIX: disable screensavers on HP23"
   }
 }
