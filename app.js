@@ -546,6 +546,10 @@ class App extends Homey.App {
 
                 const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length+fuVariables.length;
 
+                if(this.appSettings.HOMEY_VERSION === 'Homey2023') {
+                    screensaverVariables = [];
+                }
+
                 this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
                 this.ALL_VARIABLES_OBJ = {
                     logic: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.logic + logicVariables.length : logicVariables.length,
