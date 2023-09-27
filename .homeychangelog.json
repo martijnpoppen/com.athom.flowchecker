@@ -325,5 +325,8 @@
   },
   "1.26.6": {
     "en": "FIX: typo"
+  },
+  "1.26.7": {
+    "en": "FIX: disable screensavers on HP23"
   }
 }
