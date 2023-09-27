@@ -495,9 +495,9 @@ class App extends Homey.App {
                             appVariables.push(`${f.args.screensaver.uri}`);
                         }
 
-                        if(f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.id) {
+                        if(this.appSettings.HOMEY_VERSION !== 'Homey2023' && f.id && f.id.includes('homey:manager:ledring') && f.args.screensaver && f.args.screensaver.id) {
                             screensaverVariables.push(`${f.args.screensaver.id}`);
-                        } else if(f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
+                        } else if(this.appSettings.HOMEY_VERSION  !== 'Homey2023' && f.ownerUri && f.ownerUri === 'homey:manager:ledring' && f.args.screensaver && f.args.screensaver.id) {
                             screensaverVariables.push(`${f.args.screensaver.id}`);
                         }
 
@@ -545,10 +545,6 @@ class App extends Homey.App {
                 });
 
                 const variablesLength = logicVariables.length+deviceVariables.length+appVariables.length+blVariables.length+fuVariables.length;
-
-                if(this.appSettings.HOMEY_VERSION === 'Homey2023') {
-                    screensaverVariables = [];
-                }
 
                 this.ALL_VARIABLES = this.ALL_VARIABLES+variablesLength;
                 this.ALL_VARIABLES_OBJ = {
