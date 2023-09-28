@@ -334,5 +334,8 @@
   },
   "1.26.9": {
     "en": "FIX: link in settings to advanced flows"
+  },
+  "1.26.10": {
+    "en": "FIX: advanced link in settings"
   }
 }
