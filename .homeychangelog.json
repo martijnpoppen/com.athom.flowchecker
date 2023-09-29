@@ -337,5 +337,8 @@
   },
   "1.26.10": {
     "en": "FIX: advanced link in settings"
+  },
+  "1.26.11": {
+    "en": "FIX: revert isBroken check "
   }
 }
