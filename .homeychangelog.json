@@ -340,5 +340,8 @@
   },
   "1.26.11": {
     "en": "FIX: revert isBroken check "
+  },
+  "1.26.12": {
+    "en": "NEW: update Homey-api to v3.0.20"
   }
 }
