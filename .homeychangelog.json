@@ -346,5 +346,8 @@
   },
   "1.26.13": {
     "en": "FIX: random app crash"
+  },
+  "1.26.14": {
+    "en": "FIX: app crash"
   }
 }
