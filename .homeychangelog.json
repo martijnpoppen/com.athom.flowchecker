@@ -343,5 +343,8 @@
   },
   "1.26.12": {
     "en": "NEW: update Homey-api to v3.0.20"
+  },
+  "1.26.13": {
+    "en": "FIX: random app crash"
   }
 }
