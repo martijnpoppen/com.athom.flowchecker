@@ -101,7 +101,8 @@ function flowMapper(data, flows) {
             folder = f.folder;
         }
 
-        html += `<div class="row"><label class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows/${f.id}' target='_top'>${escapeHtml(f.name)}</a></label></div>`;
+        const advanced = f.advanced ? '/advanced' : '';
+        html += `<div class="row"><label class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top'>${escapeHtml(f.name)}</a></label></div>`;
     });
 
     return html;

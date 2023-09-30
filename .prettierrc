@@ -4,9 +4,9 @@
       "files": ["*.html", "**/*.js"],
       "options": {
         "semi": true,
-        "singleQuote": true,
+        "singleQuote": false,
         "tabWidth": 4,
-        "printWidth": 200,
+        "printWidth": 600,
         "trailingComma": "none"
       }
     }
