@@ -676,7 +676,7 @@ class App extends Homey.App {
             this.log(`[flowDiff] ${key} - flowDiff: `, flowDiff);
             this.log(`[flowDiff] ${key} - flowDiffReverse: `, flowDiffReverse);
 
-            if (!this.trigger && !this.trigger['trigger_FIXED_LOGIC']) {
+            if (!this.trigger && !Object.keys(this.trigger).length) {
                 await this.setFlowTriggerCards();
             }
   
@@ -687,7 +687,7 @@ class App extends Homey.App {
 
             if(index < 10) {
                 const folder = flow.folder ? flow.folder : 'unknown';
-                await this.homey.flow.getTriggerCard(`trigger_${key}`).trigger({flow: flow.name, id: flow.id, type: key, folder})
+                await this.trigger[key].trigger({flow: flow.name, id: flow.id, type: key, folder})
                     .catch( this.error )
                     .then(this.log(`[flowDiff] ${key} - Triggered: "${flow.name} | ${flow.id}"`)); 
             }
@@ -696,7 +696,7 @@ class App extends Homey.App {
 
         if(flowDiffReverse.length && logic) {
             flowDiffReverse.forEach(async logic =>  {
-              await this.homey.flow.getTriggerCard(`trigger_FIXED_LOGIC`).trigger({logic: logic.name, id: logic.id})
+              await this.trigger[`trigger_FIXED_LOGIC`].trigger({logic: logic.name, id: logic.id})
                   .catch( this.error )
                   .then(this.log(`[flowDiff] FIXED_LOGIC - Triggered: "${logic.name} | ${logic.id}"`)); 
             });
@@ -705,7 +705,7 @@ class App extends Homey.App {
 
                 if(index < 10) {
                     const folder = flow.folder ? flow.folder : 'unknown';
-                    await this.homey.flow.getTriggerCard(`trigger_FIXED`).trigger({flow: flow.name, id: flow.id, type: key, folder})
+                    await this.trigger[`trigger_FIXED`].trigger({flow: flow.name, id: flow.id, type: key, folder})
                         .catch( this.error )
                         .then(this.log(`[flowDiff] FIXED - Triggered: "${flow.name} | ${flow.id}"`)); 
                 }
