@@ -349,5 +349,8 @@
   },
   "1.26.14": {
     "en": "FIX: app crash"
+  },
+  "1.26.15": {
+    "en": "FIX: app settings"
   }
 }
