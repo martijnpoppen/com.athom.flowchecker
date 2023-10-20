@@ -22,26 +22,29 @@ class App extends Homey.App {
   // -------------------- INIT ----------------------
 
   async onInit() {
-    this.log(`[onInit] ${this.homey.manifest.id} - ${this.homey.manifest.version} started...`);
+      this.log(`[onInit] ${this.homey.manifest.id} - ${this.homey.manifest.version} started...`);
 
-    await this.initSettings();
+      // Fix Homey API bug for version <= 8
+      const myHomey = this.homey.platform ? this.homey : { ...this.homey, platform: "local", platformVersion: 1 };
 
-    this.log("[onInit] - Loaded settings", {...this.appSettings, FOLDERS: 'LOG'});
+      await this.initSettings();
 
-    this._api = await HomeyAPI.createAppAPI({
-        homey: this.homey,
-        debug: false
-    });
+      this.log("[onInit] - Loaded settings", { ...this.appSettings, FOLDERS: "LOG" });
 
-    await flowConditions.init(this.homey);
-    await flowActions.init(this.homey);
+      this._api = await HomeyAPI.createAppAPI({
+          homey: this.homey,
+          debug: false
+      });
 
-    // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
-    await this.setHomeyInfo();
-    await this.createTokens();
+      await flowConditions.init(this.homey);
+      await flowActions.init(this.homey);
 
-    await sleep(15000);
-    await this.findFlowDefects(true);
+      // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
+      await this.setHomeyInfo();
+      await this.createTokens();
+
+      await sleep(15000);
+      await this.findFlowDefects(true);
   }
 
   // -------------------- SETTINGS ----------------------
