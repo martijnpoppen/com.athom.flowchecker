@@ -301,20 +301,18 @@ class App extends Homey.App {
 
     async findFlowDefects(initial = false, force = false) {
         try {
-
+            if(!initial || this.appSettings.CHECK_ON_STARTUP) {
+                await this.getApiData();
+                await this.setFolders();
+                await this.findFlows('BROKEN');
+                await this.findFlows('DISABLED');
+                await this.findFlows('UNUSED_FLOWS');
   
-          if(!initial || this.appSettings.CHECK_ON_STARTUP) {
-            await this.getApiData();
-            await this.setFolders();
-            await this.findFlows('BROKEN');
-            await this.findFlows('DISABLED');
-            await this.findFlows('UNUSED_FLOWS');
-  
-              if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
-                  this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
-                  await this.findLogic('BROKEN_VARIABLE');
-                  await this.findUnusedLogic('UNUSED_LOGIC');
-              }
+                if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
+                    this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
+                    await this.findLogic('BROKEN_VARIABLE');
+                    await this.findUnusedLogic('UNUSED_LOGIC');
+                }
           }
   
           if(initial && this.appSettings.INTERVAL_ENABLED) {
