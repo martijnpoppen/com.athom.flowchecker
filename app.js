@@ -393,13 +393,13 @@ class App extends Homey.App {
             this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
             const homeyVariables = flowTokens.filter(f => f.id.includes(`homey:manager:logic`)).map(f => `homey:manager:logic|${f.id.split('homey:manager:logic:')[1]}`);
-            this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables, homeyVariables.length);
+            this.log(`[findLogic] ${key} - homeyVariables: `, homeyVariables.length);
             
             const homeyDevices = flowTokens.filter(f => f.id.includes(`homey:device`)).map(f => `${replaceLast(f.id, ':', '|')}`);
-            this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices, homeyDevices.length);
+            this.log(`[findLogic] ${key} - homeyDevices: `, homeyDevices.length);
 
             const homeyScreensavers = screensavers.map(f => f.id);
-            this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers, homeyScreensavers.length);
+            this.log(`[findLogic] ${key} - homeyScreensavers: `, homeyScreensavers.length);
 
 
             let homeyApps = this.API_DATA.APPS.filter(app => app.enabled && !app.crashed).map((f) => (`homey:app:${f.id}`));
