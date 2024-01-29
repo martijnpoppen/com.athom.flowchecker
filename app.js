@@ -340,7 +340,8 @@ class App extends Homey.App {
                 try {
                     // Add promises to array
                     for(let i = 0; i < flowsArray.length; i++) {
-                        if(await flowsArray[i].isBroken()) {
+                        if(await flowsArray[i].isBroken().catch(e => { this.log(`[findFlows] ${key} - isBroken Error: `, e); return true})){
+                            console.log(`[findFlows] ${key} - isBroken: `, flowsArray[i].name);
                             flows.push(flowsArray[i]);
                         }
                     }
