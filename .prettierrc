@@ -6,7 +6,7 @@
         "semi": true,
         "singleQuote": false,
         "tabWidth": 4,
-        "printWidth": 600,
+        "printWidth": 1200,
         "trailingComma": "none"
       }
     }

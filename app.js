@@ -301,13 +301,14 @@ class App extends Homey.App {
 
     async findFlowDefects(initial = false, force = false) {
         try {
-          await this.getApiData();
-          await this.setFolders();
+
   
           if(!initial || this.appSettings.CHECK_ON_STARTUP) {
-              await this.findFlows('BROKEN');
-              await this.findFlows('DISABLED');
-              await this.findFlows('UNUSED_FLOWS');
+            await this.getApiData();
+            await this.setFolders();
+            await this.findFlows('BROKEN');
+            await this.findFlows('DISABLED');
+            await this.findFlows('UNUSED_FLOWS');
   
               if(force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
                   this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
@@ -337,28 +338,16 @@ class App extends Homey.App {
             if(key === 'BROKEN') {
                 
                 const flowsArray = [...this.API_DATA.FLOWS, ...this.API_DATA.ADVANCED_FLOWS];
-                let promises = [];
-                let brokenArray = [];
                 
                 try {
                     // Add promises to array
                     for(let i = 0; i < flowsArray.length; i++) {
-                        promises.push(flowsArray[i].isBroken());
+                        if(await flowsArray[i].isBroken()) {
+                            flows.push(flowsArray[i]);
+                        }
                     }
-                
-                    // Resolve all promises
-                    brokenArray = await Promise.all(promises);
                 } catch (error) {
-                    brokenArray = [];
-                }
-
-                this.log(`[findFlows] ${key} - promises: `, promises.length);
-                this.log(`[findFlows] ${key} - brokenArray: `, brokenArray.length, brokenArray);
-
-
-                // add broken flows to array
-                for(let i = 0; i < brokenArray.length; i++) {
-                    if(brokenArray[i]) flows.push(flowsArray[i]);
+                    this.log(`[findFlows] ${key} - Error: `, error);
                 }
             } else if(key === 'DISABLED') {
               
