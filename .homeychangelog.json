@@ -361,5 +361,8 @@
   },
   "1.26.18": {
     "en": "FIX: app crash"
+  },
+  "1.27.0": {
+    "en": "NEW: Homey-API 3.4.19 | NEW: call all API's once (improve performance) | FIX: Broken flows"
   }
 }
