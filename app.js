@@ -26,7 +26,7 @@ class App extends Homey.App {
 
     await this.initSettings();
 
-    this.log("[onInit] - Loaded settings", {...this.appSettings, FOLDERS: 'LOG'});
+    this.log("[onInit] - Loaded settings:", {...this.appSettings, FOLDERS: 'LOG', FILTERED_FOLDERS: 'LOG', BROKEN: 'LOG', DISABLED: 'LOG', BROKEN_VARIABLE: 'LOG', UNUSED_FLOWS: 'LOG', UNUSED_LOGIC: 'LOG'});
 
     this._api = await HomeyAPI.createAppAPI({
         homey: this.homey,
@@ -39,7 +39,6 @@ class App extends Homey.App {
     await flowActions.init(this.homey);
 
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
-    await this.setHomeyInfo();
     await this.createTokens();
 
     await sleep(15000);
@@ -69,14 +68,14 @@ class App extends Homey.App {
                 ...this.appSettings,
                 BROKEN_VARIABLE: [],
                 NOTIFICATION_BROKEN_VARIABLE: true
-              });
+              }, false);
         }
 
         if(!('INTERVAL_FLOWS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 INTERVAL_FLOWS: 3
-            });
+            }, false);
         }
 
         if(!('ALL_FLOWS' in this.appSettings)) {
@@ -84,21 +83,21 @@ class App extends Homey.App {
                 ...this.appSettings,
                 ALL_FLOWS: 0,
                 ALL_VARIABLES: 0
-            });
+            }, false);
         }
 
         if(!('ALL_VARIABLES_OBJ' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 ALL_VARIABLES_OBJ: {}
-            });
+            }, false);
         }
 
         if(!('INTERVAL_ENABLED' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 INTERVAL_ENABLED: true
-            });
+            }, false);
         }
 
         if(!('UNUSED_FLOWS' in this.appSettings)) {
@@ -108,7 +107,7 @@ class App extends Homey.App {
                 UNUSED_LOGIC: [],
                 NOTIFICATION_UNUSED_FLOWS: false,
                 NOTIFICATION_UNUSED_LOGIC: false
-              });
+              }, false);
         }
 
 
@@ -116,34 +115,42 @@ class App extends Homey.App {
             await this.updateSettings({
                 ...this.appSettings,
                 CHECK_ON_STARTUP: false
-            });
+            }, false);
         }
 
         if(!('FOLDERS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 FOLDERS: []
-            });
+            }, false);
         }
 
         if(!('FILTERED_FOLDERS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 FILTERED_FOLDERS: []
-            });
+            }, false);
         }
 
         if(!('ALL_SCREENSAVERS' in this.appSettings)) {
             await this.updateSettings({
                 ...this.appSettings,
                 ALL_SCREENSAVERS: 0
-            });
+            }, false);
         }
 
+        
+            await this.updateSettings({
+                ...this.appSettings,
+                HOMEY_VERSION: this.homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
+            }, false);
+        
+
+        const homeyCloudId = await this.homey.cloud.getHomeyId()
         await this.updateSettings({
             ...this.appSettings,
-            HOMEY_VERSION: this.homey.platformVersion === 2 ? 'Homey2023' : 'Homey2019'
-        });
+            HOMEY_ID: homeyCloudId
+        }, false);
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -174,16 +181,16 @@ class App extends Homey.App {
     }
   }
 
-  async updateSettings(settings) {
+  async updateSettings(settings, checkInterval = true) {
     try {
       const oldSettings = this.appSettings;
       
-      this.log("[updateSettings] - New settings:");
+      this.log("[updateSettings] - New settings:", {...settings, FOLDERS: 'LOG', FILTERED_FOLDERS: 'LOG', BROKEN: 'LOG', DISABLED: 'LOG', BROKEN_VARIABLE: 'LOG', UNUSED_FLOWS: 'LOG', UNUSED_LOGIC: 'LOG'});
       this.appSettings = settings;
       
       await this.homey.settings.set(_settingsKey, this.appSettings);  
 
-      if(oldSettings && oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
+      if(checkInterval && oldSettings && oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
         this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
         if(settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
             this.setFindFlowsInterval(true);
@@ -245,19 +252,6 @@ class App extends Homey.App {
       await this.token_UNUSED_LOGIC.setValue(this.appSettings.UNUSED_LOGIC.length);
   }
 
-  async setHomeyInfo() {
-      try {
-        const homeyInfo = await this._api.system.getInfo().catch(e => { console.log(e); return ''});
-
-        await this.updateSettings({
-            ...this.appSettings,
-            HOMEY_ID: homeyInfo.cloudId || ''
-        });
-      } catch (error) {
-        this.error('[setHomeyInfo]', error);
-      }
-  }
-
 // -------------------- FUNCTIONS ----------------------
 
     async setFindFlowsInterval(clear = false) {
@@ -304,7 +298,7 @@ class App extends Homey.App {
             if(!initial || this.appSettings.CHECK_ON_STARTUP) {
                 await this.getApiData();
                 await this.setFolders();
-                await this.findFlows('BROKEN');
+                // await this.findFlows('BROKEN');
                 await this.findFlows('DISABLED');
                 await this.findFlows('UNUSED_FLOWS');
   
@@ -340,7 +334,7 @@ class App extends Homey.App {
                 try {
                     // Add promises to array
                     for(let i = 0; i < flowsArray.length; i++) {
-                        if(await flowsArray[i].isBroken().catch(e => { this.log(`[findFlows] ${key} - isBroken Error: `, e); return true})){
+                        if(await flowsArray[i].isBroken().catch(e => { this.log(`[findFlows] ${key} - isBroken Error: `, e); return false})){
                             console.log(`[findFlows] ${key} - isBroken: `, flowsArray[i].name);
                             flows.push(flowsArray[i]);
                         }
@@ -370,7 +364,7 @@ class App extends Homey.App {
                 const folder = this.appSettings.FOLDERS.find(t => t.id === f.folder);
                 const folderName = folder ? folder.name : null;
 
-                return {name: f.name, id: f.id, folder: folderName };
+                return {name: f.name, id: f.id, folder: folderName, advanced: ('cards') in f};
             });
 
             await this.updateSettings({...this.appSettings, [key]: [...new Set(flows)]});
@@ -440,6 +434,11 @@ class App extends Homey.App {
                 let fuVariables = [];
                 let screensaverVariables = [];
                 let cards = []
+
+                // filter flows
+                if(this.appSettings.FILTERED_FOLDERS.includes(f.folder)) {
+                    return false;
+                }
 
                 if(flow.cards) {
                     cards = Object.values(flow.cards);
@@ -595,7 +594,7 @@ class App extends Homey.App {
                 const logicMessage = logicMessages.find(m => m.id === f.id) || 'Unknown';
                 const folderName = folder ? folder.name : 'unknown';
 
-                return {name: f.name, id: f.id, folder: folderName, logicMessage: logicMessage.msg };
+                return {name: f.name, id: f.id, folder: folderName, advanced: ('cards') in f, logicMessage: logicMessage.msg };
             });
 
             await this.token_ALL_FLOWS.setValue(flows.length);
