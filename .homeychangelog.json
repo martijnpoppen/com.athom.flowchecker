@@ -370,5 +370,8 @@
   },
   "1.27.2": {
     "en": "FIX: disable broken isBroken check in Homey API v3"
+  },
+  "1.27.3": {
+    "en": "FIX: url to flows in settings page"
   }
 }
