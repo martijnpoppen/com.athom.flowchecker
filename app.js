@@ -1,7 +1,7 @@
 "use strict";
 
 const Homey = require("homey");
-const { HomeyAPI } = require('homey-api');
+const { HomeyAPI } = require('./lib/homey-api');
 const flowConditions = require('./lib/flows/conditions');
 const flowActions = require('./lib/flows/actions');
 const { sleep, flattenObj, replaceLast } = require('./lib/helpers');
@@ -28,6 +28,7 @@ class App extends Homey.App {
 
     this.log("[onInit] - Loaded settings:", {...this.appSettings, FOLDERS: 'LOG', FILTERED_FOLDERS: 'LOG', BROKEN: 'LOG', DISABLED: 'LOG', BROKEN_VARIABLE: 'LOG', UNUSED_FLOWS: 'LOG', UNUSED_LOGIC: 'LOG'});
 
+    // Current version: 3.4.19
     this._api = await HomeyAPI.createAppAPI({
         homey: this.homey,
         debug: false
@@ -298,7 +299,7 @@ class App extends Homey.App {
             if(!initial || this.appSettings.CHECK_ON_STARTUP) {
                 await this.getApiData();
                 await this.setFolders();
-                // await this.findFlows('BROKEN');
+                await this.findFlows('BROKEN');
                 await this.findFlows('DISABLED');
                 await this.findFlows('UNUSED_FLOWS');
   
@@ -328,20 +329,11 @@ class App extends Homey.App {
             let flows = [];
 
             if(key === 'BROKEN') {
-                
-                const flowsArray = [...this.API_DATA.FLOWS, ...this.API_DATA.ADVANCED_FLOWS];
-                
-                try {
-                    // Add promises to array
-                    for(let i = 0; i < flowsArray.length; i++) {
-                        if(await flowsArray[i].isBroken().catch(e => { this.log(`[findFlows] ${key} - isBroken Error: `, e); return false})){
-                            console.log(`[findFlows] ${key} - isBroken: `, flowsArray[i].name);
-                            flows.push(flowsArray[i]);
-                        }
-                    }
-                } catch (error) {
-                    this.log(`[findFlows] ${key} - Error: `, error);
-                }
+                const f = this.API_DATA.FLOWS.filter(flow => flow.broken);
+                const af = this.API_DATA.ADVANCED_FLOWS.filter(aflow => aflow.broken);;
+
+                flows = [...f, ...af];
+             
             } else if(key === 'DISABLED') {
               
                 const f = this.API_DATA.FLOWS.filter(flow => !flow.enabled);
@@ -436,7 +428,7 @@ class App extends Homey.App {
                 let cards = []
 
                 // filter flows
-                if(this.appSettings.FILTERED_FOLDERS.includes(f.folder)) {
+                if(this.appSettings.FILTERED_FOLDERS.includes(flow.folder)) {
                     return false;
                 }
 
