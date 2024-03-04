@@ -373,5 +373,8 @@
   },
   "1.27.3": {
     "en": "FIX: url to flows in settings page"
+  },
+  "1.28.0": {
+    "en": "FIX: error in logic check | NEW: add is Broken check"
   }
 }
