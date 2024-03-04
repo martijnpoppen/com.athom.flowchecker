@@ -376,5 +376,8 @@
   },
   "1.28.0": {
     "en": "FIX: error in logic check | NEW: add is Broken check"
+  },
+  "1.28.1": {
+    "en": "FIX: error in logic check | NEW: add is Broken check"
   }
 }
