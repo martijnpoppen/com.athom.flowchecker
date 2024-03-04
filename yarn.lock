@@ -115,10 +115,10 @@ has-cors@1.1.0:
   resolved "https://registry.yarnpkg.com/has-cors/-/has-cors-1.1.0.tgz#5e474793f7ea9843d1bb99c23eef49ff126fff39"
   integrity sha512-g5VNKdkFuUuVCP9gYfDJHjK2nqdQJ7aDLTnycnc2+RvsOQbuLdF5pm7vuE5J76SEBIQjs4kQY/BWq74JUmjbXA==
 
-homey-api@^3.4.19:
-  version "3.4.19"
-  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.4.19.tgz#3e18839f77df79148bc24cc79451c50940dd573c"
-  integrity sha512-92UejL0NVVx6spXAOfdzunS043TYEU9KbNRWa6LcxIVwiYixbKFT7YzHySh25GRevPO4R8V0AfkdQwA51dxP1A==
+homey-api@^3.4.29:
+  version "3.4.29"
+  resolved "https://registry.yarnpkg.com/homey-api/-/homey-api-3.4.29.tgz#5f7b8c04dada60626feec78c0fd3bd554d569d47"
+  integrity sha512-wNBjHreR8uIs2TSk3kk+fwrnIro46jaRyBXojCvIXeyXRSK6Q+/Nl7li/rizHYFWWtHznPEG1LF/QFt8MI4RNw==
   dependencies:
     form-data "^4.0.0"
     node-fetch "^2.6.7"
