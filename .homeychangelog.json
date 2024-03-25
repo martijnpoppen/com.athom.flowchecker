@@ -379,5 +379,8 @@
   },
   "1.28.1": {
     "en": "FIX: error in logic check | NEW: add is Broken check"
+  },
+  "1.28.2": {
+    "en": "FIX: Flow Utilities variables marked as broken"
   }
 }
