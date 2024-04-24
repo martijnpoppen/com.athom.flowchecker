@@ -406,13 +406,11 @@ class App extends Homey.App {
             }
 
             if(homeyApps.includes(`homey:app:${externalAppKeyFU}`)) {
-                const flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU}).catch(e => { console.log(e); return []});;
+                let flowUtilsSettings = await this._api.apps.getAppSetting({ name: `${externalAppKeyFU}.settings`, id: externalAppKeyFU}).catch(e => { console.log(e); return []});;
+                const variables = flowUtilsSettings ? flowUtilsSettings.VARIABLES.map(p => `homey:app:${externalAppKeyFU}|${p}`) : [];
                 flowUtils = flowTokens.filter(f => f.id.includes(`homey:app:${externalAppKeyFU}`)).map(f => `${replaceLast(f.id, ':', '|')}`);
-                flowUtils = flowUtilsSettings ? [...flowUtilsSettings.VARIABLES, ...flowUtils] : flowUtils;
+                flowUtils = [...variables, ...flowUtils, `homey:app:${externalAppKeyFU}|-All variables-`];
                 
-                if(this.debug) {
-                    this.log(`[findLogic] ${key} - Flow Utils: `, flowUtils);
-                }
             }
 
             const logicMessages = [];
