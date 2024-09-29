@@ -1,6 +1,7 @@
 {
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.athom.flowchecker",
-  "version": "1.28.2",
+  "version": "1.29.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "permissions": [
@@ -156,57 +157,6 @@
         ]
       },
       {
-        "id": "trigger_DISABLED",
-        "title": {
-          "en": "A flow is disabled",
-          "nl": "Een flow is uitgezet",
-          "de": "Ein Flow ist deaktiviert",
-          "sv": "Ett flow är inaktiverat"
-        },
-        "tokens": [
-          {
-            "name": "flow",
-            "type": "string",
-            "title": {
-              "en": "Flow",
-              "nl": "Flow",
-              "de": "Flow",
-              "sv": "Flow"
-            }
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "title": {
-              "en": "ID",
-              "nl": "ID",
-              "de": "ID",
-              "sv": "ID"
-            }
-          },
-          {
-            "name": "type",
-            "type": "string",
-            "title": {
-              "en": "Type",
-              "nl": "Type",
-              "de": "Type",
-              "sv": "Type"
-            }
-          },
-          {
-            "name": "folder",
-            "type": "string",
-            "title": {
-              "en": "Folder",
-              "nl": "Folder",
-              "de": "Folder",
-              "sv": "Folder"
-            }
-          }
-        ]
-      },
-      {
         "id": "trigger_BROKEN_VARIABLE",
         "title": {
           "en": "A flow has a broken variable",
@@ -258,12 +208,12 @@
         ]
       },
       {
-        "id": "trigger_UNUSED_FLOWS",
+        "id": "trigger_DISABLED",
         "title": {
-          "en": "A flow became unused",
-          "nl": "Een flow is ongebruikt geworden",
-          "de": "Ein Flow wurde nutzlos",
-          "sv": "Ett flow blir oanvänt"
+          "en": "A flow is disabled",
+          "nl": "Een flow is uitgezet",
+          "de": "Ein Flow ist deaktiviert",
+          "sv": "Ett flow är inaktiverat"
         },
         "tokens": [
           {
@@ -304,37 +254,6 @@
               "nl": "Folder",
               "de": "Folder",
               "sv": "Folder"
-            }
-          }
-        ]
-      },
-      {
-        "id": "trigger_UNUSED_LOGIC",
-        "title": {
-          "en": "A logic variable became unused",
-          "nl": "Een logic variabele is ongebruikt geworden",
-          "de": "Eine Logik-Variable wurde nutzlos",
-          "sv": "En logisk variabel blir oanvänd"
-        },
-        "tokens": [
-          {
-            "name": "flow",
-            "type": "string",
-            "title": {
-              "en": "Logic",
-              "nl": "Logic",
-              "de": "Logik",
-              "sv": "Logik"
-            }
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "title": {
-              "en": "ID",
-              "nl": "ID",
-              "de": "ID",
-              "sv": "ID"
             }
           }
         ]
@@ -420,6 +339,88 @@
             }
           }
         ]
+      },
+      {
+        "id": "trigger_UNUSED_FLOWS",
+        "title": {
+          "en": "A flow became unused",
+          "nl": "Een flow is ongebruikt geworden",
+          "de": "Ein Flow wurde nutzlos",
+          "sv": "Ett flow blir oanvänt"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow",
+              "de": "Flow",
+              "sv": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID",
+              "sv": "ID"
+            }
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "title": {
+              "en": "Type",
+              "nl": "Type",
+              "de": "Type",
+              "sv": "Type"
+            }
+          },
+          {
+            "name": "folder",
+            "type": "string",
+            "title": {
+              "en": "Folder",
+              "nl": "Folder",
+              "de": "Folder",
+              "sv": "Folder"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_UNUSED_LOGIC",
+        "title": {
+          "en": "A logic variable became unused",
+          "nl": "Een logic variabele is ongebruikt geworden",
+          "de": "Eine Logik-Variable wurde nutzlos",
+          "sv": "En logisk variabel blir oanvänd"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Logic",
+              "nl": "Logic",
+              "de": "Logik",
+              "sv": "Logik"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID",
+              "sv": "ID"
+            }
+          }
+        ]
       }
     ],
     "conditions": [
@@ -433,21 +434,21 @@
         }
       },
       {
-        "id": "condition_DISABLED",
-        "title": {
-          "en": "There !{{are|aren't}} disabled flows",
-          "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
-          "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden",
-          "sv": "Det !{{finns|finns inga}} inaktiva flows"
-        }
-      },
-      {
         "id": "condition_BROKEN_VARIABLE",
         "title": {
           "en": "There !{{are|aren't}} flows with broken variables",
           "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
           "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden",
           "sv": "Det !{{finns|finns inga}} flows med trasiga variabler"
+        }
+      },
+      {
+        "id": "condition_DISABLED",
+        "title": {
+          "en": "There !{{are|aren't}} disabled flows",
+          "nl": "Er !{{zijn|zijn geen}} uitgeschakelde flows",
+          "de": "Deaktivierte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} inaktiva flows"
         }
       },
       {
@@ -480,6 +481,24 @@
         }
       },
       {
+        "id": "action_disable_flow_interval",
+        "title": {
+          "en": "Disable Flow interval",
+          "nl": "Zet Flow interval uit",
+          "de": "Flow Prüfungsintervall deaktivieren",
+          "sv": "Inaktivera flow-intervall"
+        }
+      },
+      {
+        "id": "action_enable_flow_interval",
+        "title": {
+          "en": "Enable Flow interval",
+          "nl": "Zet Flow interval aan",
+          "de": "Flow Prüfungsintervall aktivieren",
+          "sv": "Aktivera flow-intervall"
+        }
+      },
+      {
         "id": "action_set_flow_interval",
         "title": {
           "en": "Set Flow interval",
@@ -507,25 +526,22 @@
             }
           }
         ]
-      },
-      {
-        "id": "action_disable_flow_interval",
-        "title": {
-          "en": "Disable Flow interval",
-          "nl": "Zet Flow interval uit",
-          "de": "Flow Prüfungsintervall deaktivieren",
-          "sv": "Inaktivera flow-intervall"
-        }
-      },
-      {
-        "id": "action_enable_flow_interval",
-        "title": {
-          "en": "Enable Flow interval",
-          "nl": "Zet Flow interval aan",
-          "de": "Flow Prüfungsintervall aktivieren",
-          "sv": "Aktivera flow-intervall"
-        }
       }
     ]
+  },
+  "widgets": {
+    "flow-overview": {
+      "name": {
+        "en": "FlowChecker Overview"
+      },
+      "settings": [],
+      "api": {
+        "getSettings": {
+          "method": "GET",
+          "path": "/"
+        }
+      },
+      "id": "flow-overview"
+    }
   }
 }

@@ -1,0 +1,105 @@
+{
+  "id": "com.athom.flowchecker",
+  "version": "1.29.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "brandColor": "#000000",
+  "name": {
+    "en": "Flow Checker",
+    "nl": "Flow Checker",
+    "de": "Flow Checker",
+    "sv": "Flow Checker"
+  },
+  "description": {
+    "en": "Detect broken Flows and Logic Variables",
+    "nl": "Detecteer kapotte Flows en Logic variabelen",
+    "de": "Beschädigte Flows und Logik-Variablen erkennen",
+    "sv": "Upptäck trasiga flöden och logiska variabler"
+  },
+  "tags": {
+    "en": [
+      "Flows",
+      "Variables",
+      "Tokens",
+      "Tags",
+      "Broken",
+      "Disabled",
+      "Broken flows",
+      "Disabled flows",
+      "Broken variables",
+      "Checker",
+      "Security",
+      "Control",
+      "Official",
+      "Homey",
+      "Athom",
+      "Better Logic",
+      "Flow Utilities",
+      "Filters",
+      "Notifications",
+      "Flow start",
+      "Logic",
+      "Apps",
+      "Devices"
+    ]
+  },
+  "category": [
+    "tools"
+  ],
+  "images": {
+    "xlarge": "/assets/images/xlarge.png",
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "author": {
+    "name": "Martijn Poppen",
+    "email": "flowchecker@martijnpoppen.nl"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Martijn Poppen",
+        "email": "flowchecker@martijnpoppen.nl"
+      }
+    ],
+    "translators": [
+      {
+        "name": "🇬🇧 Martijn Poppen"
+      },
+      {
+        "name": "🇳🇱 Martijn Poppen"
+      },
+      {
+        "name": "🇩🇪 Dirk Göbel"
+      },
+      {
+        "name": "🇸🇪 Magnus Claesson"
+      }
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "martijnpoppen"
+      },
+      "bunq": {
+        "username": "martijnpoppen"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://community.athom.com/t/app-flowchecker/50986"
+  },
+  "source": "https://github.com/martijnpoppen/com.athom.flowchecker",
+  "homeyCommunityTopicId": 50986,
+  "support": "https://community.athom.com/t/app-flowchecker/50986",
+  "api": {
+    "settings": {
+      "method": "put",
+      "path": "/settings/"
+    }
+  }
+}

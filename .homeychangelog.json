@@ -382,5 +382,8 @@
   },
   "1.28.2": {
     "en": "FIX: Flow Utilities variables marked as broken"
+  },
+  "1.29.0": {
+    "en": "NEW: Add Widget"
   }
 }
