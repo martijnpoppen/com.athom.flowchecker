@@ -1,0 +1,9 @@
+{
+  "id": "action_enable_flow_interval",
+  "title": {
+    "en": "Enable Flow interval",
+    "nl": "Zet Flow interval aan",
+    "de": "Flow Prüfungsintervall aktivieren",
+    "sv": "Aktivera flow-intervall"
+  }
+}

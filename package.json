@@ -8,5 +8,10 @@
   },
   "dependencies": {
     "homey-api": "^3.4.29"
+  },
+  "scripts": {
+    "dev": "cd widgets/flow-overview/vue && yarn build --mode development && cd ../../.. && homey app run",
+    "build": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app install",
+    "publish-app": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app publish"
   }
 }

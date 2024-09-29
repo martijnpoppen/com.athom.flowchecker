@@ -42,8 +42,8 @@ class App extends Homey.App {
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.createTokens();
 
-    await sleep(15000);
-    await this.findFlowDefects(true);
+    
+    this.findFlowDefects(true);
   }
 
   // -------------------- SETTINGS ----------------------
@@ -296,6 +296,8 @@ class App extends Homey.App {
 
     async findFlowDefects(initial = false, force = false) {
         try {
+            if(initial) await sleep(15000);
+
             if(!initial || this.appSettings.CHECK_ON_STARTUP) {
                 await this.getApiData();
                 await this.setFolders();

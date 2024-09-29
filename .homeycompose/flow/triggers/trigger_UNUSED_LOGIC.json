@@ -1,0 +1,31 @@
+{
+  "id": "trigger_UNUSED_LOGIC",
+  "title": {
+    "en": "A logic variable became unused",
+    "nl": "Een logic variabele is ongebruikt geworden",
+    "de": "Eine Logik-Variable wurde nutzlos",
+    "sv": "En logisk variabel blir oanvänd"
+  },
+  "tokens": [
+    {
+      "name": "flow",
+      "type": "string",
+      "title": {
+        "en": "Logic",
+        "nl": "Logic",
+        "de": "Logik",
+        "sv": "Logik"
+      }
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "title": {
+        "en": "ID",
+        "nl": "ID",
+        "de": "ID",
+        "sv": "ID"
+      }
+    }
+  ]
+}

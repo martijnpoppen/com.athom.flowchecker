@@ -1,0 +1,12 @@
+{
+  "name": {
+    "en": "FlowChecker Overview"
+  },
+  "settings": [],
+  "api": {
+    "getSettings": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

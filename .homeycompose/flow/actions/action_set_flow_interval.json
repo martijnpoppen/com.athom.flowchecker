@@ -1,0 +1,29 @@
+{
+  "id": "action_set_flow_interval",
+  "title": {
+    "en": "Set Flow interval",
+    "nl": "Stel Flow interval in",
+    "de": "Flow Prüfungsintervall einstellen",
+    "sv": "Ställ in flow-intervall"
+  },
+  "titleFormatted": {
+    "en": "Set Flow check interval to [[minutes]] minutes",
+    "nl": "Stel Flow check interval in op [[minutes]] minuten",
+    "de": "Flow Prüfungsintervall auf [[minutes]] Minuten einstellen",
+    "sv": "Ställ in intervall för flow-kontroll till [[minutes]] minuter"
+  },
+  "args": [
+    {
+      "name": "minutes",
+      "type": "number",
+      "min": 3,
+      "step": 1,
+      "placeholder": {
+        "en": "Minutes",
+        "nl": "Minuten",
+        "de": "Minuten",
+        "sv": "Minuter"
+      }
+    }
+  ]
+}

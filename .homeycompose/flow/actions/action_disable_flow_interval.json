@@ -1,0 +1,9 @@
+{
+  "id": "action_disable_flow_interval",
+  "title": {
+    "en": "Disable Flow interval",
+    "nl": "Zet Flow interval uit",
+    "de": "Flow Prüfungsintervall deaktivieren",
+    "sv": "Inaktivera flow-intervall"
+  }
+}

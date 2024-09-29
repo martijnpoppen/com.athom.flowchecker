@@ -1,0 +1,9 @@
+{
+  "id": "condition_BROKEN_VARIABLE",
+  "title": {
+    "en": "There !{{are|aren't}} flows with broken variables",
+    "nl": "Er !{{zijn|zijn geen}} flows met kapotte variabelen",
+    "de": "Flows mit beschädigten Variablen !{{sind|sind nicht}} vorhanden",
+    "sv": "Det !{{finns|finns inga}} flows med trasiga variabler"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "trigger_FIXED_LOGIC",
+  "title": {
+    "en": "A logic variable started working again",
+    "nl": "Een logic variabele is actief geworden",
+    "de": "Eine Logik-Variable wurde wieder aktiviert",
+    "sv": "En logisk variabel börjar fungera igen"
+  },
+  "tokens": [
+    {
+      "name": "logic",
+      "type": "string",
+      "title": {
+        "en": "Logic",
+        "nl": "Logic",
+        "de": "Logik",
+        "sv": "Logik"
+      }
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "title": {
+        "en": "ID",
+        "nl": "ID",
+        "de": "ID",
+        "sv": "ID"
+      }
+    }
+  ]
+}

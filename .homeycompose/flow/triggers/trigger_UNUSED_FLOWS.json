@@ -1,0 +1,51 @@
+{
+  "id": "trigger_UNUSED_FLOWS",
+  "title": {
+    "en": "A flow became unused",
+    "nl": "Een flow is ongebruikt geworden",
+    "de": "Ein Flow wurde nutzlos",
+    "sv": "Ett flow blir oanvänt"
+  },
+  "tokens": [
+    {
+      "name": "flow",
+      "type": "string",
+      "title": {
+        "en": "Flow",
+        "nl": "Flow",
+        "de": "Flow",
+        "sv": "Flow"
+      }
+    },
+    {
+      "name": "id",
+      "type": "string",
+      "title": {
+        "en": "ID",
+        "nl": "ID",
+        "de": "ID",
+        "sv": "ID"
+      }
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "title": {
+        "en": "Type",
+        "nl": "Type",
+        "de": "Type",
+        "sv": "Type"
+      }
+    },
+    {
+      "name": "folder",
+      "type": "string",
+      "title": {
+        "en": "Folder",
+        "nl": "Folder",
+        "de": "Folder",
+        "sv": "Folder"
+      }
+    }
+  ]
+}

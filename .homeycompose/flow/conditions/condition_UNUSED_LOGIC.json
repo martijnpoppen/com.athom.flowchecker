@@ -1,0 +1,9 @@
+{
+  "id": "condition_UNUSED_LOGIC",
+  "title": {
+    "en": "There !{{are|aren't}} unused logic variables",
+    "nl": "Er !{{zijn|zijn geen}} ongebruikte logic variabelen",
+    "de": "Ungenutzte Logik-Variablen !{{sind|sind nicht}} vorhanden",
+    "sv": "Det !{{finns|finns inga}} oanvända logiska variabler"
+  }
+}

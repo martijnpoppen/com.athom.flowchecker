@@ -1,0 +1,9 @@
+{
+  "id": "action_check_flows",
+  "title": {
+    "en": "Update broken flows and variables",
+    "nl": "Update kapotte flows en variabelen",
+    "de": "Update beschädigter Flows und Flows mit beschädigten Variablen",
+    "sv": "Uppdatera trasiga flows och variabler"
+  }
+}

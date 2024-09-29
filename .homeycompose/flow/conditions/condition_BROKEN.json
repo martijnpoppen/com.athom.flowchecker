@@ -1,0 +1,9 @@
+{
+  "id": "condition_BROKEN",
+  "title": {
+    "en": "There !{{are|aren't}} broken flows",
+    "nl": "Er !{{zijn|zijn geen}} kapotte flows",
+    "de": "Beschädigte Flows !{{sind|sind nicht}} vorhanden",
+    "sv": "Det !{{finns|finns inga}} trasiga flows"
+  }
+}
