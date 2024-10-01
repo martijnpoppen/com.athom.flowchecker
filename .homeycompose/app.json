@@ -1,7 +1,7 @@
 {
   "id": "com.athom.flowchecker",
-  "version": "1.29.0",
-  "compatibility": ">=5.0.0",
+  "version": "1.29.1",
+  "compatibility": ">=12.1.0",
   "sdk": 3,
   "permissions": [
     "homey:manager:api"

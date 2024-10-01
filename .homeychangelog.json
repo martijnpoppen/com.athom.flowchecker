@@ -385,5 +385,8 @@
   },
   "1.29.0": {
     "en": "NEW: Add Widget"
+  },
+  "1.29.1": {
+    "en": "FIX: widget kept loading on opening dashboard"
   }
 }

@@ -42,7 +42,6 @@ class App extends Homey.App {
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.createTokens();
 
-    
     this.findFlowDefects(true);
   }
 
