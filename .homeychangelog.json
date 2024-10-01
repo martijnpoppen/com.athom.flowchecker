@@ -388,5 +388,8 @@
   },
   "1.29.1": {
     "en": "FIX: widget kept loading on opening dashboard"
+  },
+  "1.29.2": {
+    "en": "FIX: widget loading"
   }
 }
