@@ -1,11 +1,17 @@
 .show {
-    display: block;
-  }
-  
-  .hide {
-    display: none;
-  }
-  
-  .homey-table-striped {
-    text-align: left;
-  }
+  display: block;
+}
+
+.hide {
+  display: none;
+}
+
+.homey-table {
+  text-align: left;
+}
+
+.homey-table th, .homey-table td {
+    padding: 7px var(--homey-su-4);
+    font-size: var(--homey-font-size-small);
+}
+

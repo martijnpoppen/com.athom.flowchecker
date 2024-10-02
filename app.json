@@ -534,7 +534,74 @@
       "name": {
         "en": "FlowChecker Overview"
       },
-      "settings": [],
+      "settings": [
+        {
+          "id": "widgetAutoHeight",
+          "type": "boolean",
+          "value": true,
+          "title": {
+            "en": "Widget auto height",
+            "nl": "Widget automatische hoogte",
+            "de": "Widget-Autohöhe",
+            "fr": "Hauteur automatique du widget",
+            "it": "Altezza automatica del widget",
+            "sv": "Widget automatisk höjd",
+            "no": "Widget automatisk høyde",
+            "es": "Altura automática del widget",
+            "da": "Widget automatisk højde",
+            "ru": "Автоматическая высота виджета",
+            "pl": "Automatyczna wysokość widżetu",
+            "ko": "위젯 자동 높이"
+          },
+          "hint": {
+            "en": "Automatically adjust the height of the widget",
+            "nl": "Pas de hoogte van de widget automatisch aan",
+            "de": "Passen Sie die Höhe des Widgets automatisch an",
+            "fr": "Ajuster automatiquement la hauteur du widget",
+            "it": "Regola automaticamente l'altezza del widget",
+            "sv": "Justera automatiskt höjden på widgeten",
+            "no": "Juster automatisk høyden på widgeten",
+            "es": "Ajustar automáticamente la altura del widget",
+            "da": "Juster automatisk højden af widgeten",
+            "ru": "Автоматически настраивайте высоту виджета",
+            "pl": "Automatycznie dostosuj wysokość widżetu",
+            "ko": "위젯의 높이를 자동으로 조정합니다"
+          }
+        },
+        {
+          "id": "widgetHeight",
+          "type": "number",
+          "value": 540,
+          "title": {
+            "en": "Widget height",
+            "nl": "Widgethoogte",
+            "de": "Widget-Höhe",
+            "fr": "Hauteur du widget",
+            "it": "Altezza del widget",
+            "sv": "Widgethöjd",
+            "no": "Widgethøyde",
+            "es": "Altura del widget",
+            "da": "Widgethøjde",
+            "ru": "Высота виджета",
+            "pl": "Wysokość widżetu",
+            "ko": "위젯 높이"
+          },
+          "hint": {
+            "en": "Height of the widget in pixels (this setting is only used when 'Widget auto height' is disabled)",
+            "nl": "Hoogte van de widget in pixels (deze instelling wordt alleen gebruikt wanneer 'Widget automatische hoogte' is uitgeschakeld)",
+            "de": "Höhe des Widgets in Pixeln (diese Einstellung wird nur verwendet, wenn 'Widget-Autohöhe' deaktiviert ist)",
+            "fr": "Hauteur du widget en pixels (ce paramètre est utilisé uniquement lorsque 'Hauteur automatique du widget' est désactivé)",
+            "it": "Altezza del widget in pixel (questa impostazione viene utilizzata solo quando 'Altezza automatica del widget' è disabilitata)",
+            "sv": "Höjden på widgeten i pixlar (den här inställningen används endast när 'Widget automatisk höjd' är inaktiverad)",
+            "no": "Høyden på widgeten i piksler (denne innstillingen brukes bare når 'Widget automatisk høyde' er deaktivert)",
+            "es": "Altura del widget en píxeles (esta configuración solo se utiliza cuando 'Altura automática del widget' está desactivada)",
+            "da": "Højden af widgeten i pixels (denne indstilling bruges kun, når 'Widget automatisk højde' er deaktiveret)",
+            "ru": "Высота виджета в пикселях (этот параметр используется только при отключенной функции 'Автоматическая высота виджета')",
+            "pl": "Wysokość widżetu w pikselach (ta opcja jest używana tylko wtedy, gdy opcja „Automatyczna wysokość widżetu” jest wyłączona)",
+            "ko": "픽셀 단위의 위젯 높이 ('위젯 자동 높이'가 비활성화된 경우에만 사용되는 설정)"
+          }
+        }
+      ],
       "api": {
         "getSettings": {
           "method": "GET",

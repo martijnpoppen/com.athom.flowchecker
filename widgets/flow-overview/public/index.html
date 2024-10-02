@@ -5,8 +5,8 @@
     <link rel="stylesheet" crossorigin href="./index.css">
 </head>
 
-<body class="homey-widget">
-    <table class="homey-table-striped">
+<body class="homey-widget-full">
+    <table class="homey-table">
         <thead>
             <tr>
                 <th data-i18n="settings.flows_overview"></th>
@@ -19,8 +19,10 @@
     </table>
 
     <script>
-        function onHomeyReady (Homey) {
-            init(Homey);
+        function onHomeyReady (Homey) { 
+            setTimeout(() => {
+                init(Homey);    
+            }, 1000);
         }
 
         function getAppSetting (appSettings, key, defaultValue) {
@@ -116,7 +118,8 @@
                     tr.appendChild(tdAmount)
                 }
 
-                Homey.ready({ height: 572 });
+                const table = document.querySelector('table')
+                Homey.ready({ height: widgetSettings.widgetAutoHeight ? table.offsetHeight : widgetSettings.widgetHeight });
             }).catch((error) => {
                 console.error(error);
             });
