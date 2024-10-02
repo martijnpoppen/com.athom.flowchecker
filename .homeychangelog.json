@@ -391,5 +391,8 @@
   },
   "1.29.2": {
     "en": "FIX: widget loading"
+  },
+  "1.29.3": {
+    "en": "NEW: widget styling fixes"
   }
 }
