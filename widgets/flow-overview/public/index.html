@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" crossorigin href="./index.css">
+</head>
+
+<body class="homey-widget">
+    <table class="homey-table-striped">
+        <thead>
+            <tr>
+                <th data-i18n="settings.flows_overview"></th>
+                <th data-i18n="settings.flows_amount"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        function onHomeyReady (Homey) {
+            init(Homey);
+        }
+
+        function getAppSetting (appSettings, key, defaultValue) {
+            return appSettings[key] || defaultValue;
+        }
+
+        function getAppSubSetting (appSettings, key, subKey, defaultValue) {
+            return getAppSetting(appSettings, key, {})[subKey] || defaultValue;
+        }
+
+        function getAppSettingLength (appSettings, key) {
+            return getAppSetting(appSettings, key, 0).length;
+        }
+
+        function init (Homey) {
+            const widgetSettings = Homey.getSettings();
+
+            Homey.api("GET", "/").then((response) => {
+                const appSettings = response;
+                const data = [
+                    {
+                        name: Homey.__("settings.flows_broken"),
+                        amount: getAppSettingLength(appSettings, "BROKEN")
+                    },
+                    {
+                        name: Homey.__("settings.flows_disabled"),
+                        amount: getAppSettingLength(appSettings, "DISABLED")
+                    },
+                    {
+                        name: Homey.__("settings.flows_broken_variable"),
+                        amount: getAppSettingLength(appSettings, "BROKEN_VARIABLE")
+                    },
+                    {
+                        name: Homey.__("settings.unused_flows"),
+                        amount: getAppSettingLength(appSettings, "UNUSED_FLOWS")
+                    },
+                    {
+                        name: Homey.__("settings.unused_logic"),
+                        amount: getAppSettingLength(appSettings, "UNUSED_LOGIC")
+                    },
+                    {
+                        name: Homey.__("settings.all_flows"),
+                        amount: getAppSetting(appSettings, "ALL_FLOWS")
+                    },
+                    {
+                        name: Homey.__("settings.all_screensavers"),
+                        amount: getAppSetting(appSettings, "ALL_SCREENSAVERS")
+                    },
+                    {
+                        name: Homey.__("settings.all_variables"),
+                        amount: getAppSetting(appSettings, "ALL_VARIABLES")
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_logic"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "logic", 0)
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_device"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "device", 0)
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_app"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "app", 0)
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_bl"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "bl", 0)
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_fu"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "fu", 0)
+                    },
+                    {
+                        name: Homey.__("settings.all_variables_screensavers"),
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "screensavers", 0)
+                    }
+                ];
+
+                // render table  in tbody based on data
+                const tbody = document.querySelector('tbody')
+                tbody.innerHTML = ''
+
+                for (const row of data) {
+                    const tr = document.createElement('tr')
+                    tbody.appendChild(tr)
+
+                    const tdName = document.createElement('td')
+                    tdName.textContent = row.name
+                    tr.appendChild(tdName)
+
+                    const tdAmount = document.createElement('td')
+                    tdAmount.textContent = row.amount
+                    tr.appendChild(tdAmount)
+                }
+
+                Homey.ready({ height: 572 });
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+    </script>
+</body>
+
+</html>

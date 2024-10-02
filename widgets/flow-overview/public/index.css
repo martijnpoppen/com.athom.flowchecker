@@ -1,0 +1,11 @@
+.show {
+    display: block;
+  }
+  
+  .hide {
+    display: none;
+  }
+  
+  .homey-table-striped {
+    text-align: left;
+  }
