@@ -394,5 +394,8 @@
   },
   "1.29.3": {
     "en": "NEW: widget styling fixes"
+  },
+  "1.29.4": {
+    "en": "OPT: add widget settings"
   }
 }
