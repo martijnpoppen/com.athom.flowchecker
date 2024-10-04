@@ -5,7 +5,7 @@
   "settings": [
     {
       "id": "widgetAutoHeight",
-      "type": "boolean",
+      "type": "checkbox",
       "value": true,
       "title": {
         "en": "Widget auto height",
@@ -68,7 +68,276 @@
         "pl": "Wysokość widżetu w pikselach (ta opcja jest używana tylko wtedy, gdy opcja „Automatyczna wysokość widżetu” jest wyłączona)",
         "ko": "픽셀 단위의 위젯 높이 ('위젯 자동 높이'가 비활성화된 경우에만 사용되는 설정)"
       }
-    }
+    },
+    {
+            "id": "showBrokenFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show broken flows",
+                "nl": "Toon defecte flows",
+                "de": "Defekte Flows anzeigen",
+                "fr": "Afficher les flows cassés",
+                "it": "Mostra flussi rotti",
+                "sv": "Visa trasiga flöden",
+                "no": "Vis ødelagte flows",
+                "es": "Mostrar flujos rotos",
+                "da": "Vis ødelagte flows",
+                "ru": "Показать сломанные потоки",
+                "pl": "Pokaż zepsute przepływy",
+                "ko": "고장난 플로우 표시"
+            }
+        },
+        {
+            "id": "showDisabledFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show disabled flows",
+                "nl": "Toon uitgeschakelde flows",
+                "de": "Deaktivierte Flows anzeigen",
+                "fr": "Afficher les flows désactivés",
+                "it": "Mostra flussi disabilitati",
+                "sv": "Visa inaktiverade flöden",
+                "no": "Vis deaktiverte flows",
+                "es": "Mostrar flujos deshabilitados",
+                "da": "Vis deaktiverede flows",
+                "ru": "Показать отключенные потоки",
+                "pl": "Pokaż wyłączone przepływy",
+                "ko": "비활성화된 플로우 표시"
+            }
+        },
+        {
+            "id": "showBrokenVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show broken variables",
+                "nl": "Toon defecte variabelen",
+                "de": "Defekte Variablen anzeigen",
+                "fr": "Afficher les variables cassées",
+                "it": "Mostra variabili rotte",
+                "sv": "Visa trasiga variabler",
+                "no": "Vis ødelagte variabler",
+                "es": "Mostrar variables rotas",
+                "da": "Vis ødelagte variabler",
+                "ru": "Показать сломанные переменные",
+                "pl": "Pokaż zepsute zmienne",
+                "ko": "고장난 변수 표시"
+            }
+        },
+        {
+            "id": "showUnusedFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show unused flows",
+                "nl": "Toon ongebruikte flows",
+                "de": "Unbenutzte Flows anzeigen",
+                "fr": "Afficher les flows inutilisés",
+                "it": "Mostra flussi non utilizzati",
+                "sv": "Visa oanvända flöden",
+                "no": "Vis ubrukte flows",
+                "es": "Mostrar flujos no utilizados",
+                "da": "Vis ubrugte flows",
+                "ru": "Показать неиспользуемые потоки",
+                "pl": "Pokaż nieużywane przepływy",
+                "ko": "사용되지 않는 플로우 표시"
+            }
+        },
+        {
+            "id": "showUnusedLogicVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show unused logic variables",
+                "nl": "Toon ongebruikte logische variabelen",
+                "de": "Unbenutzte Logikvariablen anzeigen",
+                "fr": "Afficher les variables logiques inutilisées",
+                "it": "Mostra variabili logiche non utilizzate",
+                "sv": "Visa oanvända logiska variabler",
+                "no": "Vis ubrukte logiske variabler",
+                "es": "Mostrar variables lógicas no utilizadas",
+                "da": "Vis ubrugte logiske variabler",
+                "ru": "Показать неиспользуемые логические переменные",
+                "pl": "Pokaż nieużywane zmienne logiczne",
+                "ko": "사용되지 않는 논리 변수 표시"
+            }
+        },
+        {
+            "id": "showAllFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all flows",
+                "nl": "Toon alle flows",
+                "de": "Alle Flows anzeigen",
+                "fr": "Afficher tous les flows",
+                "it": "Mostra tutti i flussi",
+                "sv": "Visa alla flöden",
+                "no": "Vis alle flows",
+                "es": "Mostrar todos los flujos",
+                "da": "Vis alle flows",
+                "ru": "Показать все потоки",
+                "pl": "Pokaż wszystkie przepływy",
+                "ko": "모든 플로우 표시"
+            }
+        },
+        {
+            "id": "showAllScreensavers",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all screensavers",
+                "nl": "Toon alle screensavers",
+                "de": "Alle Bildschirmschoner anzeigen",
+                "fr": "Afficher tous les économiseurs d'écran",
+                "it": "Mostra tutti gli screensaver",
+                "sv": "Visa alla skärmsläckare",
+                "no": "Vis alle skjermsparere",
+                "es": "Mostrar todos los protectores de pantalla",
+                "da": "Vis alle skærmsparere",
+                "ru": "Показать все заставки",
+                "pl": "Pokaż wszystkie wygaszacze ekranu",
+                "ko": "모든 화면 보호기 표시"
+            }
+        },
+        {
+            "id": "showAllVariablesInFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all variables in flows",
+                "nl": "Toon alle variabelen in flows",
+                "de": "Alle Variablen in Flows anzeigen",
+                "fr": "Afficher toutes les variables dans les flows",
+                "it": "Mostra tutte le variabili nei flussi",
+                "sv": "Visa alla variabler i flöden",
+                "no": "Vis alle variabler i flows",
+                "es": "Mostrar todas las variables en flujos",
+                "da": "Vis alle variabler i flows",
+                "ru": "Показать все переменные в потоках",
+                "pl": "Pokaż wszystkie zmienne w przepływach",
+                "ko": "플로우의 모든 변수 표시"
+            }
+        },
+        {
+            "id": "showAllLogicVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all logic variables",
+                "nl": "Toon alle logische variabelen",
+                "de": "Alle Logikvariablen anzeigen",
+                "fr": "Afficher toutes les variables logiques",
+                "it": "Mostra tutte le variabili logiche",
+                "sv": "Visa alla logiska variabler",
+                "no": "Vis alle logiske variabler",
+                "es": "Mostrar todas las variables lógicas",
+                "da": "Vis alle logiske variabler",
+                "ru": "Показать все логические переменные",
+                "pl": "Pokaż wszystkie zmienne logiczne",
+                "ko": "모든 논리 변수 표시"
+            }
+        },
+        {
+            "id": "showAllDevicesVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all devices variables",
+                "nl": "Toon alle apparaatvariabelen",
+                "de": "Alle Gerätevariablen anzeigen",
+                "fr": "Afficher toutes les variables de périphériques",
+                "it": "Mostra tutte le variabili dei dispositivi",
+                "sv": "Visa alla enhetsvariabler",
+                "no": "Vis alle enhetsvariabler",
+                "es": "Mostrar todas las variables de dispositivos",
+                "da": "Vis alle enhedsvariabler",
+                "ru": "Показать все переменные устройств",
+                "pl": "Pokaż wszystkie zmienne urządzeń",
+                "ko": "모든 장치 변수 표시"
+            }
+        },
+        {
+            "id": "showAllAppsVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all apps variables",
+                "nl": "Toon alle apps-variabelen",
+                "de": "Alle Apps-Variablen anzeigen",
+                "fr": "Afficher toutes les variables d'application",
+                "it": "Mostra tutte le variabili delle app",
+                "sv": "Visa alla apparvariabler",
+                "no": "Vis alle appvariabler",
+                "es": "Mostrar todas las variables de aplicaciones",
+                "da": "Vis alle appvariabler",
+                "ru": "Показать все переменные приложений",
+                "pl": "Pokaż wszystkie zmienne aplikacji",
+                "ko": "모든 앱 변수 표시"
+            }
+        },
+        {
+            "id": "showAllBetterLogicVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all Better Logic variables",
+                "nl": "Toon alle Better Logic-variabelen",
+                "de": "Alle Better Logic-Variablen anzeigen",
+                "fr": "Afficher toutes les variables Better Logic",
+                "it": "Mostra tutte le variabili Better Logic",
+                "sv": "Visa alla Better Logic-variabler",
+                "no": "Vis alle Better Logic-variabler",
+                "es": "Mostrar todas las variables de Better Logic",
+                "da": "Vis alle Better Logic-variabler",
+                "ru": "Показать все переменные Better Logic",
+                "pl": "Pokaż wszystkie zmienne Better Logic",
+                "ko": "모든 Better Logic 변수 표시"
+            }
+        },
+        {
+            "id": "showAllFlowUtilitiesVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all Flow Utilities variables",
+                "nl": "Toon alle Flow Utilities-variabelen",
+                "de": "Alle Flow Utilities-Variablen anzeigen",
+                "fr": "Afficher toutes les variables Flow Utilities",
+                "it": "Mostra tutte le variabili Flow Utilities",
+                "sv": "Visa alla Flow Utilities-variabler",
+                "no": "Vis alle Flow Utilities-variabler",
+                "es": "Mostrar todas las variables de Flow Utilities",
+                "da": "Vis alle Flow Utilities-variabler",
+                "ru": "Показать все переменные Flow Utilities",
+                "pl": "Pokaż wszystkie zmienne Flow Utilities",
+                "ko": "모든 Flow Utilities 변수 표시"
+            }
+        },
+        {
+            "id": "showAllScreensaversVariables",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show all screensavers variables",
+                "nl": "Toon alle screensavers-variabelen",
+                "de": "Alle Bildschirmschoner-Variablen anzeigen",
+                "fr": "Afficher toutes les variables d'économiseur d'écran",
+                "it": "Mostra tutte le variabili degli screensaver",
+                "sv": "Visa alla skärmsläckarvariabler",
+                "no": "Vis alle skjermspareringsvariabler",
+                "es": "Mostrar todas las variables de protectores de pantalla",
+                "da": "Vis alle skærmspareringsvariabler",
+                "ru": "Показать все переменные заставок",
+                "pl": "Pokaż wszystkie zmienne wygaszaczy ekranu",
+                "ko": "모든 화면 보호기 변수 표시"
+            }
+        }
+
+      
+    
   ],
   "api": {
     "getSettings": {

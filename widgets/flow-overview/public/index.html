@@ -19,9 +19,9 @@
     </table>
 
     <script>
-        function onHomeyReady (Homey) { 
+        function onHomeyReady (Homey) {
             setTimeout(() => {
-                init(Homey);    
+                init(Homey);
             }, 1000);
         }
 
@@ -45,59 +45,73 @@
                 const data = [
                     {
                         name: Homey.__("settings.flows_broken"),
-                        amount: getAppSettingLength(appSettings, "BROKEN")
+                        amount: getAppSettingLength(appSettings, "BROKEN"),
+                        show: widgetSettings.showBrokenFlows
                     },
                     {
                         name: Homey.__("settings.flows_disabled"),
-                        amount: getAppSettingLength(appSettings, "DISABLED")
+                        amount: getAppSettingLength(appSettings, "DISABLED"),
+                        show: widgetSettings.showDisabledFlows
                     },
                     {
                         name: Homey.__("settings.flows_broken_variable"),
-                        amount: getAppSettingLength(appSettings, "BROKEN_VARIABLE")
+                        amount: getAppSettingLength(appSettings, "BROKEN_VARIABLE"),
+                        show: widgetSettings.showBrokenVariables
                     },
                     {
                         name: Homey.__("settings.unused_flows"),
-                        amount: getAppSettingLength(appSettings, "UNUSED_FLOWS")
+                        amount: getAppSettingLength(appSettings, "UNUSED_FLOWS"),
+                        show: widgetSettings.showUnusedFlows
                     },
                     {
                         name: Homey.__("settings.unused_logic"),
-                        amount: getAppSettingLength(appSettings, "UNUSED_LOGIC")
+                        amount: getAppSettingLength(appSettings, "UNUSED_LOGIC"),
+                        show: widgetSettings.showUnusedLogicVariables
                     },
                     {
                         name: Homey.__("settings.all_flows"),
-                        amount: getAppSetting(appSettings, "ALL_FLOWS")
+                        amount: getAppSetting(appSettings, "ALL_FLOWS"),
+                        show: widgetSettings.showAllFlows
                     },
                     {
                         name: Homey.__("settings.all_screensavers"),
-                        amount: getAppSetting(appSettings, "ALL_SCREENSAVERS")
+                        amount: getAppSetting(appSettings, "ALL_SCREENSAVERS"),
+                        show: widgetSettings.showAllScreensavers
                     },
                     {
                         name: Homey.__("settings.all_variables"),
-                        amount: getAppSetting(appSettings, "ALL_VARIABLES")
+                        amount: getAppSetting(appSettings, "ALL_VARIABLES"),
+                        show: widgetSettings.showAllVariablesInFlows
                     },
                     {
                         name: Homey.__("settings.all_variables_logic"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "logic", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "logic", 0),
+                        show: widgetSettings.showAllLogicVariables
                     },
                     {
                         name: Homey.__("settings.all_variables_device"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "device", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "device", 0),
+                        show: widgetSettings.showAllDevicesVariables
                     },
                     {
                         name: Homey.__("settings.all_variables_app"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "app", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "app", 0),
+                        show: widgetSettings.showAllAppsVariables
                     },
                     {
                         name: Homey.__("settings.all_variables_bl"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "bl", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "bl", 0),
+                        show: widgetSettings.showAllBetterLogicVariables
                     },
                     {
                         name: Homey.__("settings.all_variables_fu"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "fu", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "fu", 0),
+                        show: widgetSettings.showAllFlowUtilitiesVariables
                     },
                     {
                         name: Homey.__("settings.all_variables_screensavers"),
-                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "screensavers", 0)
+                        amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "screensavers", 0),
+                        show: widgetSettings.showAllScreensaversVariables
                     }
                 ];
 
@@ -106,16 +120,18 @@
                 tbody.innerHTML = ''
 
                 for (const row of data) {
-                    const tr = document.createElement('tr')
-                    tbody.appendChild(tr)
+                    if (row.show) {
+                        const tr = document.createElement('tr')
+                        tbody.appendChild(tr)
 
-                    const tdName = document.createElement('td')
-                    tdName.textContent = row.name
-                    tr.appendChild(tdName)
+                        const tdName = document.createElement('td')
+                        tdName.textContent = row.name
+                        tr.appendChild(tdName)
 
-                    const tdAmount = document.createElement('td')
-                    tdAmount.textContent = row.amount
-                    tr.appendChild(tdAmount)
+                        const tdAmount = document.createElement('td')
+                        tdAmount.textContent = row.amount
+                        tr.appendChild(tdAmount)
+                    }
                 }
 
                 const table = document.querySelector('table')
