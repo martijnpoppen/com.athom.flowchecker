@@ -1,44 +1,78 @@
 {
   "settings": {
-    "title": "Notification Settings",
-    "menu_settings": "Settings",
-    "menu_flows": "Flows",
-    "menu_overview": "Overview",
-    "menu_filters": "Filters",
-    "notification_broken": "Notify when flow breaks",
-    "notification_disabled": "Notify when flow gets disabled",
-    "notification_broken_variable": "Notify when flow has broken variables",
-    "notification_unused_flows": "Notify when flow is unused",
-    "notification_unused_logic": "Notify when a logic variable is unused",
-    "interval": "Interval settings",
-    "interval_enabled": "Automatic flows check",
-    "check_on_startup": "Run Flow check on start of app.",
-    "interval_flows": "flow interval (minutes)",
-    "interval_variables": "variable interval (minutes)",
-    "ctrl_click": "CTRL/CMD + Click to open flow",
-    "flows_overview": "Overview",
-    "flows_amount": "Amount",
-    "flows_broken": "Broken flows",
-    "flows_disabled": "Disabled flows",
-    "flows_broken_variable": "Flows with broken variable",
-    "all_flows": "All flows",
-    "all_variables": "All variables in flows",
-    "all_screensavers": "All screensavers",
-    "all_variables_logic": "-- Logic",
-    "all_variables_device": "-- Devices",
-    "all_variables_app": "-- Apps",
-    "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities",
-    "all_variables_screensavers": "-- Screensavers",
-    "filtered_folders": "Filtered folders",
-    "filtered_folders_description": "Selected folders are excluded during the check",
-    "unused_flows": "Unused flows",
-    "unused_flows_description": "Unused flows or flows with a 'This flow has started' trigger",
-    "unused_logic": "Unused logic variable",
-    "config_saving": "Saving...",
-    "config_saved": "Saved.",
-    "config_clear_and_saved": "Clear and saved.",
-    "config_save": "Save",
-    "config_default_settings": "Default settings"
+    "menu": {
+      "settings": "Settings",
+      "flows": "Flows",
+      "overview": "Overview",
+      "filters": "Filters",
+      "variable_per_flow": "Flows with Variables",
+      "logic_flow_map": "Logic in Flows"
+    },
+    "notifications": {
+      "title": "Settings",
+      "setting": "Setting",
+      "enable_check": "Enable Check",
+      "enable_notification": "Enable Notification",
+      "broken": "Check / notify Broken flows",
+      "disabled": "Check / notify Disabled flows",
+      "broken_variable": "Check / notify flows with broken variable",
+      "unused_flows": "Check / notify unused flows",
+      "unused_logic": "Check / notify unused logic variables",
+      "fixed": "Check / notify flow is fixed",
+      "fixed_logic": "Check / notify variable is fixed"
+    },
+    "interval": {
+      "title": "Interval settings",
+      "interval_enabled": "Automatic flows check",
+      "check_on_startup": "Run Flow check on start of app.",
+      "interval_flows": "flow interval (minutes)",
+      "interval_variables": "variable interval (minutes)"
+    },
+    "general": {
+      "title": "General settings",
+      "ctrl_click": "CTRL/CMD + Click to open flow",
+      "saving": "Saving...",
+      "saved": "Saved.",
+      "clear_and_saved": "Clear and saved.",
+      "save": "Save",
+      "default_settings": "Reset settings",
+      "none": "-- None --"
+    },
+    "flows": {
+      "overview": "Overview",
+      "amount": "Amount",
+      "broken": "Broken flows",
+      "disabled": "Disabled flows",
+      "broken_variable": "Flows with broken variable",
+      "unused_flows": "Unused flows",
+      "unused_flows_description": "Unused flows or flows with a 'This flow has started' trigger",
+      "unused_logic": "Unused logic variables",
+      "unused_logic_description": "Overview of unused logic variables"
+    },
+    "all": {
+      "flows": "All flows",
+      "variables": "All variables in flows",
+      "screensavers": "All screensavers",
+      "variables_logic": "-- Logic variables",
+      "variables_device": "-- Device variables",
+      "variables_app": "-- App variables",
+      "variables_bl": "-- Better Logic variables",
+      "variables_fu": "-- Flow Utilities variables",
+      "variables_screensavers": "-- Screensaver variables"
+    },
+    "filtered_folders": {
+      "title": "Folder Filters",
+      "description": "Selected folders are excluded during the check"
+    },
+    "logic_flow_map": {
+      "description": "Overview of where logic variables are used in flows",
+      "list_string": "Logic flow map (string)",
+      "list_number": "Logic flow map (number)",
+      "list_boolean": "Logic flow map (boolean)"
+    },
+    "variable_per_flow": {
+      "title": "Flows with Variables",
+      "description": "Overview of Logic variables used per flow"
+    }
   }
 }

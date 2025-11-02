@@ -4,228 +4,252 @@
 <head>
     <!-- The '/homey.js' script must be included in your settings view to work -->
     <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
-    <style>
-        fieldset legend, .hy-fieldset:not(.hy-nostyle) legend {
-            font-size: 14px !important;
-        }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" />
+    <link rel="stylesheet" href="./style.css">
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 
-        .spacer {
-            display: block;
-            margin: 60px auto;
-        }
-
-        .red {
-            color: red !important;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        #interval_settings .row,
-        #flows_overview .row, 
-        #flows_settings .row,
-        #filtered_folders .row {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px auto;
-        }
-
-        #flows_broken .row, 
-        #flows_disabled .row, 
-        #flows_broken_variable .row,
-        #flows_unused .row,
-        #logic_unused .row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #flows_broken br:first-of-type, 
-        #flows_disabled br:first-of-type, 
-        #flows_broken_variable br:first-of-type,
-        #flows_unused br:first-of-type,
-        #logic_unused br:first-of-type {
-            display: none;
-        }
-
-        .fixed {
-            background-color: white;
-            border-top: 1px solid #1d1d1d;
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
-        }
-
-        .m-l {
-            margin-left: 8px;
-        }
-
-        /* Style the tab */
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-            margin-bottom: 20px;
-        }
-
-        /* Style the buttons that are used to open the tab content */
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-        }
-
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-            background-color: #000;
-            color: white;
-        }
-
-        /* Create an active/current tablink class */
-        .tab button.active {
-            background-color: #1d1d1d;
-            color: white;
-        }
-
-        /* Style the tab content */
-        .tabcontent {
-            display: none;           
-            border-top: none;
-        }
-
-        .tabcontent.active {
-            display: block;           
-        }
-    </style>
 </head>
 
 <body>
-    <div class="tab">
-        <button class="tablinks active" onclick="setPage(event, 'settings')" data-i18n="settings.menu_settings"></button>
-        <button class="tablinks" onclick="setPage(event, 'overview')" data-i18n="settings.menu_overview"></button>
-        <button class="tablinks" onclick="setPage(event, 'flows')" data-i18n="settings.menu_flows"></button>
-        <button class="tablinks" onclick="setPage(event, 'filters')" data-i18n="settings.menu_filters"></button>
-    </div>
-    <div id="settings" class="tabcontent active">
-        <fieldset id="flows_settings">
-            <legend data-i18n="settings.title"></legend>
-            <div class="field row">
-                <label for="notification_broken" data-i18n="settings.notification_broken"></label>
-                <input id="notification_broken" type="checkbox" value="" />
-            </div>
-            <div class="field row">
-                <label for="notification_disabled" data-i18n="settings.notification_disabled"></label>
-                <input id="notification_disabled" type="checkbox" value="" />
-            </div>
-            <div class="field row">
-                <label for="notification_broken_variable" data-i18n="settings.notification_broken_variable"></label>
-                <input id="notification_broken_variable" type="checkbox" value="" />
-            </div>
+    <main>
+        <div id="settings" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.notifications.title"> </div>
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th data-i18n="settings.notifications.setting"></th>
+                            <th data-i18n="settings.notifications.enable_check"></th>
+                            <th data-i18n="settings.notifications.enable_notification"></th>
+                        </tr>
+                    <tbody>
+                        <tr>
+                            <td data-i18n="settings.notifications.broken"></td>
+                            <td><sl-checkbox id="check_broken" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_broken" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.disabled"></td>
+                            <td><sl-checkbox id="check_disabled" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_disabled" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.broken_variable"></td>
+                            <td><sl-checkbox id="check_broken_variable" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_broken_variable" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.unused_flows"></td>
+                            <td><sl-checkbox id="check_unused_flows" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_unused_flows" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.unused_logic"></td>
+                            <td><sl-checkbox id="check_unused_logic" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_unused_logic" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.fixed"></td>
+                            <td><sl-checkbox id="check_fixed" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_fixed" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.notifications.fixed_logic"></td>
+                            <td><sl-checkbox id="check_fixed_logic" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_fixed_logic" value="" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </sl-card>
 
-            <div class="field row">
-                <label for="notification_unused_flows" data-i18n="settings.notification_unused_flows"></label>
-                <input id="notification_unused_flows" type="checkbox" value="" />
-            </div>
-
-            <div class="field row">
-                <label for="notification_unused_logic" data-i18n="settings.notification_unused_logic"></label>
-                <input id="notification_unused_logic" type="checkbox" value="" />
-            </div>
-        </fieldset>
-        <fieldset id="interval_settings">
-            <legend data-i18n="settings.interval"></legend>
-            <div class="field row">
-                <label for="check_on_startup" data-i18n="settings.check_on_startup"></label>
-                <input id="check_on_startup" type="checkbox" value="" />
-            </div>
-            <div class="field row">
-                <label for="interval_enabled" data-i18n="settings.interval_enabled"></label>
-                <input id="interval_enabled" type="checkbox" value="" onclick="showHide(this)" />
-            </div>
-
-            <div class="field row" id="interval_flows_row">
-                <label for="interval_flows" data-i18n="settings.interval_flows"></label>
-                <input id="interval_flows" type="number" min="3" step="1" value="" oninput="updateValue()" />
-            </div>
-
-            <div class="field row" id="interval_variables_row">
-                <label for="interval_variables" data-i18n="settings.interval_variables"></label>
-                <input disabled id="interval_variables" type="number" value="" />
-            </div>
-        </fieldset>
-    </div>
-
-    <div id="overview" class="tabcontent">
-    <fieldset>
-        <legend data-i18n="settings.flows_overview"></legend>
-        <div class="field">
-            <div id="flows_overview"></div>
+            <br>
+            <br>
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.interval.title"></div>
+                <table style="width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td data-i18n="settings.interval.check_on_startup"></td>
+                            <td><sl-checkbox id="check_on_startup" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td data-i18n="settings.interval.interval_enabled"></td>
+                            <td><sl-checkbox id="interval_enabled" value="" onclick="checkBoxToggles()" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr id="interval_flows_row">
+                            <td data-i18n="settings.interval.interval_flows"></td>
+                            <td><sl-input id="interval_flows" style="width: 7rem; float:right;" type="number" min="3"
+                                    step="1" value="" oninput="updateValue()" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr id="interval_variables_row">
+                            <td data-i18n="settings.interval.interval_variables"></td>
+                            <td><sl-input disabled style="width: 7rem; float:right;" id="interval_variables"
+                                    type="number" value="" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </sl-card>
         </div>
-    </fieldset>
+
+        <div id="overview" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.overview"></div>
+                <table id="flows.overview" width="100%">
+                </table>
+            </sl-card>
+        </div>
+
+        <div id="flows" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.broken"></div>
+                <div id="flows_broken" width="100%">
+                </div>
+            </sl-card>
+
+
+            <br>
+            <br>
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.disabled"></div>
+                <div id="flows_disabled" width="100%">
+                </div>
+            </sl-card>
+
+            <br>
+            <br>
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.broken_variable"></div>
+                <div id="flows_broken_variable" width="100%">
+                </div>
+            </sl-card>
+
+            <br>
+            <br>
+
+
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.unused_flows_description">
+                </div>
+                <div id="flows_unused" width="100%">
+                </div>
+            </sl-card>
+
+
+            <br>
+            <br>
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.unused_logic_description"></div>
+                <div id="logic_unused" width="100%">
+                </div>
+            </sl-card>
+        </div>
+
+        <div id="filters" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.filtered_folders.description">
+                </div>
+
+                <table id="filtered_folders" width="100%">
+                </table>
+
+            </sl-card>
+        </div>
+
+        <div id="variable_per_flow" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.variable_per_flow.description"></div>
+                <span class="red" data-i18n="settings.general.ctrl_click"></span><br>
+            </sl-card>
+
+            <br><br>
+            <div id="variable_per_flow_list" width="100%"></div>
+        </div>
+
+        <div id="logic_flow_map" class="tabcontent">
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.logic_flow_map.description">
+                </div>
+
+                <span class="red" data-i18n="settings.general.ctrl_click"></span><br>
+            </sl-card>
+
+            <br>
+            <br>
+
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.logic_flow_map.list_string">
+                </div>
+
+                <table id="logic_flow_map_list_string" width="100%">
+                </table>
+            </sl-card>
+
+
+            <br>
+            <br>
+
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.logic_flow_map.list_number">
+                </div>
+
+                <table id="logic_flow_map_list_number" width="100%">
+                </table>
+            </sl-card>
+
+
+            <br>
+            <br>
+
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.logic_flow_map.list_boolean">
+                </div>
+
+                <table id="logic_flow_map_list_boolean" width="100%">
+                </table>
+            </sl-card>
+        </div>
+
+    </main>
+
+    <div class="top-nav">
+        <sl-button-group style="width: 100%;">
+            <sl-button style="width: 20%;" onclick="setPage(event, 'previous')">Previous</sl-button>
+            <sl-button style="width: 80%;" disabled id="currentPage">Current Page</sl-button>
+            <sl-button style="width: 20%;" onclick="setPage(event, 'next')">Next</sl-button>
+        </sl-button-group>
     </div>
 
-    <div id="flows" class="tabcontent">
-        <fieldset>
-            <legend data-i18n="settings.flows_broken"></legend>
-            <div class="field row">
-                <div id="flows_broken"></div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend data-i18n="settings.flows_disabled"></legend>
-            <div class="field row">
-                <div id="flows_disabled"></div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend data-i18n="settings.flows_broken_variable"></legend>
-            <div class="field row">
-                <div id="flows_broken_variable"></div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend data-i18n="settings.unused_flows"></legend>
-            <label data-i18n="settings.unused_flows_description"></label>
-            <div class="field row">
-                <div id="flows_unused"></div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend data-i18n="settings.unused_logic"></legend>
-            <label data-i18n="settings.unused_logic_description"></label>
-            <div class="field row">
-                <div id="logic_unused"></div>
-            </div>
-        </fieldset>
+    <div class="btm-nav">
+        <sl-button-group style="width: 100%;">
+            <sl-button variant="danger" style="width: 30%;" id="clear"
+                data-i18n="settings.general.default_settings"></sl-button>
+            <sl-button style="width: 70%;" disabled>&nbsp;</sl-button>
+            <sl-button variant="primary" style="width: 30%;" id="save" data-i18n="settings.general.save"></sl-button>
+        </sl-button-group>
     </div>
 
-    <div id="filters" class="tabcontent">
-        <fieldset>
-            <legend data-i18n="settings.filtered_folders"></legend>
-            <label class="red" data-i18n="settings.filtered_folders_description"></label>
-            <div class="field row">
-                <div id="filtered_folders"></div>
-            </div>
-        </fieldset>
-    </div>
 
-    <div class="spacer">&nbsp;</div>
-
-    <div class="row fixed">
+    <sl-dialog label="Dialog" class="dialog-overview">
         <p id="error" style="color: red;"></p>
         <p id="loading" style="color: #0000FF;"></p>
         <p id="success" style="color: #5fd225;"></p>
-        <button id="save" class="right" data-i18n="settings.config_save"></button>
-        <button id="clear" class="left" data-i18n="settings.config_default_settings"></button>
-    </div>
-    
+        <sl-button slot="footer" variant="primary">Close</sl-button>
+    </sl-dialog>
+
+
+
     <script src="./settings.js"></script>
 
 </body>

@@ -1,43 +1,78 @@
 {
   "settings": {
-    "title": "Meddelandeinställningar",
-    "menu_settings": "Inställningar",
-    "menu_flows": "Flows",
-    "menu_overview": "Översikt",
-    "menu_filters": "Filter",
-    "notification_broken": "Meddela när flows avbryts",
-    "notification_disabled": "Meddela när flows inaktiveras",
-    "notification_broken_variable": "Meddela när flows har trasiga variabler",
-    "notification_unused_flows": "Meddela när flows är oanvända",
-    "notification_unused_logic": "Meddela när en logisk variabel inte används",
-    "interval": "Intervall-inställningar",
-    "interval_enabled": "Automatisk flow-kontroll",
-    "check_on_startup": "Kör flow-kontroll när appen startar.",
-    "interval_flows": "Flow-intervall (minuter)",
-    "interval_variables": "Variabel-interval (minuter)",
-    "ctrl_click": "CTRL/CMD + Klicka för att öppna flow",
-    "flows_overview": "Översikt",
-    "flows_broken": "Trasiga flows",
-    "flows_disabled": "Inaktiva flows",
-    "flows_broken_variable": "Flows med trasiga variabler",
-    "all_flows": "Alla flows",
-    "all_variables": "Alla variabler i flows",
-    "all_screensavers": "Alla screensavers",
-    "all_variables_logic": "-- logik",
-    "all_variables_device": "-- enheter",
-    "all_variables_app": "-- appar",
-    "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities",
-    "all_variables_screensavers": "-- Screensavers",
-    "filtered_folders": "Filtrerade mappar",
-    "filtered_folders_description": "Valda mappar exkluderas vid kontroll",
-    "unused_flows": "Oanvända flows",
-    "unused_flows_description": "Oanvända flows eller flows med utlösaren 'Detta flow har startat'",
-    "unused_logic": "Oanvända logiska variabler",
-    "config_saving": "Sparar...",
-    "config_saved": "Sparad.",
-    "config_clear_and_saved": "Rensat och sparat.",
-    "config_save": "Spara",
-    "config_default_settings": "Återställ inställningar"
+    "menu": {
+      "settings": "Inställningar",
+      "flows": "Flows",
+      "overview": "Översikt",
+      "filters": "Filter",
+      "variable_per_flow": "Flows med Variabler",
+      "logic_flow_map": "Logik i Flows"
+    },
+     "notifications": {
+      "title": "Inställningar",
+      "setting": "Inställning",
+      "enable_check": "Aktivera kontroll",
+      "enable_notification": "Aktivera meddelande",
+      "broken": "Kontrollera / meddela Trasiga flows",
+      "disabled": "Kontrollera / meddela Inaktiva flows",
+      "broken_variable": "Meddela flows med trasiga variabler",
+      "unused_flows": "Kontrollera / meddela oanvända flows",
+      "unused_logic": "Kontrollera / meddela oanvända logiska variabler",
+      "fixed": "Kontrollera / meddela flow är fixat",
+      "fixed_logic": "Kontrollera / meddela variabel är reparerad"
+    },
+    "interval": {
+      "title": "Intervallinställningar",
+      "interval_enabled": "Automatisk flow-kontroll",
+      "check_on_startup": "Kör flow-kontroll när appen startar.",
+      "interval_flows": "Flow-intervall (minuter)",
+      "interval_variables": "Variabel-intervall (minuter)"
+    },
+    "general": {
+      "title": "Allmänna inställningar",
+      "ctrl_click": "CTRL/CMD + Klicka för att öppna flow",
+      "saving": "Sparar...",
+      "saved": "Sparad.",
+      "clear_and_saved": "Rensat och sparat.",
+      "save": "Spara",
+      "default_settings": "Återställ inställningar",
+      "none": "-- Ingen --"
+    },
+    "flows": {
+      "overview": "Översikt",
+      "amount": "Antal",
+      "broken": "Trasiga flows",
+      "disabled": "Inaktiva flows",
+      "broken_variable": "Flows med trasiga variabler",
+      "unused_flows": "Oanvända flows",
+      "unused_flows_description": "Oanvända flows eller flows med utlösaren 'Detta flow har startat'",
+      "unused_logic": "Oanvända logiska variabler",
+      "unused_logic_description": "Översikt över oanvända logiska variabler"
+    },
+    "all": {
+      "flows": "Alla flows",
+      "variables": "Alla variabler i flows",
+      "screensavers": "Alla screensavers",
+      "variables_logic": "-- Logiska variabler",
+      "variables_device": "-- Enhetsvariabler",
+      "variables_app": "-- App-variabler",
+      "variables_bl": "-- Better Logic-variabler",
+      "variables_fu": "-- Flow Utilities-variabler",
+      "variables_screensavers": "-- Screensaver-variabler"
+    },
+    "filtered_folders": {
+      "title": "Mappfilter",
+      "description": "Valda mappar exkluderas vid kontrollen"
+    },
+    "logic_flow_map": {
+      "description": "Översikt över var logiska variabler används i flows",
+      "list_string": "Logisk flow-karta (sträng)",
+      "list_number": "Logisk flow-karta (nummer)",
+      "list_boolean": "Logisk flow-karta (boolean)"
+    },
+    "variable_per_flow": {
+      "title": "Flows med Variabler",
+      "description": "Översikt över logiska variabler som används per flow"
+    }
   }
 }

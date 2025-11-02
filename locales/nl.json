@@ -1,39 +1,78 @@
 {
   "settings": {
-    "title": "Notificatie instellingen",
-    "menu_settings": "Instellingen",
-    "menu_flows": "Flows",
-    "menu_overview": "Overzicht",
-    "menu_filters": "Filters",
-    "notification_broken": "Notificatie als een flow kapot gaat",
-    "notification_disabled": "Notificatie als een flow uitgezet wordt",
-    "notification_broken_variable": "Notificatie als een flow een kapotte variabele heeft",
-    "notification_unused_flows": "Notificatie als een flow ongebruikt is",
-    "notification_unused_logic": "Notificatie als een logic variabele ongebruikt is",
-    "interval": "Interval instellingen",
-    "interval_enabled": "Automatisch flows checken",
-    "check_on_startup": "Draai Flow check na opstarten van de app.",
-    "interval_flows": "Flow interval (minuten)",
-    "interval_variables": "Variabele interval (minuten)",
-    "ctrl_click": "CTRL/CMD + Klik om flow te openen",
-    "flows_overview": "Overzicht",
-    "flows_amount": "Aantal",
-    "flows_broken": "Kapotte flows",
-    "flows_disabled": "Uitgeschakelde flows",
-    "flows_broken_variable": "Flows met kapotte variabele",
-    "all_flows": "Alle flows",
-    "all_screensavers": "Alle screensavers",
-    "all_variables": "Alle variabelen in flows",
-    "all_variables_logic": "-- Logic",
-    "all_variables_device": "-- Apparaten",
-    "all_variables_app": "-- Apps",
-    "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities",
-    "all_variables_screensavers": "-- Screensavers",
-    "filtered_folders": "Map Filters",
-    "filtered_folders_description": "Geselecteerde mappen worden uitgesloten tijdens de check",
-    "unused_flows": "Ongebruikte flows",
-    "unused_flows_description": "Ongebruikte flows of flows met een 'Deze flow is gestart' trigger",
-    "unused_logic": "Ongebruikte logic variabelen"
+    "menu": {
+      "settings": "Instellingen",
+      "flows": "Flows",
+      "overview": "Overzicht",
+      "filters": "Filters",
+      "variable_per_flow": "Flows met Variabelen",
+      "logic_flow_map": "Logica in Flows"
+    },
+     "notifications": {
+      "title": "Instellingen",
+      "setting": "Instelling",
+      "enable_check": "Check inschakelen",
+      "enable_notification": "Melding inschakelen",
+      "broken": "Check / meld Kapotte flows",
+      "disabled": "Check / meld Uitgeschakelde flows",
+      "broken_variable": "Check / meld flows met kapotte variabele",
+      "unused_flows": "Check / meld ongebruikte flows",
+      "unused_logic": "Check / meld ongebruikte logic variabelen",
+      "fixed": "Check / meld flow is gerepareerd",
+      "fixed_logic": "Check / meld variabele is gerepareerd"
+    },
+    "interval": {
+      "title": "Interval instellingen",
+      "interval_enabled": "Automatisch flows checken",
+      "check_on_startup": "Draai Flow check na opstarten van de app.",
+      "interval_flows": "Flow interval (minuten)",
+      "interval_variables": "Variabele interval (minuten)"
+    },
+    "general": {
+      "title": "Algemene instellingen",
+      "ctrl_click": "CTRL/CMD + Klik om flow te openen",
+      "saving": "Opslaan...",
+      "saved": "Opgeslagen.",
+      "clear_and_saved": "Gecleared en opgeslagen.",
+      "save": "Opslaan",
+      "default_settings": "Instellingen resetten",
+      "none": "-- Geen --"
+    },
+    "flows": {
+      "overview": "Overzicht",
+      "amount": "Aantal",
+      "broken": "Kapotte flows",
+      "disabled": "Uitgeschakelde flows",
+      "broken_variable": "Flows met kapotte variabele",
+      "unused_flows": "Ongebruikte flows",
+      "unused_flows_description": "Ongebruikte flows of flows met een 'Deze flow is gestart' trigger",
+      "unused_logic": "Ongebruikte logic variabelen",
+      "unused_logic_description": "Overzicht van ongebruikte logic variabelen"
+    },
+    "all": {
+      "flows": "Alle flows",
+      "variables": "Alle variabelen in flows",
+      "screensavers": "Alle screensavers",
+      "variables_logic": "-- Logic variabelen",
+      "variables_device": "-- Apparaten variabelen",
+      "variables_app": "-- Apps variabelen",
+      "variables_bl": "-- Better Logic variabelen",
+      "variables_fu": "-- Flow Utilities variabelen",
+      "variables_screensavers": "-- Screensaver variabelen"
+    },
+    "filtered_folders": {
+      "title": "Map Filters",
+      "description": "Geselecteerde mappen worden uitgesloten tijdens de check"
+    },
+    "logic_flow_map": {
+      "description": "Overzicht van waar logische variabelen worden gebruikt in flows",
+      "list_string": "Logische flow map (string)",
+      "list_number": "Logische flow map (nummer)",
+      "list_boolean": "Logische flow map (boolean)"
+    },
+    "variable_per_flow": {
+      "title": "Flows met Variabelen",
+      "description": "Overzicht van logische variabelen die per flow worden gebruikt"
+    }
   }
 }

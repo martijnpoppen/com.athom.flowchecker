@@ -1,38 +1,78 @@
 {
   "settings": {
-    "title": "Einstellungen",
-    "menu_settings": "Einstellungen",
-    "menu_flows": "Flows",
-    "menu_overview": "Übersicht",
-    "menu_filters": "Filter",
-    "notification_broken": "Benachrichtigen bei beschädigten Flows",
-    "notification_disabled": "Benachrichtigen bei deaktivierten Flows",
-    "notification_broken_variable": "Benachrichtigen bei beschädigten Variablen",
-    "notification_unused_flows": "Benachrichtigen bei ungenutzten Flows",
-    "notification_unused_logic": "Benachrichtigen bei ungenutzten Logik-Variablen",
-    "interval": "Einstellungen Prüfungsintervall",
-    "interval_enabled": "Automatische Flow Kontrolle",
-    "check_on_startup": "Flowcheck nach dem Starten der Anwendung ausführen",
-    "interval_flows": "Prüfungsintervall Flows (Minuten)",
-    "interval_variables": "Prüfungsintervall Variablen (Minuten)",
-    "ctrl_click": "CTRL/CMD + Klicken zum Öffnen des Flows",
-    "flows_overview": "Übersicht",
-    "flows_broken": "Beschädigte Flows",
-    "flows_disabled": "Deaktivierte Flows",
-    "flows_broken_variable": "Flows mit beschädigten Variablen",
-    "all_flows": "Anzahl Flows",
-    "all_variables": "Anzahl Variablen in Flows",
-    "all_screensavers": "Anzahl Screensavers",
-    "all_variables_logic": "-- Logik",
-    "all_variables_device": "-- Geräte",
-    "all_variables_app": "-- Apps",
-    "all_variables_bl": "-- Better Logic",
-    "all_variables_fu": "-- Flow Utilities",
-    "all_variables_screensavers": "-- Screensavers",
-    "filtered_folders": "Filter für Ordner",
-    "filtered_folders_description": "Ausgewählte Ordner werden bei der Prüfung ausgeschlossen",
-    "unused_flows": "Ungenutzte Flows",
-    "unused_flows_description": "Ungenutzte Flows oder Flows mit einem 'Dieser Flow wurde gestartet'-Trigger",
-    "unused_logic": "Ungenutzte Logik-Variablen"
+    "menu": {
+      "settings": "Einstellungen",
+      "flows": "Flows",
+      "overview": "Übersicht",
+      "filters": "Filter",
+      "variable_per_flow": "Flows mit Variablen",
+      "logic_flow_map": "Logik in Flows"
+    },
+     "notifications": {
+      "title": "Benachrichtigungseinstellungen",
+      "setting": "Einstellung",
+      "enable_check": "Überprüfung aktivieren",
+      "enable_notification": "Benachrichtigung aktivieren",
+      "broken": "Überprüfen / Benachrichtigen bei beschädigten Flows",
+      "disabled": "Überprüfen / Benachrichtigen bei deaktivierten Flows",
+      "broken_variable": "Überprüfen / Benachrichtigen bei Flows mit beschädigten Variablen",
+      "unused_flows": "Überprüfen / Benachrichtigen bei ungenutzten Flows",
+      "unused_logic": "Überprüfen / Benachrichtigen bei ungenutzten Logik-Variablen",
+      "fixed": "Überprüfen / Benachrichtigen wenn Flow repariert ist",
+      "fixed_logic": "Überprüfen / Benachrichtigen wenn Variable repariert ist"
+    },
+    "interval": {
+      "title": "Intervalleinstellungen",
+      "interval_enabled": "Automatische Flow-Kontrolle",
+      "check_on_startup": "Flow-Kontrolle beim Start der App ausführen.",
+      "interval_flows": "Flow-Intervall (Minuten)",
+      "interval_variables": "Variablen-Intervall (Minuten)"
+    },
+    "general": {
+      "title": "Allgemeine Einstellungen",
+      "ctrl_click": "CTRL/CMD + Klicken zum Öffnen des Flows",
+      "saving": "Speichern...",
+      "saved": "Gespeichert.",
+      "clear_and_saved": "Bereinigt und gespeichert.",
+      "save": "Speichern",
+      "default_settings": "Einstellungen zurücksetzen",
+      "none": "-- Keine --"
+    },
+    "flows": {
+      "overview": "Übersicht",
+      "amount": "Anzahl",
+      "broken": "Beschädigte Flows",
+      "disabled": "Deaktivierte Flows",
+      "broken_variable": "Flows mit beschädigten Variablen",
+      "unused_flows": "Ungenutzte Flows",
+      "unused_flows_description": "Ungenutzte Flows oder Flows mit einem 'Dieser Flow wurde gestartet'-Trigger",
+      "unused_logic": "Ungenutzte Logik-Variablen",
+      "unused_logic_description": "Überblick über ungenutzte Logik-Variablen"
+    },
+    "all": {
+      "flows": "Alle Flows",
+      "variables": "Alle Variablen in Flows",
+      "screensavers": "Alle Screensavers",
+      "variables_logic": "-- Logik Variablen",
+      "variables_device": "-- Geräte Variablen",
+      "variables_app": "-- App Variablen",
+      "variables_bl": "-- Better Logic Variablen",
+      "variables_fu": "-- Flow Utilities Variablen",
+      "variables_screensavers": "-- Screensaver Variablen"
+    },
+    "filtered_folders": {
+      "title": "Ordnerfilter",
+      "description": "Ausgewählte Ordner werden bei der Prüfung ausgeschlossen"
+    },
+    "logic_flow_map": {
+      "description": "Überblick über die Verwendung von Logikvariablen in Flows",
+      "list_string": "Logische Flow-Karte (String)",
+      "list_number": "Logische Flow-Karte (Nummer)",
+      "list_boolean": "Logische Flow-Karte (Boolean)"
+    },
+    "variable_per_flow": {
+      "title": "Flows mit Variablen",
+      "description": "Überblick über logische Variablen, die pro Flow verwendet werden"
+    }
   }
 }

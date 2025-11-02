@@ -9,8 +9,8 @@
     <table class="homey-table">
         <thead>
             <tr>
-                <th data-i18n="settings.flows_overview"></th>
-                <th data-i18n="settings.flows_amount"></th>
+                <th data-i18n="settings.flows.overview"></th>
+                <th data-i18n="settings.flows.amount"></th>
             </tr>
         </thead>
         <tbody>
@@ -44,72 +44,72 @@
                 const appSettings = response;
                 const data = [
                     {
-                        name: Homey.__("settings.flows_broken"),
+                        name: Homey.__("settings.flows.broken"),
                         amount: getAppSettingLength(appSettings, "BROKEN"),
                         show: widgetSettings.showBrokenFlows
                     },
                     {
-                        name: Homey.__("settings.flows_disabled"),
+                        name: Homey.__("settings.flows.disabled"),
                         amount: getAppSettingLength(appSettings, "DISABLED"),
                         show: widgetSettings.showDisabledFlows
                     },
                     {
-                        name: Homey.__("settings.flows_broken_variable"),
+                        name: Homey.__("settings.flows.broken_variable"),
                         amount: getAppSettingLength(appSettings, "BROKEN_VARIABLE"),
                         show: widgetSettings.showBrokenVariables
                     },
                     {
-                        name: Homey.__("settings.unused_flows"),
+                        name: Homey.__("settings.flows.unused_flows"),
                         amount: getAppSettingLength(appSettings, "UNUSED_FLOWS"),
                         show: widgetSettings.showUnusedFlows
                     },
                     {
-                        name: Homey.__("settings.unused_logic"),
+                        name: Homey.__("settings.flows.unused_logic"),
                         amount: getAppSettingLength(appSettings, "UNUSED_LOGIC"),
                         show: widgetSettings.showUnusedLogicVariables
                     },
                     {
-                        name: Homey.__("settings.all_flows"),
+                        name: Homey.__("settings.all.flows"),
                         amount: getAppSetting(appSettings, "ALL_FLOWS"),
                         show: widgetSettings.showAllFlows
                     },
                     {
-                        name: Homey.__("settings.all_screensavers"),
-                        amount: getAppSetting(appSettings, "ALL_SCREENSAVERS"),
+                        name: Homey.__("settings.all.screensavers"),
+                        amount: getAppSetting(appSettings, "ALL_SCREENSAVERS", 0),
                         show: widgetSettings.showAllScreensavers
                     },
                     {
-                        name: Homey.__("settings.all_variables"),
-                        amount: getAppSetting(appSettings, "ALL_VARIABLES"),
+                        name: Homey.__("settings.all.variables"),
+                        amount: getAppSetting(appSettings, "ALL_VARIABLES", 0),
                         show: widgetSettings.showAllVariablesInFlows
                     },
                     {
-                        name: Homey.__("settings.all_variables_logic"),
+                        name: Homey.__("settings.all.variables_logic"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "logic", 0),
                         show: widgetSettings.showAllLogicVariables
                     },
                     {
-                        name: Homey.__("settings.all_variables_device"),
+                        name: Homey.__("settings.all.variables_device"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "device", 0),
                         show: widgetSettings.showAllDevicesVariables
                     },
                     {
-                        name: Homey.__("settings.all_variables_app"),
+                        name: Homey.__("settings.all.variables_app"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "app", 0),
                         show: widgetSettings.showAllAppsVariables
                     },
                     {
-                        name: Homey.__("settings.all_variables_bl"),
+                        name: Homey.__("settings.all.variables_bl"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "bl", 0),
                         show: widgetSettings.showAllBetterLogicVariables
                     },
                     {
-                        name: Homey.__("settings.all_variables_fu"),
+                        name: Homey.__("settings.all.variables_fu"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "fu", 0),
                         show: widgetSettings.showAllFlowUtilitiesVariables
                     },
                     {
-                        name: Homey.__("settings.all_variables_screensavers"),
+                        name: Homey.__("settings.all.variables_screensavers"),
                         amount: getAppSubSetting(appSettings, "ALL_VARIABLES_OBJ", "screensavers", 0),
                         show: widgetSettings.showAllScreensaversVariables
                     }
