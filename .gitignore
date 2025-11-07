@@ -99,3 +99,4 @@ build/
 # Added by Homey CLI
 /.homeybuild/
 lib/homey-api/
+settings/homey-settings-mock.js

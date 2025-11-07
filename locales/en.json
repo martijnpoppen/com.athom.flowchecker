@@ -29,6 +29,7 @@
       "interval_variables": "variable interval (minutes)"
     },
     "general": {
+       "load_error": "Error loading settings.",
       "title": "General settings",
       "ctrl_click": "CTRL/CMD + Click to open flow",
       "saving": "Saving...",

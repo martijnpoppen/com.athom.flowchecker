@@ -45,33 +45,35 @@ function setPage(evt, method) {
   document.getElementById("currentPage").innerText = Homey.__(`settings.menu.${tabPage}`);
 }
 
-function initializeSettings(err, data) {
-  if (err || !data) {
-    document.getElementById("error").innerHTML = err;
-    showDialog();
-    return;
-  }
+function initializeSettings(err) {
+  try {
+    if (err || !data) {
+      console.error(err, data);
+      document.getElementById("error").innerHTML = err ? err : Homey.__("settings.general.load_error");
+      showDialog();
+      return;
+    }
 
-  initDialog();
-  setPage(null, "");
+    initDialog();
+    setPage(null, "");
 
-  document.getElementById("notification_broken").checked = data["NOTIFICATION_BROKEN"];
-  document.getElementById("check_broken").checked = data["CHECK_BROKEN"];
-  document.getElementById("notification_disabled").checked = data["NOTIFICATION_DISABLED"];
-  document.getElementById("check_disabled").checked = data["CHECK_DISABLED"];
-  document.getElementById("notification_broken_variable").checked = data["NOTIFICATION_BROKEN_VARIABLE"];
-  document.getElementById("check_broken_variable").checked = data["CHECK_BROKEN_VARIABLE"];
-  document.getElementById("notification_unused_flows").checked = data["NOTIFICATION_UNUSED_FLOWS"];
-  document.getElementById("check_unused_flows").checked = data["CHECK_UNUSED_FLOWS"];
-  document.getElementById("notification_unused_logic").checked = data["NOTIFICATION_UNUSED_LOGIC"];
-  document.getElementById("check_unused_logic").checked = data["CHECK_UNUSED_LOGIC"];
-  document.getElementById("notification_fixed").checked = data["NOTIFICATION_FIXED"];
-  document.getElementById("check_fixed").checked = data["CHECK_FIXED"];
-  document.getElementById("notification_fixed_logic").checked = data["NOTIFICATION_FIXED_LOGIC"];
-  document.getElementById("check_fixed_logic").checked = data["CHECK_FIXED_LOGIC"];
-  document.getElementById("interval_enabled").checked = data["INTERVAL_ENABLED"];
-  document.getElementById("check_on_startup").checked = data["CHECK_ON_STARTUP"];
-  document.getElementById("flows.overview").innerHTML = `<tbody><tr><td>${Homey.__("settings.flows.broken")}</td><td>${data["BROKEN"].length}</td></tr>
+    document.getElementById("notification_broken").checked = data["NOTIFICATION_BROKEN"];
+    document.getElementById("check_broken").checked = data["CHECK_BROKEN"];
+    document.getElementById("notification_disabled").checked = data["NOTIFICATION_DISABLED"];
+    document.getElementById("check_disabled").checked = data["CHECK_DISABLED"];
+    document.getElementById("notification_broken_variable").checked = data["NOTIFICATION_BROKEN_VARIABLE"];
+    document.getElementById("check_broken_variable").checked = data["CHECK_BROKEN_VARIABLE"];
+    document.getElementById("notification_unused_flows").checked = data["NOTIFICATION_UNUSED_FLOWS"];
+    document.getElementById("check_unused_flows").checked = data["CHECK_UNUSED_FLOWS"];
+    document.getElementById("notification_unused_logic").checked = data["NOTIFICATION_UNUSED_LOGIC"];
+    document.getElementById("check_unused_logic").checked = data["CHECK_UNUSED_LOGIC"];
+    document.getElementById("notification_fixed").checked = data["NOTIFICATION_FIXED"];
+    document.getElementById("check_fixed").checked = data["CHECK_FIXED"];
+    document.getElementById("notification_fixed_logic").checked = data["NOTIFICATION_FIXED_LOGIC"];
+    document.getElementById("check_fixed_logic").checked = data["CHECK_FIXED_LOGIC"];
+    document.getElementById("interval_enabled").checked = data["INTERVAL_ENABLED"];
+    document.getElementById("check_on_startup").checked = data["CHECK_ON_STARTUP"];
+    document.getElementById("flows.overview").innerHTML = `<tbody><tr><td>${Homey.__("settings.flows.broken")}</td><td>${data["BROKEN"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.disabled")}</td><td>${data["DISABLED"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.broken_variable")}</td><td>${data["BROKEN_VARIABLE"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.unused_flows")}</td><td>${data["UNUSED_FLOWS"].length}</td></tr>
@@ -89,22 +91,26 @@ function initializeSettings(err, data) {
                                                            <tr><td>${Homey.__("settings.all.variables_bl")}</td><td>${data["ALL_VARIABLES_OBJ"]["bl"] || 0}</td></tr>
                                                            <tr><td>${Homey.__("settings.all.variables_fu")}</td><td>${data["ALL_VARIABLES_OBJ"]["fu"] || 0}</td></tr>
                                                            <tr><td>${Homey.__("settings.all.variables_screensavers")}</td><td>${data["ALL_VARIABLES_OBJ"]["screensavers"] || 0}</td></tr></tbody>`;
-  document.getElementById("interval_flows").value = data["INTERVAL_FLOWS"];
-  document.getElementById("interval_variables").value = data["INTERVAL_FLOWS"] * 10;
-  if (data["BROKEN"]) document.getElementById("flows_broken").innerHTML = flowMapper(data, data["BROKEN"]);
-  if (data["DISABLED"]) document.getElementById("flows_disabled").innerHTML = flowMapper(data, data["DISABLED"]);
-  if (data["BROKEN_VARIABLE"]) document.getElementById("flows_broken_variable").innerHTML = flowMapper(data, data["BROKEN_VARIABLE"]);
-  if (data["UNUSED_FLOWS"]) document.getElementById("flows_unused").innerHTML = flowMapper(data, data["UNUSED_FLOWS"]);
-  if (data["UNUSED_LOGIC"]) document.getElementById("logic_unused").innerHTML = logicMapper(data, data["UNUSED_LOGIC"]);
-  if (data["FOLDERS"]) document.getElementById("filtered_folders").innerHTML = filterMapper(data, data["FOLDERS"]);
-  if (data["VARIABLES_PER_FLOW"]) document.getElementById("variable_per_flow_list").innerHTML = flowsWithVariables(data);
-  if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_string").innerHTML = flowLogicMap(data, "string");
-  if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_number").innerHTML = flowLogicMap(data, "number");
-  if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_boolean").innerHTML = flowLogicMap(data, "boolean");
+    document.getElementById("interval_flows").value = data["INTERVAL_FLOWS"];
+    document.getElementById("interval_variables").value = data["INTERVAL_FLOWS"] * 10;
+    if (data["BROKEN"]) document.getElementById("flows_broken").innerHTML = flowMapper(data, data["BROKEN"]);
+    if (data["DISABLED"]) document.getElementById("flows_disabled").innerHTML = flowMapper(data, data["DISABLED"]);
+    if (data["BROKEN_VARIABLE"]) document.getElementById("flows_broken_variable").innerHTML = flowMapper(data, data["BROKEN_VARIABLE"]);
+    if (data["UNUSED_FLOWS"]) document.getElementById("flows_unused").innerHTML = flowMapper(data, data["UNUSED_FLOWS"]);
+    if (data["UNUSED_LOGIC"]) document.getElementById("logic_unused").innerHTML = logicMapper(data, data["UNUSED_LOGIC"]);
+    if (data["FOLDERS"]) document.getElementById("filtered_folders").innerHTML = filterMapper(data, data["FOLDERS"]);
+    if (data["VARIABLES_PER_FLOW"]) document.getElementById("variable_per_flow_list").innerHTML = flowsWithVariables(data);
+    if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_string").innerHTML = flowLogicMap(data, "string");
+    if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_number").innerHTML = flowLogicMap(data, "number");
+    if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_boolean").innerHTML = flowLogicMap(data, "boolean");
 
-  checkBoxToggles();
-  initSave(data);
-  initClear(data);
+    checkBoxToggles();
+    initSave(data);
+    initClear(data);
+  } catch (error) {
+    console.error("Error in initializeSettings:", error);
+    showDialog(error);
+  }
 }
 
 function updateValue() {
@@ -139,7 +145,7 @@ function flowMapper(data, flows) {
     .sort((a, b) => a.folder && a.folder.localeCompare(b.folder))
     .forEach((f) => {
       if (f.folder !== folder && f.folder !== null) {
-        html += `<br><div class="row"><span class="flow-map"><strong>${escapeHtml(f.folder)}</strong></span></div>`;
+        html += `<br><div class="row"><span class="flow-map"><strong>${escapeHtml(f.folder, 'folder', f)}</strong></span></div>`;
         folder = f.folder;
       } else if (f.folder !== folder && f.folder === null) {
         html += `<br><div class="row"><span class="flow-map"><strong>----</strong></span></div>`;
@@ -147,7 +153,7 @@ function flowMapper(data, flows) {
       }
 
       const advanced = f.advanced ? "/advanced" : "";
-      html += `<div class="row"><span class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top'>${escapeHtml(f.name)}</a></span></div>`;
+      html += `<div class="row"><span class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top'>${escapeHtml(f.name, 'folderlink', f)}</a></span></div>`;
     });
 
   if (flows.length === 0) {
@@ -159,15 +165,16 @@ function flowMapper(data, flows) {
 
 function logicMapper(data, flows) {
   let html = ``;
+
+  if (flows.length === 0) {
+    return `<div class="row"><span class="flow-map">${Homey.__("settings.general.none")}</span></div>`;
+  }
+
   flows
     .sort((a, b) => a.name.localeCompare(b.name))
     .forEach((f) => {
-      html += `<div class="row"><span class="flow-map">${escapeHtml(f.name)}</span</div>`;
+      html += `<div class="row"><span class="flow-map">${escapeHtml(f.name, 'logicmapper', f)}</span</div>`;
     });
-
-  if (flows.length === 0) {
-    html = `<div class="row"><span class="flow-map">${Homey.__("settings.general.none")}</span></div>`;
-  }
 
   return html;
 }
@@ -181,14 +188,14 @@ function flowLogicMap(data, type) {
   const filteredLogic = flow_logic_map.filter((logic) => logic.type === type).sort((a, b) => a.token.localeCompare(b.token));
 
   filteredLogic.forEach((logic) => {
-    html += `<tr><td>Logic variable: <strong>${escapeHtml(logic.token)}</strong></td></tr>`;
+    html += `<tr><td>Logic variable: <strong>${escapeHtml(logic.token, 'flowlogicmap', logic)}</strong></td></tr>`;
     html += `<tr><td colspan="2">&nbsp;</td></tr>`;
     html += `<tr><td colspan="2">Flows:</td></tr>`;
     logic.flows
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((f, index) => {
         const advanced = f.advanced ? "/advanced" : "";
-        html += `<tr class="row"><td><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top' class="m-l flow-map">${escapeHtml(f.name)}</a></td></tr>`;
+        html += `<tr class="row"><td><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top' class="m-l flow-map">${escapeHtml(f.name, 'flowLogicMapfolderlink', f)}</a></td></tr>`;
       });
 
     html += `<tr><td colspan="2">&nbsp;</td></tr>`;
@@ -210,7 +217,7 @@ function flowsWithVariables(data) {
 
   flows_with_variables.forEach((entry) => {
     const flow = entry.flow;
-    html += `<sl-card class="card"> <div slot="header">Flow: <a href='https://my.homey.app/homeys/${homey_id}/flows${flow.advanced}/${flow.id}' target='_top' class="m-l flow-map">${escapeHtml(flow.name)}</a></div>`;
+    html += `<sl-card class="card"> <div slot="header">Flow: <a href='https://my.homey.app/homeys/${homey_id}/flows${flow.advanced}/${flow.id}' target='_top' class="m-l flow-map">${escapeHtml(flow.name, 'flowsWithVariables', flow)}</a></div>`;
     html += `<table width="100%"><tr>`;
 
     let emptyHtml = `<tr><td>${Homey.__("settings.general.none")}</td></tr>`;
@@ -225,9 +232,9 @@ function flowsWithVariables(data) {
           html += `<tr><td colspan="2"><hr></td></tr>`;
         }
 
-        html += `<tr><td><strong>${escapeHtml(varType).toUpperCase()} VARIABLES</strong></td></tr>`;
+        html += `<tr><td><strong>${escapeHtml(varType, 'vartype', { name: varType }).toUpperCase()} VARIABLES</strong></td></tr>`;
         variables.forEach((v) => {
-          html += `<tr><td>${escapeHtml(v.name)}</td><td>(${v.type})</td></tr>`;
+          html += `<tr><td>${escapeHtml(v.name || v.id, 'variable', v)}</td><td>(${v.type ? v.type : "N/A"})</td></tr>`;
         });
       }
     });
@@ -412,7 +419,12 @@ function initClear(_settings) {
   });
 }
 
-function escapeHtml(unsafe) {
+function escapeHtml(unsafe, context = '', flow = {}) {
+  if (typeof unsafe !== "string") {
+    console.warn("escapeHtml called with non-string:", unsafe, context, flow);
+    return unsafe;
+  }
+
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 

@@ -43,7 +43,7 @@ class App extends Homey.App {
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.createTokens();
 
-    this.findFlowDefects(true);
+    this.findFlowDefects(true, true);
   }
 
   // -------------------- SETTINGS ----------------------
@@ -331,23 +331,24 @@ class App extends Homey.App {
       this.log(`[findFlows] ${key} - FlowArray: `, flowArray);
       let flows = [];
 
-      if (key === "BROKEN") {
+      if (key === "BROKEN" && this._hp23) {
         // ---------------------------------------------
         // This is for the new 'isBroken' function, but it doesn't work reliable yet
-        // const f = this.API_DATA.FLOWS;
-        // const af = this.API_DATA.ADVANCED_FLOWS;
+        const f = this.API_DATA.FLOWS;
+        const af = this.API_DATA.ADVANCED_FLOWS;
 
-        // // get all flows, then check per flow if it is broken with isBroken() promise
-        // const brokenFlows = await Promise.all(
-        //   [...f, ...af].map(async (flow) => {
-        //     const isBroken = await flow.isBroken().catch(() => null);
-        //     return isBroken ? flow : null;
-        //   })
-        // );
+        // get all flows, then check per flow if it is broken with isBroken() promise
+        const brokenFlows = await Promise.all(
+          [...f, ...af].map(async (flow) => {
+            console.log(`Checking flow ID: ${flow.id} | Name: ${flow.name}`);
+            const shouldLog = flow.id === "5a18c948-0c47-48f5-96bf-47afdceb9b31";
+            const isBroken = await flow.isBroken(shouldLog).catch(() => null);
+            return isBroken ? flow : null;
+          })
+        );
 
-        // flows = brokenFlows.filter((flow) => flow !== null);
-        // ---------------------------------------------
-
+        flows = brokenFlows.filter((flow) => flow !== null);
+      } else if (key === "BROKEN" && !this._hp23) {
         const f = this.API_DATA.FLOWS.filter((flow) => flow.broken);
         const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken);
 
@@ -823,7 +824,7 @@ class App extends Homey.App {
         const appId = l.split(":")[2];
         const token = this.API_DATA.APPS.find((t) => t.id === appId);
         if (token) {
-          return { name: token.name, id: token.id, version: token.version };
+          return { name: token.name, id: token.id };
         } else {
           return null;
         }
