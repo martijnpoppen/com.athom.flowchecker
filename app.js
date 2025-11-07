@@ -340,9 +340,7 @@ class App extends Homey.App {
         // get all flows, then check per flow if it is broken with isBroken() promise
         const brokenFlows = await Promise.all(
           [...f, ...af].map(async (flow) => {
-            console.log(`Checking flow ID: ${flow.id} | Name: ${flow.name}`);
-            const shouldLog = flow.id === "5a18c948-0c47-48f5-96bf-47afdceb9b31";
-            const isBroken = await flow.isBroken(shouldLog).catch(() => null);
+            const isBroken = await flow.isBroken().catch(() => null);
             return isBroken ? flow : null;
           })
         );

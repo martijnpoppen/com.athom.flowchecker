@@ -45,7 +45,7 @@ function setPage(evt, method) {
   document.getElementById("currentPage").innerText = Homey.__(`settings.menu.${tabPage}`);
 }
 
-function initializeSettings(err) {
+function initializeSettings(err, data) {
   try {
     if (err || !data) {
       console.error(err, data);

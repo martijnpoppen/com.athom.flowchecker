@@ -463,5 +463,11 @@
   },
   "1.33.11": {
     "en": "FIX: filtered folders issue"
+  },
+  "1.33.12": {
+    "en": "FIX: settings page | FIX: isBroken()"
+  },
+  "1.33.13": {
+    "en": "FIX: error"
   }
 }
