@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.athom.flowchecker",
-  "version": "1.33.13",
+  "version": "1.34.1",
   "compatibility": ">=12.1.0",
   "sdk": 3,
   "permissions": [
@@ -108,10 +108,61 @@
       {
         "id": "trigger_BROKEN",
         "title": {
-          "en": "A flow is broken",
-          "nl": "Een flow is kapot gegaan",
-          "de": "Ein Flow ist beschädigt",
-          "sv": "Ett flow är trasigt"
+          "en": "A enabled flow is broken",
+          "nl": "Een ingeschakelde flow is kapot gegaan",
+          "de": "Ein aktivierter Flow ist beschädigt",
+          "sv": "Ett aktiverat flöde är trasigt"
+        },
+        "tokens": [
+          {
+            "name": "flow",
+            "type": "string",
+            "title": {
+              "en": "Flow",
+              "nl": "Flow",
+              "de": "Flow",
+              "sv": "Flow"
+            }
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "title": {
+              "en": "ID",
+              "nl": "ID",
+              "de": "ID",
+              "sv": "ID"
+            }
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "title": {
+              "en": "Type",
+              "nl": "Type",
+              "de": "Type",
+              "sv": "Type"
+            }
+          },
+          {
+            "name": "folder",
+            "type": "string",
+            "title": {
+              "en": "Folder",
+              "nl": "Folder",
+              "de": "Folder",
+              "sv": "Folder"
+            }
+          }
+        ]
+      },
+      {
+        "id": "trigger_BROKEN_DISABLED",
+        "title": {
+          "en": "A disabled flow is broken",
+          "nl": "Een uitgeschakelde flow is kapot gegaan",
+          "de": "Ein deaktivierter Flow ist beschädigt",
+          "sv": "Ett inaktiverat flöde är trasigt"
         },
         "tokens": [
           {
@@ -427,10 +478,19 @@
       {
         "id": "condition_BROKEN",
         "title": {
-          "en": "There !{{are|aren't}} broken flows",
-          "nl": "Er !{{zijn|zijn geen}} kapotte flows",
-          "de": "Beschädigte Flows !{{sind|sind nicht}} vorhanden",
-          "sv": "Det !{{finns|finns inga}} trasiga flows"
+          "en": "There !{{are|aren't}} broken enabled flows",
+          "nl": "Er !{{zijn|zijn geen}} kapotte ingeschakelde flows",
+          "de": "Beschädigte aktivierte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} trasiga aktiverade flows"
+        }
+      },
+      {
+        "id": "condition_BROKEN_DISABLED",
+        "title": {
+          "en": "There !{{are|aren't}} broken disabled flows",
+          "nl": "Er !{{zijn|zijn geen}} kapotte uitgeschakelde flows",
+          "de": "Beschädigte deaktivierte Flows !{{sind|sind nicht}} vorhanden",
+          "sv": "Det !{{finns|finns inga}} trasiga inaktiverade flows"
         }
       },
       {
@@ -571,7 +631,7 @@
         {
           "id": "widgetHeight",
           "type": "number",
-          "value": 540,
+          "value": 560,
           "title": {
             "en": "Widget height",
             "nl": "Widgethoogte",
@@ -606,18 +666,37 @@
           "type": "checkbox",
           "value": true,
           "title": {
-            "en": "Show broken flows",
-            "nl": "Toon defecte flows",
-            "de": "Defekte Flows anzeigen",
-            "fr": "Afficher les flows cassés",
-            "it": "Mostra flussi rotti",
-            "sv": "Visa trasiga flöden",
-            "no": "Vis ødelagte flows",
-            "es": "Mostrar flujos rotos",
-            "da": "Vis ødelagte flows",
-            "ru": "Показать сломанные потоки",
-            "pl": "Pokaż zepsute przepływy",
-            "ko": "고장난 플로우 표시"
+            "en": "Show broken enabled flows",
+            "nl": "Toon defecte ingeschakelde flows",
+            "de": "Defekte aktivierte Flows anzeigen",
+            "fr": "Afficher les flux activés cassés",
+            "it": "Mostra i flussi abilitati non funzionanti",
+            "sv": "Visa trasiga aktiverade flöden",
+            "no": "Vis ødelagte aktiverte flows",
+            "es": "Mostrar flujos habilitados rotos",
+            "da": "Vis ødelagte aktiverede flows",
+            "ru": "Показать сломанные включенные потоки",
+            "pl": "Pokaż zepsute włączone przepływy",
+            "ko": "손상된 활성 플로우 표시"
+          }
+        },
+        {
+          "id": "showBrokenDisabledFlows",
+          "type": "checkbox",
+          "value": true,
+          "title": {
+            "en": "Show broken disabled flows",
+            "nl": "Toon defecte uitgeschakelde flows",
+            "de": "Defekte deaktivierte Flows anzeigen",
+            "fr": "Afficher les flux désactivés cassés",
+            "it": "Mostra i flussi disabilitati non funzionanti",
+            "sv": "Visa trasiga inaktiverade flöden",
+            "no": "Vis ødelagte deaktiverte flows",
+            "es": "Mostrar flujos deshabilitados rotos",
+            "da": "Vis ødelagte deaktiverede flows",
+            "ru": "Показать сломанные отключенные потоки",
+            "pl": "Pokaż zepsute wyłączone przepływy",
+            "ko": "손상된 비활성화된 플로우 표시"
           }
         },
         {

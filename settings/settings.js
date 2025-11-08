@@ -49,8 +49,7 @@ function initializeSettings(err, data) {
   try {
     if (err || !data) {
       console.error(err, data);
-      document.getElementById("error").innerHTML = err ? err : Homey.__("settings.general.load_error");
-      showDialog();
+      showDialog(err ? err : Homey.__("settings.general.load_error"));
       return;
     }
 
@@ -59,6 +58,8 @@ function initializeSettings(err, data) {
 
     document.getElementById("notification_broken").checked = data["NOTIFICATION_BROKEN"];
     document.getElementById("check_broken").checked = data["CHECK_BROKEN"];
+    document.getElementById("notification_broken_disabled").checked = data["NOTIFICATION_BROKEN_DISABLED"];
+    document.getElementById("check_broken_disabled").checked = data["CHECK_BROKEN"];
     document.getElementById("notification_disabled").checked = data["NOTIFICATION_DISABLED"];
     document.getElementById("check_disabled").checked = data["CHECK_DISABLED"];
     document.getElementById("notification_broken_variable").checked = data["NOTIFICATION_BROKEN_VARIABLE"];
@@ -74,6 +75,7 @@ function initializeSettings(err, data) {
     document.getElementById("interval_enabled").checked = data["INTERVAL_ENABLED"];
     document.getElementById("check_on_startup").checked = data["CHECK_ON_STARTUP"];
     document.getElementById("flows.overview").innerHTML = `<tbody><tr><td>${Homey.__("settings.flows.broken")}</td><td>${data["BROKEN"].length}</td></tr>
+                                                           <tr><td>${Homey.__("settings.flows.broken_disabled")}</td><td>${data["BROKEN_DISABLED"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.disabled")}</td><td>${data["DISABLED"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.broken_variable")}</td><td>${data["BROKEN_VARIABLE"].length}</td></tr>
                                                            <tr><td>${Homey.__("settings.flows.unused_flows")}</td><td>${data["UNUSED_FLOWS"].length}</td></tr>
@@ -94,6 +96,7 @@ function initializeSettings(err, data) {
     document.getElementById("interval_flows").value = data["INTERVAL_FLOWS"];
     document.getElementById("interval_variables").value = data["INTERVAL_FLOWS"] * 10;
     if (data["BROKEN"]) document.getElementById("flows_broken").innerHTML = flowMapper(data, data["BROKEN"]);
+    if (data["BROKEN_DISABLED"]) document.getElementById("flows_broken_disabled").innerHTML = flowMapper(data, data["BROKEN_DISABLED"]);
     if (data["DISABLED"]) document.getElementById("flows_disabled").innerHTML = flowMapper(data, data["DISABLED"]);
     if (data["BROKEN_VARIABLE"]) document.getElementById("flows_broken_variable").innerHTML = flowMapper(data, data["BROKEN_VARIABLE"]);
     if (data["UNUSED_FLOWS"]) document.getElementById("flows_unused").innerHTML = flowMapper(data, data["UNUSED_FLOWS"]);
@@ -109,7 +112,8 @@ function initializeSettings(err, data) {
     initClear(data);
   } catch (error) {
     console.error("Error in initializeSettings:", error);
-    showDialog(error);
+
+    showDialog(`Error in initializeSettings: ${error}`);
   }
 }
 
@@ -145,7 +149,7 @@ function flowMapper(data, flows) {
     .sort((a, b) => a.folder && a.folder.localeCompare(b.folder))
     .forEach((f) => {
       if (f.folder !== folder && f.folder !== null) {
-        html += `<br><div class="row"><span class="flow-map"><strong>${escapeHtml(f.folder, 'folder', f)}</strong></span></div>`;
+        html += `<br><div class="row"><span class="flow-map"><strong>${escapeHtml(f.folder, "folder", f)}</strong></span></div>`;
         folder = f.folder;
       } else if (f.folder !== folder && f.folder === null) {
         html += `<br><div class="row"><span class="flow-map"><strong>----</strong></span></div>`;
@@ -153,7 +157,7 @@ function flowMapper(data, flows) {
       }
 
       const advanced = f.advanced ? "/advanced" : "";
-      html += `<div class="row"><span class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top'>${escapeHtml(f.name, 'folderlink', f)}</a></span></div>`;
+      html += `<div class="row"><span class="m-l flow-map"><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top'>${escapeHtml(f.name, "folderlink", f)}</a></span></div>`;
     });
 
   if (flows.length === 0) {
@@ -173,7 +177,7 @@ function logicMapper(data, flows) {
   flows
     .sort((a, b) => a.name.localeCompare(b.name))
     .forEach((f) => {
-      html += `<div class="row"><span class="flow-map">${escapeHtml(f.name, 'logicmapper', f)}</span</div>`;
+      html += `<div class="row"><span class="flow-map">${escapeHtml(f.name, "logicmapper", f)}</span</div>`;
     });
 
   return html;
@@ -188,22 +192,22 @@ function flowLogicMap(data, type) {
   const filteredLogic = flow_logic_map.filter((logic) => logic.type === type).sort((a, b) => a.token.localeCompare(b.token));
 
   filteredLogic.forEach((logic) => {
-    html += `<tr><td>Logic variable: <strong>${escapeHtml(logic.token, 'flowlogicmap', logic)}</strong></td></tr>`;
+    html += `<tr><td>Logic variable: <strong>${escapeHtml(logic.token, "flowlogicmap", logic)}</strong></td></tr>`;
     html += `<tr><td colspan="2">&nbsp;</td></tr>`;
     html += `<tr><td colspan="2">Flows:</td></tr>`;
     logic.flows
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((f, index) => {
         const advanced = f.advanced ? "/advanced" : "";
-        html += `<tr class="row"><td><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top' class="m-l flow-map">${escapeHtml(f.name, 'flowLogicMapfolderlink', f)}</a></td></tr>`;
+        html += `<tr class="row"><td><a href='https://my.homey.app/homeys/${homey_id}/flows${advanced}/${f.id}' target='_top' class="m-l flow-map">${escapeHtml(f.name, "flowLogicMapfolderlink", f)}</a></td></tr>`;
       });
-
-    html += `<tr><td colspan="2">&nbsp;</td></tr>`;
-    html += `<tr><td colspan="2"><hr></td></tr>`;
 
     if (!logic.flows.length) {
       html += `<tr><td colspan="2">${Homey.__("settings.general.none")}</td></tr>`;
     }
+
+    html += `<tr><td colspan="2">&nbsp;</td></tr>`;
+    html += `<tr><td colspan="2"><hr></td></tr>`;
   });
 
   return html;
@@ -217,7 +221,7 @@ function flowsWithVariables(data) {
 
   flows_with_variables.forEach((entry) => {
     const flow = entry.flow;
-    html += `<sl-card class="card"> <div slot="header">Flow: <a href='https://my.homey.app/homeys/${homey_id}/flows${flow.advanced}/${flow.id}' target='_top' class="m-l flow-map">${escapeHtml(flow.name, 'flowsWithVariables', flow)}</a></div>`;
+    html += `<sl-card class="card"> <div slot="header">Flow: <a href='https://my.homey.app/homeys/${homey_id}/flows${flow.advanced}/${flow.id}' target='_top' class="m-l flow-map">${escapeHtml(flow.name, "flowsWithVariables", flow)}</a></div>`;
     html += `<table width="100%"><tr>`;
 
     let emptyHtml = `<tr><td>${Homey.__("settings.general.none")}</td></tr>`;
@@ -232,9 +236,9 @@ function flowsWithVariables(data) {
           html += `<tr><td colspan="2"><hr></td></tr>`;
         }
 
-        html += `<tr><td><strong>${escapeHtml(varType, 'vartype', { name: varType }).toUpperCase()} VARIABLES</strong></td></tr>`;
+        html += `<tr><td><strong>${escapeHtml(varType, "vartype", { name: varType }).toUpperCase()} VARIABLES</strong></td></tr>`;
         variables.forEach((v) => {
-          html += `<tr><td>${escapeHtml(v.name || v.id, 'variable', v)}</td><td>(${v.type ? v.type : "N/A"})</td></tr>`;
+          html += `<tr><td>${escapeHtml(v.name || v.id, "variable", v)}</td><td>(${v.type ? v.type : "N/A"})</td></tr>`;
         });
       }
     });
@@ -265,10 +269,8 @@ function checked(filtered_folders, id) {
 
 function initSave(_settings) {
   document.getElementById("save").addEventListener("click", function (e) {
-    const error = document.getElementById("error");
-    const loading = document.getElementById("loading");
-    const success = document.getElementById("success");
     const button = document.getElementById("save");
+    button.setAttribute("loading", "loading");
 
     const filtered_folders = [];
     let filteredInputed = document.querySelectorAll(".filterMapper");
@@ -277,6 +279,8 @@ function initSave(_settings) {
     const settings = {
       NOTIFICATION_BROKEN: document.getElementById("notification_broken").checked,
       CHECK_BROKEN: document.getElementById("check_broken").checked,
+      NOTIFICATION_BROKEN_DISABLED: document.getElementById("notification_broken_disabled").checked,
+      CHECK_BROKEN_DISABLED: document.getElementById("check_broken_disabled").checked,
       NOTIFICATION_DISABLED: document.getElementById("notification_disabled").checked,
       CHECK_DISABLED: document.getElementById("check_disabled").checked,
       NOTIFICATION_BROKEN_VARIABLE: document.getElementById("notification_broken_variable").checked,
@@ -292,6 +296,7 @@ function initSave(_settings) {
       INTERVAL_ENABLED: document.getElementById("interval_enabled").checked,
       CHECK_ON_STARTUP: document.getElementById("check_on_startup").checked,
       BROKEN: _settings["BROKEN"],
+      BROKEN_DISABLED: _settings["BROKEN_DISABLED"],
       DISABLED: _settings["DISABLED"],
       BROKEN_VARIABLE: _settings["BROKEN_VARIABLE"],
       UNUSED_FLOWS: _settings["UNUSED_FLOWS"],
@@ -310,24 +315,20 @@ function initSave(_settings) {
 
     // ----------------------------------------------
 
-    button.disabled = true;
-    loading.innerHTML = `<i class="fa fa-spinner fa-spin fa-fw"></i>${Homey.__("settings.general.saving")}`;
-    error.innerHTML = "";
-    success.innerHTML = "";
-
     Homey.api("PUT", "/settings", settings, function (err, result) {
       if (err) {
         console.error(err);
-        error.innerHTML = err;
-        loading.innerHTML = "";
-        success.innerHTML = "";
-        showDialog();
+        showDialog(err);
+        setTimeout(() => {
+          button.removeAttribute("loading");
+        }, 2000);
+
         return Homey.alert(err);
       } else {
-        loading.innerHTML = "";
-        error.innerHTML = "";
-        success.innerHTML = `${Homey.__("settings.general.saved")}`;
-        showDialog();
+        showDialog(`${Homey.__("settings.general.saved")}`, "succes");
+        setTimeout(() => {
+          button.removeAttribute("loading");
+        }, 2000);
       }
     });
   });
@@ -336,12 +337,10 @@ function initSave(_settings) {
 function initClear(_settings) {
   document.getElementById("clear").addEventListener("click", async function (e) {
     e.preventDefault();
+    const button = document.getElementById("clear");
+    button.setAttribute("loading", "loading");
 
     if (await Homey.confirm("Are you sure you want to clear all stored configuration data?")) {
-      error = document.getElementById("error");
-      loading = document.getElementById("loading");
-      success = document.getElementById("success");
-
       document.getElementById("flows.broken").innerHTML = "";
       document.getElementById("flows.disabled").innerHTML = "";
       document.getElementById("flows.broken_variable").innerHTML = "";
@@ -350,6 +349,7 @@ function initClear(_settings) {
       document.getElementById("logic_unused").innerHTML = "";
       document.getElementById("filtered_folders").innerHTML = "";
       document.getElementById("notification_broken").checked = true;
+      document.getElementById("notification_broken_disabled").checked = true;
       document.getElementById("notification_disabled").checked = false;
       document.getElementById("notification_broken_variable").checked = true;
       document.getElementById("notification_unused_flows").checked = false;
@@ -357,6 +357,7 @@ function initClear(_settings) {
       document.getElementById("notifcation_fixed").checked = false;
       document.getElementById("notification_fixed_logic").checked = false;
       document.getElementById("check_broken").checked = true;
+      document.getElementById("check_broken_disabled").checked = true;
       document.getElementById("check_disabled").checked = true;
       document.getElementById("check_broken_variable").checked = true;
       document.getElementById("check_unused_flows").checked = true;
@@ -371,6 +372,8 @@ function initClear(_settings) {
       const settings = {
         NOTIFICATION_BROKEN: true,
         CHECK_BROKEN: true,
+        NOTIFICATION_BROKEN_DISABLED: true,
+        CHECK_BROKEN_DISABLED: true,
         NOTIFICATION_DISABLED: false,
         CHECK_DISABLED: true,
         NOTIFICATION_BROKEN_VARIABLE: true,
@@ -386,6 +389,7 @@ function initClear(_settings) {
         INTERVAL_ENABLED: true,
         CHECK_ON_STARTUP: false,
         BROKEN: [],
+        BROKEN_DISABLED: [],
         DISABLED: [],
         BROKEN_VARIABLE: [],
         UNUSED_FLOWS: [],
@@ -403,23 +407,30 @@ function initClear(_settings) {
       Homey.api("PUT", "/settings", settings, function (err, result) {
         if (err) {
           console.error(err);
-          error.innerHTML = err;
-          loading.innerHTML = "";
-          success.innerHTML = "";
-          showDialog();
+          showDialog(err);
+
+          setTimeout(() => {
+            button.removeAttribute("loading");
+          }, 2000);
           return Homey.alert(err);
         } else {
-          loading.innerHTML = "";
-          error.innerHTML = "";
-          success.innerHTML = `${Homey.__("settings.general.clear_and_saved")}`;
-          showDialog();
+          showDialog(`${Homey.__("settings.general.clear_and_saved")}`, "succes");
+
+          setTimeout(() => {
+            button.removeAttribute("loading");
+          }, 2000);
         }
       });
+    } else {
+      console.log("canceled");
+      setTimeout(() => {
+        button.removeAttribute("loading");
+      }, 2000);
     }
   });
 }
 
-function escapeHtml(unsafe, context = '', flow = {}) {
+function escapeHtml(unsafe, context = "", flow = {}) {
   if (typeof unsafe !== "string") {
     console.warn("escapeHtml called with non-string:", unsafe, context, flow);
     return unsafe;
@@ -428,14 +439,37 @@ function escapeHtml(unsafe, context = '', flow = {}) {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-function showDialog() {
+function showDialog(msg, type = "error") {
   const dialog = document.querySelector(".dialog-overview");
-  dialog.show();
+  const dialogContent = dialog.querySelector(".dialog-content");
+  dialogContent.innerHTML = msg;
+
+  console.log(msg, type);
+
+  if (type === "succes") {
+    dialogContent.style.color = "green";
+  }
+
+  if (type === "error") {
+    dialogContent.style.color = "red";
+  }
+
+  if (type === "other") {
+    dialogContent.style.color = "orange";
+  }
+
+  setTimeout(() => {
+    dialog.show();
+  }, 500);
 }
 
 function initDialog() {
   const dialog = document.querySelector(".dialog-overview");
   const closeButton = dialog.querySelector('sl-button[slot="footer"]');
 
-  closeButton.addEventListener("click", () => dialog.hide());
+  closeButton.addEventListener("click", () => {
+    dialog.hide();
+    const dialogContent = dialog.querySelector(".dialog-content");
+    dialogContent.innerHTML = "";
+  });
 }

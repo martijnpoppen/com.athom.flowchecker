@@ -1,0 +1,9 @@
+{
+  "id": "condition_BROKEN_DISABLED",
+  "title": {
+    "en": "There !{{are|aren't}} broken disabled flows",
+    "nl": "Er !{{zijn|zijn geen}} kapotte uitgeschakelde flows",
+    "de": "Beschädigte deaktivierte Flows !{{sind|sind nicht}} vorhanden",
+    "sv": "Det !{{finns|finns inga}} trasiga inaktiverade flows"
+  }
+}

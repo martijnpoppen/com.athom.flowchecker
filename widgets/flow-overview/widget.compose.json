@@ -39,7 +39,7 @@
     {
       "id": "widgetHeight",
       "type": "number",
-      "value": 540,
+      "value": 560,
       "title": {
         "en": "Widget height",
         "nl": "Widgethoogte",
@@ -74,18 +74,37 @@
             "type": "checkbox",
             "value": true,
             "title": {
-                "en": "Show broken flows",
-                "nl": "Toon defecte flows",
-                "de": "Defekte Flows anzeigen",
-                "fr": "Afficher les flows cassés",
-                "it": "Mostra flussi rotti",
-                "sv": "Visa trasiga flöden",
-                "no": "Vis ødelagte flows",
-                "es": "Mostrar flujos rotos",
-                "da": "Vis ødelagte flows",
-                "ru": "Показать сломанные потоки",
-                "pl": "Pokaż zepsute przepływy",
-                "ko": "고장난 플로우 표시"
+                "en": "Show broken enabled flows",
+                "nl": "Toon defecte ingeschakelde flows",
+                "de": "Defekte aktivierte Flows anzeigen",
+                "fr": "Afficher les flux activés cassés",
+                "it": "Mostra i flussi abilitati non funzionanti",
+                "sv": "Visa trasiga aktiverade flöden",
+                "no": "Vis ødelagte aktiverte flows",
+                "es": "Mostrar flujos habilitados rotos",
+                "da": "Vis ødelagte aktiverede flows",
+                "ru": "Показать сломанные включенные потоки",
+                "pl": "Pokaż zepsute włączone przepływy",
+                "ko": "손상된 활성 플로우 표시"
+            }
+        },
+        {
+            "id": "showBrokenDisabledFlows",
+            "type": "checkbox",
+            "value": true,
+            "title": {
+                "en": "Show broken disabled flows",
+                "nl": "Toon defecte uitgeschakelde flows",
+                "de": "Defekte deaktivierte Flows anzeigen",
+                "fr": "Afficher les flux désactivés cassés",
+                "it": "Mostra i flussi disabilitati non funzionanti",
+                "sv": "Visa trasiga inaktiverade flöden",
+                "no": "Vis ødelagte deaktiverte flows",
+                "es": "Mostrar flujos deshabilitados rotos",
+                "da": "Vis ødelagte deaktiverede flows",
+                "ru": "Показать сломанные отключенные потоки",
+                "pl": "Pokaż zepsute wyłączone przepływy",
+                "ko": "손상된 비활성화된 플로우 표시"
             }
         },
         {

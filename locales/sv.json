@@ -8,18 +8,19 @@
       "variable_per_flow": "Flows med Variabler",
       "logic_flow_map": "Logik i Flows"
     },
-     "notifications": {
+    "notifications": {
       "title": "Inställningar",
       "setting": "Inställning",
-      "enable_check": "Aktivera kontroll",
-      "enable_notification": "Aktivera meddelande",
-      "broken": "Kontrollera / meddela Trasiga flows",
-      "disabled": "Kontrollera / meddela Inaktiva flows",
-      "broken_variable": "Meddela flows med trasiga variabler",
-      "unused_flows": "Kontrollera / meddela oanvända flows",
-      "unused_logic": "Kontrollera / meddela oanvända logiska variabler",
-      "fixed": "Kontrollera / meddela flow är fixat",
-      "fixed_logic": "Kontrollera / meddela variabel är reparerad"
+      "enable_check": "Kontroll",
+      "enable_notification": "Meddelande",
+      "broken": "Trasiga aktiverade flows",
+      "broken_disabled": "Trasiga inaktiverade flows",
+      "disabled": "Inaktiva flows",
+      "broken_variable": "Flows med trasiga variabler",
+      "unused_flows": "Oanvända flows",
+      "unused_logic": "Oanvända logiska variabler",
+      "fixed": "Flow är fixat",
+      "fixed_logic": "Variabel är reparerad"
     },
     "interval": {
       "title": "Intervallinställningar",
@@ -41,7 +42,8 @@
     "flows": {
       "overview": "Översikt",
       "amount": "Antal",
-      "broken": "Trasiga flows",
+      "broken": "Trasiga aktiverade flows",
+      "broken_disabled": "Trasiga inaktiverade flows",
       "disabled": "Inaktiva flows",
       "broken_variable": "Flows med trasiga variabler",
       "unused_flows": "Oanvända flows",

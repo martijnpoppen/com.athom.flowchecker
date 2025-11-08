@@ -48,6 +48,11 @@
                         amount: getAppSettingLength(appSettings, "BROKEN"),
                         show: widgetSettings.showBrokenFlows
                     },
+                                        {
+                        name: Homey.__("settings.flows.broken_disabled"),
+                        amount: getAppSettingLength(appSettings, "BROKEN_DISABLED"),
+                        show: widgetSettings.showBrokenDisabledFlows
+                    },
                     {
                         name: Homey.__("settings.flows.disabled"),
                         amount: getAppSettingLength(appSettings, "DISABLED"),

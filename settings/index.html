@@ -32,6 +32,12 @@
                         </tr>
                         <tr><td>&nbsp;</td></tr>
                         <tr>
+                            <td data-i18n="settings.notifications.broken_disabled"></td>
+                            <td><sl-checkbox id="check_broken_disabled" value="" onclick="checkBoxToggles()"/></td>
+                            <td><sl-checkbox id="notification_broken_disabled" value="" /></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
                             <td data-i18n="settings.notifications.disabled"></td>
                             <td><sl-checkbox id="check_disabled" value="" onclick="checkBoxToggles()"/></td>
                             <td><sl-checkbox id="notification_disabled" value="" /></td>
@@ -115,6 +121,15 @@
             <sl-card class="card">
                 <div slot="header" data-i18n="settings.flows.broken"></div>
                 <div id="flows_broken" width="100%">
+                </div>
+            </sl-card>
+
+
+            <br>
+            <br>
+            <sl-card class="card">
+                <div slot="header" data-i18n="settings.flows.broken_disabled"></div>
+                <div id="flows_broken_disabled" width="100%">
                 </div>
             </sl-card>
 
@@ -242,9 +257,9 @@
 
 
     <sl-dialog label="Dialog" class="dialog-overview">
-        <p id="error" style="color: red;"></p>
-        <p id="loading" style="color: #0000FF;"></p>
-        <p id="success" style="color: #5fd225;"></p>
+        <p class="dialog-content">
+
+        </p> 
         <sl-button slot="footer" variant="primary">Close</sl-button>
     </sl-dialog>
 

@@ -11,15 +11,16 @@
     "notifications": {
       "title": "Settings",
       "setting": "Setting",
-      "enable_check": "Enable Check",
-      "enable_notification": "Enable Notification",
-      "broken": "Check / notify Broken flows",
-      "disabled": "Check / notify Disabled flows",
-      "broken_variable": "Check / notify flows with broken variable",
-      "unused_flows": "Check / notify unused flows",
-      "unused_logic": "Check / notify unused logic variables",
-      "fixed": "Check / notify flow is fixed",
-      "fixed_logic": "Check / notify variable is fixed"
+      "enable_check": "Check",
+      "enable_notification": "Notification",
+      "broken": "Broken enabled flows",
+      "broken_disabled": "Broken disabled flows",
+      "disabled": "Disabled flows",
+      "broken_variable": "Flows with broken variable",
+      "unused_flows": "Unused flows",
+      "unused_logic": "Unused logic variables",
+      "fixed": "Flow is fixed",
+      "fixed_logic": "Variable is fixed"
     },
     "interval": {
       "title": "Interval settings",
@@ -29,7 +30,7 @@
       "interval_variables": "variable interval (minutes)"
     },
     "general": {
-       "load_error": "Error loading settings.",
+      "load_error": "Error loading settings.",
       "title": "General settings",
       "ctrl_click": "CTRL/CMD + Click to open flow",
       "saving": "Saving...",
@@ -42,7 +43,8 @@
     "flows": {
       "overview": "Overview",
       "amount": "Amount",
-      "broken": "Broken flows",
+      "broken": "Broken enabled flows",
+      "broken_disabled": "Broken disabled flows",
       "disabled": "Disabled flows",
       "broken_variable": "Flows with broken variable",
       "unused_flows": "Unused flows",

@@ -11,15 +11,16 @@
      "notifications": {
       "title": "Benachrichtigungseinstellungen",
       "setting": "Einstellung",
-      "enable_check": "Überprüfung aktivieren",
-      "enable_notification": "Benachrichtigung aktivieren",
-      "broken": "Überprüfen / Benachrichtigen bei beschädigten Flows",
-      "disabled": "Überprüfen / Benachrichtigen bei deaktivierten Flows",
-      "broken_variable": "Überprüfen / Benachrichtigen bei Flows mit beschädigten Variablen",
-      "unused_flows": "Überprüfen / Benachrichtigen bei ungenutzten Flows",
-      "unused_logic": "Überprüfen / Benachrichtigen bei ungenutzten Logik-Variablen",
-      "fixed": "Überprüfen / Benachrichtigen wenn Flow repariert ist",
-      "fixed_logic": "Überprüfen / Benachrichtigen wenn Variable repariert ist"
+      "enable_check": "Überprüfung",
+      "enable_notification": "Benachrichtigung",
+      "broken": "Kaputte aktivierte Flows",
+      "broken_disabled": "Kaputte deaktivierte Flows",
+      "disabled": "Deaktivierte Flows",
+      "broken_variable": "Flows mit beschädigten Variablen",
+      "unused_flows": "Ungenutzte Flows",
+      "unused_logic": "Ungenutzte Logik-Variablen",
+      "fixed": "Flow repariert",
+      "fixed_logic": "Variable repariert"
     },
     "interval": {
       "title": "Intervalleinstellungen",
@@ -41,7 +42,8 @@
     "flows": {
       "overview": "Übersicht",
       "amount": "Anzahl",
-      "broken": "Beschädigte Flows",
+      "broken": "Beschädigte aktivierte Flows",
+      "broken_disabled": "Beschädigte deaktivierte Flows",
       "disabled": "Deaktivierte Flows",
       "broken_variable": "Flows mit beschädigten Variablen",
       "unused_flows": "Ungenutzte Flows",

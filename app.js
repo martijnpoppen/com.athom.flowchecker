@@ -4,7 +4,7 @@ const Homey = require("homey");
 const { HomeyAPI } = require("homey-api");
 const flowConditions = require("./lib/flows/conditions");
 const flowActions = require("./lib/flows/actions");
-const { sleep, flattenObj, replaceLast } = require("./lib/helpers");
+const { sleep, flattenObj, replaceLast, get } = require("./lib/helpers");
 
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = "net.i-dev.betterlogic";
@@ -26,7 +26,7 @@ class App extends Homey.App {
 
     await this.initSettings();
 
-    this.log("[onInit] - Loaded settings:", { ...this.appSettings, FOLDERS: "LOG", FILTERED_FOLDERS: "LOG", BROKEN: "LOG", DISABLED: "LOG", BROKEN_VARIABLE: "LOG", UNUSED_FLOWS: "LOG", UNUSED_LOGIC: "LOG", VARIABLES_PER_FLOW: "LOG", FLOW_LOGIC_MAP: "LOG" });
+    this.log("[onInit] - Loaded settings:", this.settingsLog(this.appSettings));
 
     this._api = await HomeyAPI.createAppAPI({
       homey: this.homey,
@@ -88,6 +88,18 @@ class App extends Homey.App {
           );
         }
 
+        if (!("BROKEN_DISABLED" in this.appSettings)) {
+          await this.updateSettings(
+            {
+              ...this.appSettings,
+              BROKEN_DISABLED: [],
+              NOTIFICATION_BROKEN_DISABLED: true,
+              CHECK_BROKEN_DISABLED: true
+            },
+            false
+          );
+        }
+
         if (!("NOTIFICATION_FIXED" in this.appSettings)) {
           await this.updateSettings(
             {
@@ -99,24 +111,29 @@ class App extends Homey.App {
           );
         }
 
-        const homeyCloudId = await this.homey.cloud.getHomeyId();
-        await this.updateSettings(
-          {
-            ...this.appSettings,
-            HOMEY_ID: homeyCloudId
-          },
-          false
-        );
+        if (!("HOMEY_ID" in this.appSettings) || this.appSettings.HOMEY_ID === "") {
+          const homeyCloudId = await this.homey.cloud.getHomeyId();
+          await this.updateSettings(
+            {
+              ...this.appSettings,
+              HOMEY_ID: homeyCloudId
+            },
+            false
+          );
+        }
       } else {
         this.log(`Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
           BROKEN: [],
+          BROKEN_DISABLED: [],
           DISABLED: [],
           BROKEN_VARIABLE: [],
           UNUSED_FLOWS: [],
           UNUSED_LOGIC: [],
           NOTIFICATION_BROKEN: true,
           CHECK_BROKEN: true,
+          NOTIFICATION_BROKEN_DISABLED: true,
+          CHECK_BROKEN_DISABLED: true,
           NOTIFICATION_DISABLED: false,
           CHECK_DISABLED: true,
           NOTIFICATION_BROKEN_VARIABLE: true,
@@ -152,7 +169,8 @@ class App extends Homey.App {
     try {
       const oldSettings = this.appSettings;
 
-      this.log("[updateSettings] - New settings:", { ...settings, FOLDERS: "LOG", FILTERED_FOLDERS: "LOG", BROKEN: "LOG", DISABLED: "LOG", BROKEN_VARIABLE: "LOG", UNUSED_FLOWS: "LOG", UNUSED_LOGIC: "LOG", VARIABLES_PER_FLOW: "LOG", FLOW_LOGIC_MAP: "LOG" });
+      this.log("[updateSettings] - New settings:", this.settingsLog(settings));
+
       this.appSettings = settings;
 
       await this.homey.settings.set(_settingsKey, this.appSettings);
@@ -168,10 +186,31 @@ class App extends Homey.App {
     }
   }
 
+  settingsLog(settings) {
+    return {
+      ...settings,
+      FOLDERS: get(settings, "FOLDERS", 0).length,
+      FILTERED_FOLDERS: get(settings, "FILTERED_FOLDERS", 0).length,
+      BROKEN: get(settings, "BROKEN", 0).length,
+      BROKEN_DISABLED: get(settings, "BROKEN_DISABLED", 0).length,
+      DISABLED: get(settings, "DISABLED", 0).length,
+      BROKEN_VARIABLE: get(settings, "BROKEN_VARIABLE", 0).length,
+      UNUSED_FLOWS: get(settings, "UNUSED_FLOWS", 0).length,
+      UNUSED_LOGIC: get(settings, "UNUSED_LOGIC", 0).length,
+      VARIABLES_PER_FLOW: get(settings, "VARIABLES_PER_FLOW", 0).length,
+      FLOW_LOGIC_MAP: get(settings, "FLOW_LOGIC_MAP", 0).length
+    };
+  }
+
   async createTokens() {
     this.token_BROKEN = await this.homey.flow.createToken("token_BROKEN", {
       type: "number",
       title: this.homey.__("settings.flows_broken")
+    });
+
+    this.token_BROKEN_DISABLED = await this.homey.flow.createToken("token_BROKEN_DISABLED", {
+      type: "number",
+      title: this.homey.__("settings.flows_broken_disabled")
     });
 
     this.token_DISABLED = await this.homey.flow.createToken("token_DISABLED", {
@@ -210,6 +249,7 @@ class App extends Homey.App {
     });
 
     await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
+    await this.token_BROKEN_DISABLED.setValue(this.appSettings.BROKEN_DISABLED.length);
     await this.token_DISABLED.setValue(this.appSettings.DISABLED.length);
     await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
     await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
@@ -302,6 +342,7 @@ class App extends Homey.App {
         await this.getApiData();
         await this.setFolders();
         await this.findFlows("BROKEN");
+        await this.findFlows("BROKEN_DISABLED");
         await this.findFlows("DISABLED");
         await this.findFlows("UNUSED_FLOWS");
 
@@ -345,10 +386,30 @@ class App extends Homey.App {
           })
         );
 
-        flows = brokenFlows.filter((flow) => flow !== null);
+        flows = brokenFlows.filter((flow) => flow !== null && flow.enabled);
       } else if (key === "BROKEN" && !this._hp23) {
-        const f = this.API_DATA.FLOWS.filter((flow) => flow.broken);
-        const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken);
+        const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && flow.enabled);
+        const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && flow.enabled);
+
+        flows = [...f, ...af];
+      } else if (key === "BROKEN_DISABLED" && this._hp23) {
+        // ---------------------------------------------
+        // This is for the new 'isBroken' function, but it doesn't work reliable yet
+        const f = this.API_DATA.FLOWS;
+        const af = this.API_DATA.ADVANCED_FLOWS;
+
+        // get all flows, then check per flow if it is broken with isBroken() promise
+        const brokenFlows = await Promise.all(
+          [...f, ...af].map(async (flow) => {
+            const isBroken = await flow.isBroken().catch(() => null);
+            return isBroken ? flow : null;
+          })
+        );
+
+        flows = brokenFlows.filter((flow) => flow !== null && !flow.enabled);
+      } else if (key === "BROKEN_DISABLED" && !this._hp23) {
+        const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && !aflow.enabled);
+        const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && !aflow.enabled);
 
         flows = [...f, ...af];
       } else if (key === "DISABLED") {

@@ -1,10 +1,10 @@
 {
-  "id": "trigger_BROKEN",
+  "id": "trigger_BROKEN_DISABLED",
   "title": {
-    "en": "A enabled flow is broken",
-    "nl": "Een ingeschakelde flow is kapot gegaan",
-    "de": "Ein aktivierter Flow ist beschädigt",
-    "sv": "Ett aktiverat flöde är trasigt"
+    "en": "A disabled flow is broken",
+    "nl": "Een uitgeschakelde flow is kapot gegaan",
+    "de": "Ein deaktivierter Flow ist beschädigt",
+    "sv": "Ett inaktiverat flöde är trasigt"
   },
   "tokens": [
     {

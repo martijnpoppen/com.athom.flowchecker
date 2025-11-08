@@ -11,15 +11,16 @@
      "notifications": {
       "title": "Instellingen",
       "setting": "Instelling",
-      "enable_check": "Check inschakelen",
-      "enable_notification": "Melding inschakelen",
-      "broken": "Check / meld Kapotte flows",
-      "disabled": "Check / meld Uitgeschakelde flows",
-      "broken_variable": "Check / meld flows met kapotte variabele",
-      "unused_flows": "Check / meld ongebruikte flows",
-      "unused_logic": "Check / meld ongebruikte logic variabelen",
-      "fixed": "Check / meld flow is gerepareerd",
-      "fixed_logic": "Check / meld variabele is gerepareerd"
+      "enable_check": "Check",
+      "enable_notification": "Melding",
+      "broken": "Kapotte ingeschakelde flows",
+      "broken_disabled": "Kapotte uitgeschakelde flows",
+      "disabled": "Uitgeschakelde flows",
+      "broken_variable": "flows met kapotte variabele",
+      "unused_flows": "ongebruikte flows",
+      "unused_logic": "ongebruikte logic variabelen",
+      "fixed": "flow is gerepareerd",
+      "fixed_logic": "variabele is gerepareerd"
     },
     "interval": {
       "title": "Interval instellingen",
@@ -41,7 +42,8 @@
     "flows": {
       "overview": "Overzicht",
       "amount": "Aantal",
-      "broken": "Kapotte flows",
+      "broken": "Kapotte ingeschakelde flows",
+      "broken_disabled": "Kapotte uitgeschakelde flows",
       "disabled": "Uitgeschakelde flows",
       "broken_variable": "Flows met kapotte variabele",
       "unused_flows": "Ongebruikte flows",
