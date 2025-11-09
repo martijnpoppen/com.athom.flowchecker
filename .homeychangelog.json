@@ -475,5 +475,11 @@
   },
   "1.34.1": {
     "en": "FIX: content"
+  },
+  "1.34.2": {
+    "en": "FIX: save button in setting page"
+  },
+  "1.34.3": {
+    "en": "FIX: save button"
   }
 }

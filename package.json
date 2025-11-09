@@ -10,6 +10,7 @@
     "homey-api": "^3.14.10"
   },
   "scripts": {
+    "postinstall": "cp ./lib/homey-api-patch/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/Flow.js ./node_modules/homey-api/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/Flow.js && cp ./lib/homey-api-patch/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/AdvancedFlow.js ./node_modules/homey-api/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/AdvancedFlow.js",
     "dev": "cd widgets/flow-overview/vue && yarn build --mode development && cd ../../.. && homey app run",
     "build": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app install",
     "publish-app": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app publish"

@@ -2,11 +2,19 @@ function onHomeyReady(Homey) {
   const _settingsKey = `com.athom.flowchecker.settings`;
 
   Homey.get(_settingsKey, initializeSettings);
-  Homey.on("settings.set", (key, data) => {
+  Homey.on("settings.set", (key) => {
     if (key == _settingsKey) {
       Homey.get(_settingsKey, initializeSettings);
     }
   });
+
+  setPage(null, "");
+
+  setTimeout(() => {
+    initDialog();
+    initSave();
+    initClear();
+  }, 500);
 
   Homey.ready();
 }
@@ -53,13 +61,12 @@ function initializeSettings(err, data) {
       return;
     }
 
-    initDialog();
-    setPage(null, "");
+    window._settings = data;
 
     document.getElementById("notification_broken").checked = data["NOTIFICATION_BROKEN"];
     document.getElementById("check_broken").checked = data["CHECK_BROKEN"];
     document.getElementById("notification_broken_disabled").checked = data["NOTIFICATION_BROKEN_DISABLED"];
-    document.getElementById("check_broken_disabled").checked = data["CHECK_BROKEN"];
+    document.getElementById("check_broken_disabled").checked = data["CHECK_BROKEN_DISABLED"];
     document.getElementById("notification_disabled").checked = data["NOTIFICATION_DISABLED"];
     document.getElementById("check_disabled").checked = data["CHECK_DISABLED"];
     document.getElementById("notification_broken_variable").checked = data["NOTIFICATION_BROKEN_VARIABLE"];
@@ -108,8 +115,6 @@ function initializeSettings(err, data) {
     if (data["FLOW_LOGIC_MAP"]) document.getElementById("logic_flow_map_list_boolean").innerHTML = flowLogicMap(data, "boolean");
 
     checkBoxToggles();
-    initSave(data);
-    initClear(data);
   } catch (error) {
     console.error("Error in initializeSettings:", error);
 
@@ -267,7 +272,7 @@ function checked(filtered_folders, id) {
   return filtered_folders.includes(id) ? "checked" : "";
 }
 
-function initSave(_settings) {
+function initSave() {
   document.getElementById("save").addEventListener("click", function (e) {
     const button = document.getElementById("save");
     button.setAttribute("loading", "loading");
@@ -295,22 +300,22 @@ function initSave(_settings) {
       CHECK_FIXED_LOGIC: document.getElementById("check_fixed_logic").checked,
       INTERVAL_ENABLED: document.getElementById("interval_enabled").checked,
       CHECK_ON_STARTUP: document.getElementById("check_on_startup").checked,
-      BROKEN: _settings["BROKEN"],
-      BROKEN_DISABLED: _settings["BROKEN_DISABLED"],
-      DISABLED: _settings["DISABLED"],
-      BROKEN_VARIABLE: _settings["BROKEN_VARIABLE"],
-      UNUSED_FLOWS: _settings["UNUSED_FLOWS"],
-      UNUSED_LOGIC: _settings["UNUSED_LOGIC"],
+      BROKEN: window._settings["BROKEN"],
+      BROKEN_DISABLED: window._settings["BROKEN_DISABLED"],
+      DISABLED: window._settings["DISABLED"],
+      BROKEN_VARIABLE: window._settings["BROKEN_VARIABLE"],
+      UNUSED_FLOWS: window._settings["UNUSED_FLOWS"],
+      UNUSED_LOGIC: window._settings["UNUSED_LOGIC"],
       INTERVAL_FLOWS: document.getElementById("interval_flows").value,
-      ALL_FLOWS: _settings["ALL_FLOWS"],
-      ALL_SCREENSAVERS: _settings["ALL_SCREENSAVERS"],
-      ALL_VARIABLES: _settings["ALL_VARIABLES"],
-      ALL_VARIABLES_OBJ: _settings["ALL_VARIABLES_OBJ"],
-      VARIABLES_PER_FLOW: _settings["VARIABLES_PER_FLOW"],
-      FLOW_LOGIC_MAP: _settings["FLOW_LOGIC_MAP"],
-      FOLDERS: _settings["FOLDERS"],
+      ALL_FLOWS: window._settings["ALL_FLOWS"],
+      ALL_SCREENSAVERS: window._settings["ALL_SCREENSAVERS"],
+      ALL_VARIABLES: window._settings["ALL_VARIABLES"],
+      ALL_VARIABLES_OBJ: window._settings["ALL_VARIABLES_OBJ"],
+      VARIABLES_PER_FLOW: window._settings["VARIABLES_PER_FLOW"],
+      FLOW_LOGIC_MAP: window._settings["FLOW_LOGIC_MAP"],
+      FOLDERS: window._settings["FOLDERS"],
       FILTERED_FOLDERS: filtered_folders,
-      HOMEY_ID: _settings["HOMEY_ID"]
+      HOMEY_ID: window._settings["HOMEY_ID"]
     };
 
     // ----------------------------------------------
@@ -325,6 +330,7 @@ function initSave(_settings) {
 
         return Homey.alert(err);
       } else {
+        console.log(result);
         showDialog(`${Homey.__("settings.general.saved")}`, "succes");
         setTimeout(() => {
           button.removeAttribute("loading");
@@ -334,7 +340,7 @@ function initSave(_settings) {
   });
 }
 
-function initClear(_settings) {
+function initClear() {
   document.getElementById("clear").addEventListener("click", async function (e) {
     e.preventDefault();
     const button = document.getElementById("clear");
@@ -401,7 +407,7 @@ function initClear(_settings) {
         ALL_VARIABLES_OBJ: {},
         FOLDERS: [],
         FILTERED_FOLDERS: [],
-        HOMEY_ID: _settings["HOMEY_ID"]
+        HOMEY_ID: window._settings["HOMEY_ID"]
       };
 
       Homey.api("PUT", "/settings", settings, function (err, result) {
@@ -472,4 +478,12 @@ function initDialog() {
     const dialogContent = dialog.querySelector(".dialog-content");
     dialogContent.innerHTML = "";
   });
+}
+
+function removeAllListeners() {
+  try {
+    document.querySelector("body").outerHTML = document.querySelector("body").outerHTML;
+  } catch (error) {
+    console.error(error);
+  }
 }
