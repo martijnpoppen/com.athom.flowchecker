@@ -587,40 +587,50 @@ class App extends Homey.App {
 
             argsArray = flattenObj(card.args);
 
-            const logicVar = argsArray.find((arg) => typeof arg === "string" && arg.includes("homey:manager:logic"));
-            const logicDevice = argsArray.find((arg) => typeof arg === "string" && arg.includes("homey:device"));
-            const logicApp = argsArray.find((arg) => typeof arg === "string" && arg.includes("homey:app"));
-            const logicBL = argsArray.find((arg) => typeof arg === "string" && arg.includes(`homey:app:${externalAppKeyBL}`));
-            const logicFU = argsArray.find((arg) => typeof arg === "string" && arg.includes(`homey:app:${externalAppKeyFU}`));
+            const logicVar = argsArray.filter((arg) => typeof arg === "string" && arg.includes("homey:manager:logic"));
+            const logicDevice = argsArray.filter((arg) => typeof arg === "string" && arg.includes("homey:device"));
+            const logicApp = argsArray.filter((arg) => typeof arg === "string" && arg.includes("homey:app"));
+            const logicBL = argsArray.filter((arg) => typeof arg === "string" && arg.includes(`homey:app:${externalAppKeyBL}`));
+            const logicFU = argsArray.filter((arg) => typeof arg === "string" && arg.includes(`homey:app:${externalAppKeyFU}`));
 
-            if (logicVar) {
-              const match = logicVar.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-              const varArray = match ? match.filter((l) => l.includes("homey:manager:logic")) : [];
-              logicVariables = [...logicVariables, ...varArray];
+            if (logicVar && logicVar.length) {
+              logicVar.forEach((lv) => {
+                const match = lv.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                const varArray = match ? match.filter((l) => l.includes("homey:manager:logic")) : [];
+                logicVariables = [...logicVariables, ...varArray];
+              });
             }
 
-            if (logicDevice) {
-              const match = logicDevice.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-              const varArray = match ? match.filter((l) => l.includes("homey:device")) : [];
-              deviceVariables = [...deviceVariables, ...varArray];
+            if (logicDevice && logicDevice.length) {
+              logicDevice.forEach((ld) => {
+                const match = ld.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                const varArray = match ? match.filter((l) => l.includes("homey:device")) : [];
+                deviceVariables = [...deviceVariables, ...varArray];
+              });
             }
 
-            if (logicApp) {
-              const match = logicApp.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
-              const varArray = match ? match.filter((l) => (l !== externalAppKeyBL) & (l !== externalAppKeyFU)).map((l) => `homey:app:${l}`) : [];
-              appVariables = [...appVariables, ...varArray];
+            if (logicApp && logicApp.length) {
+              logicApp.forEach((la) => {
+                const match = la.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
+                const varArray = match ? match.filter((l) => (l !== externalAppKeyBL) & (l !== externalAppKeyFU)).map((l) => `homey:app:${l}`) : [];
+                appVariables = [...appVariables, ...varArray];
+              });
             }
 
-            if (logicBL) {
-              const match = logicBL.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-              const varArray = match ? match.filter((l) => l.includes(`homey:app:${externalAppKeyBL}`)) : [];
-              blVariables = [...blVariables, ...varArray];
+            if (logicBL && logicBL.length) {
+              logicBL.forEach((lbl) => {
+                const match = lbl.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                const varArray = match ? match.filter((l) => l.includes(`homey:app:${externalAppKeyBL}`)) : [];
+                blVariables = [...blVariables, ...varArray];
+              });
             }
 
-            if (logicFU) {
-              const match = logicFU.match(/(?<=\[\[)(.*?)(?=\]\])/g);
-              const varArray = match ? match.filter((l) => l.includes(`homey:app:${externalAppKeyFU}`)) : [];
-              fuVariables = [...fuVariables, ...varArray];
+            if (logicFU && logicFU.length) {
+              logicFU.forEach((lfu) => {
+                const match = lfu.match(/(?<=\[\[)(.*?)(?=\]\])/g);
+                const varArray = match ? match.filter((l) => l.includes(`homey:app:${externalAppKeyFU}`)) : [];
+                fuVariables = [...fuVariables, ...varArray];
+              });
             }
           }
         });

@@ -481,5 +481,11 @@
   },
   "1.34.3": {
     "en": "FIX: save button"
+  },
+  "1.34.4": {
+    "en": "FIX: multiple logic inputs in advanced card"
+  },
+  "1.34.5": {
+    "en": "FIX: multiple logic inputs in advanced card"
   }
 }
