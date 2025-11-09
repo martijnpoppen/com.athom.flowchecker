@@ -138,6 +138,7 @@ function checkBoxToggles() {
   showHide(document.getElementById("interval_enabled"), "interval_flows_row");
   showHide(document.getElementById("interval_enabled"), "interval_variables_row");
   enableDisable(document.getElementById("check_broken"), "notification_broken");
+  enableDisable(document.getElementById("check_broken_disabled"), "notification_broken_disabled");
   enableDisable(document.getElementById("check_disabled"), "notification_disabled");
   enableDisable(document.getElementById("check_broken_variable"), "notification_broken_variable");
   enableDisable(document.getElementById("check_unused_flows"), "notification_unused_flows");
