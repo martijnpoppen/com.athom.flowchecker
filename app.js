@@ -9,14 +9,18 @@ const { sleep, flattenObj, replaceLast, get } = require("./lib/helpers");
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = "net.i-dev.betterlogic";
 const externalAppKeyFU = "com.flow.utilities";
+const FORCE_LOGGING = false;
+const FORCE_FLOW = false;
 
 class App extends Homey.App {
   log() {
-    console.log.bind(this, "[log]").apply(this, arguments);
+    if (!FORCE_LOGGING) {
+      console.log.bind(this, "[log]").apply(this, arguments);
+    }
   }
 
   error() {
-    console.error.bind(this, "[error]").apply(this, arguments);
+      console.error.bind(this, "[error]").apply(this, arguments);
   }
 
   // -------------------- INIT ----------------------
@@ -336,9 +340,9 @@ class App extends Homey.App {
 
   async findFlowDefects(initial = false, force = false) {
     try {
-      if (initial) await sleep(15000);
+      if (initial && !FORCE_LOGGING) await sleep(15000);
 
-      if (!initial || this.appSettings.CHECK_ON_STARTUP) {
+      if (!initial || this.appSettings.CHECK_ON_STARTUP || FORCE_LOGGING) {
         await this.getApiData();
         await this.setFolders();
         await this.findFlows("BROKEN");
@@ -487,6 +491,9 @@ class App extends Homey.App {
 
       let homeyApps = this.API_DATA.APPS.filter((app) => app.enabled && !app.crashed).map((f) => `homey:app:${f.id}`);
 
+      const homeyAppVariables = flowTokens.filter((f) => f.id.includes(`homey:app`)).map((f) => `${replaceLast(f.id, ":", "|")}`);
+      this.log(`[findLogic] ${key} - homeyAppVariables: `, homeyAppVariables.length);
+
       // -------------APP SPECIFIC -----------------------
       let betterLogic = [];
       let flowUtils = [];
@@ -515,7 +522,7 @@ class App extends Homey.App {
       }
 
       const logicMessages = [];
-      const flows = [...this.API_DATA.FLOWS, ...this.API_DATA.ADVANCED_FLOWS];
+      const flows = FORCE_FLOW ? [FORCE_FLOW] : [...this.API_DATA.FLOWS, ...this.API_DATA.ADVANCED_FLOWS];
 
       let filteredFlows = flows.filter((flow) => {
         let logicVariables = [];
@@ -612,7 +619,7 @@ class App extends Homey.App {
             if (logicApp && logicApp.length) {
               logicApp.forEach((la) => {
                 const match = la.match(/(?<=\[\[)(homey:app:)(.*?)(?=\]\])/g);
-                const varArray = match ? match.filter((l) => (!l.includes(externalAppKeyBL)) & !l.includes(externalAppKeyFU)) : [];
+                const varArray = match ? match.filter((l) => !l.includes(externalAppKeyBL) & !l.includes(externalAppKeyFU)) : [];
                 appVariables = [...appVariables, ...varArray];
               });
             }
@@ -634,6 +641,10 @@ class App extends Homey.App {
             }
           }
         });
+
+        if (FORCE_LOGGING) {
+          console.log(logicVariables, deviceVariables, appVariables, blVariables, fuVariables, screensaverVariables);
+        }
 
         const variablesLength = logicVariables.length + deviceVariables.length + appVariables.length + blVariables.length + fuVariables.length;
 
@@ -693,7 +704,7 @@ class App extends Homey.App {
           logicMessages.push({ id: flow.id, msg: "Flow Utillities" });
           return true;
         }
-        if (appVariables.length && appVariables.some((r) => homeyApps.indexOf(r) === -1)) {
+        if (appVariables.length && appVariables.some((r) => homeyAppVariables.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Broken app" });
           return true;
         }
