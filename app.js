@@ -611,8 +611,8 @@ class App extends Homey.App {
 
             if (logicApp && logicApp.length) {
               logicApp.forEach((la) => {
-                const match = la.match(/(?<=\[(homey:app:))(.*?)(?=\|)/g);
-                const varArray = match ? match.filter((l) => (l !== externalAppKeyBL) & (l !== externalAppKeyFU)).map((l) => `homey:app:${l}`) : [];
+                const match = la.match(/(?<=\[\[)(homey:app:)(.*?)(?=\]\])/g);
+                const varArray = match ? match.filter((l) => (!l.includes(externalAppKeyBL)) & !l.includes(externalAppKeyFU)) : [];
                 appVariables = [...appVariables, ...varArray];
               });
             }
