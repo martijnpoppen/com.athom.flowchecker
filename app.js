@@ -9,8 +9,12 @@ const { sleep, flattenObj, replaceLast, get } = require("./lib/helpers");
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = "net.i-dev.betterlogic";
 const externalAppKeyFU = "com.flow.utilities";
+
 const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
+const HP23_CHECK = false;
+const LOGIC_MAP_CHECK = false;
+
 
 class App extends Homey.App {
   log() {
@@ -209,47 +213,47 @@ class App extends Homey.App {
   async createTokens() {
     this.token_BROKEN = await this.homey.flow.createToken("token_BROKEN", {
       type: "number",
-      title: this.homey.__("settings.flows_broken")
+      title: this.homey.__("settings.flows.broken")
     });
 
     this.token_BROKEN_DISABLED = await this.homey.flow.createToken("token_BROKEN_DISABLED", {
       type: "number",
-      title: this.homey.__("settings.flows_broken_disabled")
+      title: this.homey.__("settings.flows.broken_disabled")
     });
 
     this.token_DISABLED = await this.homey.flow.createToken("token_DISABLED", {
       type: "number",
-      title: this.homey.__("settings.flows_disabled")
+      title: this.homey.__("settings.flows.disabled")
     });
 
     this.token_BROKEN_VARIABLE = await this.homey.flow.createToken("token_BROKEN_VARIABLE", {
       type: "number",
-      title: this.homey.__("settings.flows_broken_variable")
+      title: this.homey.__("settings.flows.broken_variable")
     });
 
     this.token_ALL_VARIABLES = await this.homey.flow.createToken("token_ALL_VARIABLES", {
       type: "number",
-      title: this.homey.__("settings.all_variables")
+      title: this.homey.__("settings.all.variables")
     });
 
     this.token_ALL_FLOWS = await this.homey.flow.createToken("token_ALL_FLOWS", {
       type: "number",
-      title: this.homey.__("settings.all_flows")
+      title: this.homey.__("settings.all.flows")
     });
 
     this.token_ALL_SCREENSAVERS = await this.homey.flow.createToken("token_ALL_SCREENSAVERS", {
       type: "number",
-      title: this.homey.__("settings.all_screensavers")
+      title: this.homey.__("settings.all.screensavers")
     });
 
     this.token_UNUSED_FLOWS = await this.homey.flow.createToken("token_UNUSED_FLOWS", {
       type: "number",
-      title: this.homey.__("settings.unused_flows")
+      title: this.homey.__("settings.flows.unused_flows")
     });
 
     this.token_UNUSED_LOGIC = await this.homey.flow.createToken("token_UNUSED_LOGIC", {
       type: "number",
-      title: this.homey.__("settings.unused_logic")
+      title: this.homey.__("settings.flows.unused_logic")
     });
 
     await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
@@ -376,9 +380,9 @@ class App extends Homey.App {
       this.log(`[findFlows] ${key} - FlowArray: `, flowArray);
       let flows = [];
 
-      if (key === "BROKEN" && this._hp23) {
-        // ---------------------------------------------
-        // This is for the new 'isBroken' function, but it doesn't work reliable yet
+
+
+      if (key === "BROKEN" && this._hp23 && HP23_CHECK) {
         const f = this.API_DATA.FLOWS;
         const af = this.API_DATA.ADVANCED_FLOWS;
 
@@ -391,14 +395,12 @@ class App extends Homey.App {
         );
 
         flows = brokenFlows.filter((flow) => flow !== null && flow.enabled);
-      } else if (key === "BROKEN" && !this._hp23) {
+      } else if (key === "BROKEN" && (!this._hp23 || !HP23_CHECK)) {
         const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && flow.enabled);
         const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && flow.enabled);
 
         flows = [...f, ...af];
-      } else if (key === "BROKEN_DISABLED" && this._hp23) {
-        // ---------------------------------------------
-        // This is for the new 'isBroken' function, but it doesn't work reliable yet
+      } else if (key === "BROKEN_DISABLED" && this._hp23 && HP23_CHECK) {
         const f = this.API_DATA.FLOWS;
         const af = this.API_DATA.ADVANCED_FLOWS;
 
@@ -411,7 +413,7 @@ class App extends Homey.App {
         );
 
         flows = brokenFlows.filter((flow) => flow !== null && !flow.enabled);
-      } else if (key === "BROKEN_DISABLED" && !this._hp23) {
+      } else if (key === "BROKEN_DISABLED" && (!this._hp23 || !HP23_CHECK)) {
         const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && !aflow.enabled);
         const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && !aflow.enabled);
 
@@ -658,7 +660,7 @@ class App extends Homey.App {
           screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
         };
 
-        if (variablesLength) {
+        if (variablesLength && LOGIC_MAP_CHECK) {
           this.VARIABLES_PER_FLOW.push({
             flow: { id: flow.id, name: flow.name, folder: flow.folder || "", advanced: "cards" in flow },
             logic: logicVariables,
@@ -768,6 +770,8 @@ class App extends Homey.App {
         await this[`token_${key}`].setValue(0);
         await this.checkFlowDiff(key, [], logicArray, true);
       }
+
+      this.LOGIC_VARIABLES = [];
     } catch (error) {
       this.error("[findUnusedLogic]", error);
     }
