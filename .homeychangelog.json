@@ -502,5 +502,8 @@
   },
   "1.35.0": {
     "en": "FIX: decrease memory usage when checking variables. | NEW: prevent cached data during check to prevent memory build up"
+  },
+  "1.35.1": {
+    "en": "FIX: unused logic "
   }
 }

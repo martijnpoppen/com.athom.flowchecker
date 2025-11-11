@@ -535,10 +535,7 @@ class App extends Homey.App {
         let screensaverVariables = [];
         let cards = [];
 
-        // filter flows
-        if (appSettings.FILTERED_FOLDERS.includes(flow.folder)) {
-          return false;
-        }
+        if (appSettings.FILTERED_FOLDERS.includes(flow.folder)) continue; // Skip filtered folders
 
         if (flow.cards) {
           cards = Object.values(flow.cards);
@@ -547,7 +544,7 @@ class App extends Homey.App {
           cards = [trigger, ...conditions, ...actions];
         }
 
-        cards.forEach((card) => {
+        for (const card of cards) {
           if (card.droptoken && card.droptoken.includes("homey:manager:logic")) {
             logicVariables.push(card.droptoken);
           } else if (card.droptoken && card.droptoken.includes("homey:device:")) {
@@ -592,7 +589,7 @@ class App extends Homey.App {
             }
 
             let argsArray = (card.args && Object.values(card.args)) || [];
-            if (!argsArray || !argsArray.length) return false;
+            if (!argsArray || !argsArray.length) continue;
 
             argsArray = flattenObj(card.args);
 
@@ -642,7 +639,7 @@ class App extends Homey.App {
               });
             }
           }
-        });
+        }
 
         const variablesLength = logicVariables.length + deviceVariables.length + appVariables.length + blVariables.length + fuVariables.length;
 
