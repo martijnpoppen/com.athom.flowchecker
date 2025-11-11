@@ -12,9 +12,8 @@ const externalAppKeyFU = "com.flow.utilities";
 
 const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
-const HP23_CHECK = false;
-const LOGIC_MAP_CHECK = false;
-
+const HP23_CHECK = true;
+const VARIABLES_PER_FLOW_CHECK = true;
 
 class App extends Homey.App {
   log() {
@@ -24,7 +23,7 @@ class App extends Homey.App {
   }
 
   error() {
-      console.error.bind(this, "[error]").apply(this, arguments);
+    console.error.bind(this, "[error]").apply(this, arguments);
   }
 
   // -------------------- INIT ----------------------
@@ -33,8 +32,6 @@ class App extends Homey.App {
     this.log(`[onInit] ${this.homey.manifest.id} - ${this.homey.manifest.version} started...`);
 
     await this.initSettings();
-
-    this.log("[onInit] - Loaded settings:", this.settingsLog(this.appSettings));
 
     this._api = await HomeyAPI.createAppAPI({
       homey: this.homey,
@@ -59,22 +56,17 @@ class App extends Homey.App {
   async initSettings() {
     try {
       let settingsInitialized = false;
-      this.homey.settings.getKeys().forEach((key) => {
+
+      this.homey.settings.getKeys().forEach(async (key) => {
         if (key == _settingsKey) {
-          settingsInitialized = true;
+          settingsInitialized = true; // Old settings found in Homey settings
         }
       });
 
-      this.interval = 0;
-      this.debug = false;
-
       if (settingsInitialized) {
-        this.log("[initSettings] - Found settings key", _settingsKey);
-        this.appSettings = this.homey.settings.get(_settingsKey);
-
-        if (!("CHECK_BROKEN" in this.appSettings)) {
+        const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+        if (!("CHECK_BROKEN" in appSettings)) {
           await this.updateSettings({
-            ...this.appSettings,
             CHECK_BROKEN: true,
             CHECK_DISABLED: true,
             CHECK_BROKEN_VARIABLE: true,
@@ -85,10 +77,9 @@ class App extends Homey.App {
           });
         }
 
-        if (!("VARIABLES_PER_FLOW" in this.appSettings)) {
+        if (!("VARIABLES_PER_FLOW" in appSettings)) {
           await this.updateSettings(
             {
-              ...this.appSettings,
               VARIABLES_PER_FLOW: [],
               FLOW_LOGIC_MAP: []
             },
@@ -96,10 +87,9 @@ class App extends Homey.App {
           );
         }
 
-        if (!("BROKEN_DISABLED" in this.appSettings)) {
+        if (!("BROKEN_DISABLED" in appSettings)) {
           await this.updateSettings(
             {
-              ...this.appSettings,
               BROKEN_DISABLED: [],
               NOTIFICATION_BROKEN_DISABLED: true,
               CHECK_BROKEN_DISABLED: true
@@ -108,10 +98,9 @@ class App extends Homey.App {
           );
         }
 
-        if (!("NOTIFICATION_FIXED" in this.appSettings)) {
+        if (!("NOTIFICATION_FIXED" in appSettings)) {
           await this.updateSettings(
             {
-              ...this.appSettings,
               NOTIFICATION_FIXED: false,
               NOTIFICATION_FIXED_LOGIC: false
             },
@@ -119,18 +108,19 @@ class App extends Homey.App {
           );
         }
 
-        if (!("HOMEY_ID" in this.appSettings) || this.appSettings.HOMEY_ID === "") {
+        if (!("HOMEY_ID" in appSettings) || appSettings.HOMEY_ID === "") {
           const homeyCloudId = await this.homey.cloud.getHomeyId();
           await this.updateSettings(
             {
-              ...this.appSettings,
               HOMEY_ID: homeyCloudId
             },
             false
           );
         }
+
+        this.log(`[InitSettings] - Loading ${_settingsKey}`);
       } else {
-        this.log(`Initializing ${_settingsKey} with defaults`);
+        this.log(`[InitSettings] - Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
           BROKEN: [],
           BROKEN_DISABLED: [],
@@ -173,44 +163,40 @@ class App extends Homey.App {
     }
   }
 
-  async updateSettings(settings, checkInterval = true) {
+  async updateSettings(newSettings, checkInterval = true) {
     try {
-      const oldSettings = this.appSettings;
+      if (newSettings == null || typeof newSettings !== "object") {
+        throw new Error("Invalid settings object provided to updateSettings");
+      }
 
-      this.log("[updateSettings] - New settings:", this.settingsLog(settings));
+      const oldSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      const updatedSettings = {
+        ...oldSettings,
+        ...newSettings
+      };
 
-      this.appSettings = settings;
+      if (FORCE_LOGGING) {
+        console.log("[updateSettings] - settings:", { ...updatedSettings, FOLDERS: get(updatedSettings, "FOLDERS", 0).length, FILTERED_FOLDERS: get(updatedSettings, "FILTERED_FOLDERS", 0).length, BROKEN: get(updatedSettings, "BROKEN", 0).length, BROKEN_DISABLED: get(updatedSettings, "BROKEN_DISABLED", 0).length, DISABLED: get(updatedSettings, "DISABLED", 0).length, BROKEN_VARIABLE: get(updatedSettings, "BROKEN_VARIABLE", 0).length, UNUSED_FLOWS: get(updatedSettings, "UNUSED_FLOWS", 0).length, UNUSED_LOGIC: get(updatedSettings, "UNUSED_LOGIC", 0).length, VARIABLES_PER_FLOW: get(updatedSettings, "VARIABLES_PER_FLOW", 0).length, FLOW_LOGIC_MAP: get(updatedSettings, "FLOW_LOGIC_MAP", 0).length });
+      }
 
-      await this.homey.settings.set(_settingsKey, this.appSettings);
+      await this.homey.settings.set(_settingsKey, updatedSettings);
 
-      if (checkInterval && oldSettings && oldSettings.INTERVAL_FLOWS && settings.INTERVAL_ENABLED && settings.INTERVAL_FLOWS) {
-        this.log("[updateSettings] - Comparing intervals", settings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
-        if (settings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
-          this.setFindFlowsInterval(true);
+      if (checkInterval && oldSettings && oldSettings.INTERVAL_FLOWS && newSettings.INTERVAL_ENABLED && newSettings.INTERVAL_FLOWS) {
+        this.log("[updateSettings] - Comparing intervals", newSettings.INTERVAL_FLOWS, oldSettings.INTERVAL_FLOWS);
+        if (newSettings.INTERVAL_FLOWS !== oldSettings.INTERVAL_FLOWS) {
+          this.setFindFlowsInterval(true, newSettings.INTERVAL_FLOWS);
         }
       }
+
+      return updatedSettings;
     } catch (err) {
       this.error(err);
     }
   }
 
-  settingsLog(settings) {
-    return {
-      ...settings,
-      FOLDERS: get(settings, "FOLDERS", 0).length,
-      FILTERED_FOLDERS: get(settings, "FILTERED_FOLDERS", 0).length,
-      BROKEN: get(settings, "BROKEN", 0).length,
-      BROKEN_DISABLED: get(settings, "BROKEN_DISABLED", 0).length,
-      DISABLED: get(settings, "DISABLED", 0).length,
-      BROKEN_VARIABLE: get(settings, "BROKEN_VARIABLE", 0).length,
-      UNUSED_FLOWS: get(settings, "UNUSED_FLOWS", 0).length,
-      UNUSED_LOGIC: get(settings, "UNUSED_LOGIC", 0).length,
-      VARIABLES_PER_FLOW: get(settings, "VARIABLES_PER_FLOW", 0).length,
-      FLOW_LOGIC_MAP: get(settings, "FLOW_LOGIC_MAP", 0).length
-    };
-  }
-
   async createTokens() {
+    const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+
     this.token_BROKEN = await this.homey.flow.createToken("token_BROKEN", {
       type: "number",
       title: this.homey.__("settings.flows.broken")
@@ -256,34 +242,34 @@ class App extends Homey.App {
       title: this.homey.__("settings.flows.unused_logic")
     });
 
-    await this.token_BROKEN.setValue(this.appSettings.BROKEN.length);
-    await this.token_BROKEN_DISABLED.setValue(this.appSettings.BROKEN_DISABLED.length);
-    await this.token_DISABLED.setValue(this.appSettings.DISABLED.length);
-    await this.token_BROKEN_VARIABLE.setValue(this.appSettings.BROKEN_VARIABLE.length);
-    await this.token_ALL_VARIABLES.setValue(this.appSettings.ALL_VARIABLES);
-    await this.token_ALL_FLOWS.setValue(this.appSettings.ALL_FLOWS);
-    await this.token_ALL_SCREENSAVERS.setValue(this.appSettings.ALL_SCREENSAVERS);
-    await this.token_UNUSED_FLOWS.setValue(this.appSettings.UNUSED_FLOWS.length);
-    await this.token_UNUSED_LOGIC.setValue(this.appSettings.UNUSED_LOGIC.length);
+    await this.token_BROKEN.setValue(appSettings.BROKEN.length);
+    await this.token_BROKEN_DISABLED.setValue(appSettings.BROKEN_DISABLED.length);
+    await this.token_DISABLED.setValue(appSettings.DISABLED.length);
+    await this.token_BROKEN_VARIABLE.setValue(appSettings.BROKEN_VARIABLE.length);
+    await this.token_ALL_VARIABLES.setValue(appSettings.ALL_VARIABLES);
+    await this.token_ALL_FLOWS.setValue(appSettings.ALL_FLOWS);
+    await this.token_ALL_SCREENSAVERS.setValue(appSettings.ALL_SCREENSAVERS);
+    await this.token_UNUSED_FLOWS.setValue(appSettings.UNUSED_FLOWS.length);
+    await this.token_UNUSED_LOGIC.setValue(appSettings.UNUSED_LOGIC.length);
   }
 
   // -------------------- FUNCTIONS ----------------------
 
-  async setFindFlowsInterval(clear = false) {
-    const REFRESH_INTERVAL = 1000 * (this.appSettings.INTERVAL_FLOWS * 60);
+  async setFindFlowsInterval(clear = false, interval = null) {
+    const REFRESH_INTERVAL = 1000 * (interval * 60);
 
     if (clear) {
       this.log(`[onPollInterval] - Clearinterval`);
       this.homey.clearInterval(this.onPollInterval);
     }
 
-    this.log(`[onPollInterval]`, this.appSettings.INTERVAL_FLOWS, REFRESH_INTERVAL);
+    this.log(`[onPollInterval]`, interval, REFRESH_INTERVAL);
     this.onPollInterval = this.homey.setInterval(this.findFlowDefects.bind(this), REFRESH_INTERVAL);
   }
 
   async setFolders() {
     try {
-      await this.updateSettings({ ...this.appSettings, FOLDERS: [...new Set(this.API_DATA.FOLDERS)] });
+      await this.updateSettings({ FOLDERS: [...new Set(this.API_DATA.FOLDERS.map(folder => ({id: folder.id, name: folder.name})))] });
     } catch (error) {
       this.error("[setFolders]", error);
     }
@@ -302,36 +288,42 @@ class App extends Homey.App {
         return {};
       })
     );
+
     this.API_DATA.FLOWS = Object.values(
       await this._api.flow.getFlows().catch((e) => {
         console.log(e);
         return {};
       })
     );
+
     this.API_DATA.ADVANCED_FLOWS = Object.values(
       await this._api.flow.getAdvancedFlows().catch((e) => {
         console.log(e);
         return {};
       })
     );
+
     this.API_DATA.FOLDERS = Object.values(
       await this._api.flow.getFlowFolders().catch((e) => {
         console.log(e);
         return {};
       })
     );
+
     this.API_DATA.SCREENSAVERS = this._hp23
       ? []
       : await this._api.ledring.getScreensavers().catch((e) => {
           console.log(e);
           return [];
         });
+
     this.API_DATA.APPS = Object.values(
       await this._api.apps.getApps().catch((e) => {
         console.log(e);
         return {};
       })
     );
+
     this.API_DATA.VARIABLES = Object.values(
       await this._api.logic.getVariables().catch((e) => {
         console.log(e);
@@ -342,11 +334,18 @@ class App extends Homey.App {
     this.log(`[getApiData] Setting API_DATA - data length:`, Object.keys(this.API_DATA).length);
   }
 
+  async clearAPIData() {
+    this.log(`[clearAPIData] Clearing API_DATA`);
+    this.API_DATA = {};
+  }
+
   async findFlowDefects(initial = false, force = false) {
     try {
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+
       if (initial && !FORCE_LOGGING) await sleep(15000);
 
-      if (!initial || this.appSettings.CHECK_ON_STARTUP || FORCE_LOGGING) {
+      if (!initial || appSettings.CHECK_ON_STARTUP || FORCE_LOGGING) {
         await this.getApiData();
         await this.setFolders();
         await this.findFlows("BROKEN");
@@ -354,20 +353,23 @@ class App extends Homey.App {
         await this.findFlows("DISABLED");
         await this.findFlows("UNUSED_FLOWS");
 
-        if (force || this.interval % (this.appSettings.INTERVAL_FLOWS * 10) === 0) {
+        if (force || this.interval % (appSettings.INTERVAL_FLOWS * 10) === 0) {
           this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
           await this.findLogic("BROKEN_VARIABLE");
           await this.findUnusedLogic("UNUSED_LOGIC");
           await this.updateVariablesPerFlow();
         }
+
+        await this.clearAPIData();
       }
 
-      if (initial && this.appSettings.INTERVAL_ENABLED) {
+      if (initial && appSettings.INTERVAL_ENABLED) {
+        this.interval = 0;
         await sleep(9000);
-        await this.setFindFlowsInterval();
+        await this.setFindFlowsInterval(false, appSettings.INTERVAL_FLOWS);
       }
 
-      if (!force) this.interval = this.interval + this.appSettings.INTERVAL_FLOWS;
+      if (!force) this.interval = this.interval + appSettings.INTERVAL_FLOWS;
     } catch (error) {
       this.error(error);
     }
@@ -375,12 +377,11 @@ class App extends Homey.App {
 
   async findFlows(key) {
     try {
-      const flowArray = this.appSettings[key];
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      const flowArray = appSettings[key];
 
       this.log(`[findFlows] ${key} - FlowArray: `, flowArray);
       let flows = [];
-
-
 
       if (key === "BROKEN" && this._hp23 && HP23_CHECK) {
         const f = this.API_DATA.FLOWS;
@@ -440,20 +441,20 @@ class App extends Homey.App {
       }
 
       flows = flows
-        .filter((f) => f.folder && !this.appSettings.FILTERED_FOLDERS.includes(f.folder))
+        .filter((f) => f.folder && !appSettings.FILTERED_FOLDERS.includes(f.folder))
         .map((f) => {
-          const folder = this.appSettings.FOLDERS.find((t) => t.id === f.folder);
+          const folder = appSettings.FOLDERS.find((t) => t.id === f.folder);
           const folderName = folder ? folder.name : null;
 
           return { name: f.name, id: f.id, folder: folderName, advanced: "cards" in f };
         });
 
-      if (this.appSettings[`CHECK_${key}`]) {
-        await this.updateSettings({ ...this.appSettings, [key]: [...new Set(flows)] });
+      if (appSettings[`CHECK_${key}`]) {
+        await this.updateSettings({ [key]: [...new Set(flows)] });
         await this[`token_${key}`].setValue(flows.length);
         await this.checkFlowDiff(key, flows, flowArray);
       } else {
-        await this.updateSettings({ ...this.appSettings, [key]: [] });
+        await this.updateSettings({ [key]: [] });
         await this[`token_${key}`].setValue(0);
         await this.checkFlowDiff(key, [], flowArray);
       }
@@ -464,18 +465,16 @@ class App extends Homey.App {
 
   async findLogic(key) {
     try {
-      const flowArray = this.appSettings[key];
+      let appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      const flowArray = appSettings[key];
       const flowTokens = this.API_DATA.FLOWTOKENS;
       const screensavers = this.API_DATA.SCREENSAVERS;
 
       this.ALL_VARIABLES = 0;
       this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
       this.LOGIC_VARIABLES = [];
-      this.VARIABLES_PER_FLOW = [];
 
-      // Reset VARIABLES_PER_FLOW to prevent stale data
-      await this.updateSettings({
-        ...this.appSettings,
+      appSettings = await this.updateSettings({
         VARIABLES_PER_FLOW: [],
         FLOW_LOGIC_MAP: []
       });
@@ -506,7 +505,7 @@ class App extends Homey.App {
           return [];
         });
 
-        if (this.debug) {
+        if (FORCE_LOGGING) {
           this.log(`[findLogic] ${key} - betterLogic: `, betterLogic);
         }
 
@@ -526,7 +525,8 @@ class App extends Homey.App {
       const logicMessages = [];
       const flows = FORCE_FLOW ? [FORCE_FLOW] : [...this.API_DATA.FLOWS, ...this.API_DATA.ADVANCED_FLOWS];
 
-      let filteredFlows = flows.filter((flow) => {
+      let filteredFlows = [];
+      for (const flow of flows) {
         let logicVariables = [];
         let deviceVariables = [];
         let appVariables = [];
@@ -536,7 +536,7 @@ class App extends Homey.App {
         let cards = [];
 
         // filter flows
-        if (this.appSettings.FILTERED_FOLDERS.includes(flow.folder)) {
+        if (appSettings.FILTERED_FOLDERS.includes(flow.folder)) {
           return false;
         }
 
@@ -644,10 +644,6 @@ class App extends Homey.App {
           }
         });
 
-        if (FORCE_LOGGING) {
-          console.log(logicVariables, deviceVariables, appVariables, blVariables, fuVariables, screensaverVariables);
-        }
-
         const variablesLength = logicVariables.length + deviceVariables.length + appVariables.length + blVariables.length + fuVariables.length;
 
         this.ALL_VARIABLES = this.ALL_VARIABLES + variablesLength;
@@ -660,8 +656,9 @@ class App extends Homey.App {
           screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
         };
 
-        if (variablesLength && LOGIC_MAP_CHECK) {
-          this.VARIABLES_PER_FLOW.push({
+        if (variablesLength && VARIABLES_PER_FLOW_CHECK) {
+          const variablesPerFlow = appSettings.VARIABLES_PER_FLOW;
+          variablesPerFlow.push({
             flow: { id: flow.id, name: flow.name, folder: flow.folder || "", advanced: "cards" in flow },
             logic: logicVariables,
             device: deviceVariables,
@@ -670,11 +667,15 @@ class App extends Homey.App {
             fu: fuVariables,
             screensavers: screensaverVariables
           });
+
+          await this.updateSettings({
+            VARIABLES_PER_FLOW: variablesPerFlow
+          });
         }
 
         this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
 
-        if (this.debug && variablesLength) {
+        if (FORCE_LOGGING && variablesLength) {
           this.log(`[findLogic] ---------------------START---------------------------`);
           this.log(`[findLogic]`, flow.name);
           if (logicVariables.length) this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
@@ -688,34 +689,32 @@ class App extends Homey.App {
 
         if (logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Logic variable" });
-          return true;
+          filteredFlows.push(flow);
         }
         if (deviceVariables.length && deviceVariables.some((r) => homeyDevices.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Device variable" });
-          return true;
+          filteredFlows.push(flow);
         }
         if (screensaverVariables.length && screensaverVariables.some((r) => homeyScreensavers.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Screensaver missing" });
-          return true;
+          filteredFlows.push(flow);
         }
         if (blVariables.length && blVariables.some((r) => betterLogic.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "BetterLogic" });
-          return true;
+          filteredFlows.push(flow);
         }
         if (fuVariables.length && fuVariables.some((r) => flowUtils.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Flow Utillities" });
-          return true;
+          filteredFlows.push(flow);
         }
         if (appVariables.length && appVariables.some((r) => homeyAppVariables.indexOf(r) === -1)) {
           logicMessages.push({ id: flow.id, msg: "Broken app" });
-          return true;
+          filteredFlows.push(flow);
         }
-
-        return false;
-      });
+      }
 
       filteredFlows = filteredFlows.map((filteredFlow) => {
-        const folder = this.appSettings.FOLDERS.find((t) => t.id === filteredFlow.folder);
+        const folder = appSettings.FOLDERS.find((t) => t.id === filteredFlow.folder);
         const logicMessage = logicMessages.find((m) => m.id === filteredFlow.id) || "Unknown";
         const folderName = folder ? folder.name : "unknown";
 
@@ -726,10 +725,9 @@ class App extends Homey.App {
       await this.token_ALL_SCREENSAVERS.setValue(homeyScreensavers.length);
       await this.token_ALL_VARIABLES.setValue(this.ALL_VARIABLES);
 
-      const flowSet = this.appSettings[`CHECK_${key}`] ? [...new Set(filteredFlows)] : [];
+      const flowSet = appSettings[`CHECK_${key}`] ? [...new Set(filteredFlows)] : [];
 
       await this.updateSettings({
-        ...this.appSettings,
         [key]: flowSet,
         ALL_FLOWS: flows.length,
         ALL_SCREENSAVERS: homeyScreensavers.length,
@@ -737,11 +735,11 @@ class App extends Homey.App {
         ALL_VARIABLES_OBJ: this.ALL_VARIABLES_OBJ
       });
 
-      if (this.appSettings[`CHECK_${key}`]) {
+      if (appSettings[`CHECK_${key}`]) {
         await this[`token_${key}`].setValue(filteredFlows.length);
         await this.checkFlowDiff(key, filteredFlows, flowArray);
       } else {
-        await this.updateSettings({ ...this.appSettings, [key]: [] });
+        await this.updateSettings({ [key]: [] });
         await this[`token_${key}`].setValue(0);
         await this.checkFlowDiff(key, [], flowArray);
       }
@@ -752,7 +750,8 @@ class App extends Homey.App {
 
   async findUnusedLogic(key) {
     try {
-      const logicArray = this.appSettings[key];
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      const logicArray = appSettings[key];
       const homeyVariables = this.API_DATA.VARIABLES;
       const logicVariables = this.LOGIC_VARIABLES;
 
@@ -761,12 +760,12 @@ class App extends Homey.App {
 
       logic = logic.map((f) => ({ name: f.name, id: f.id, type: f.type, value: f.value }));
 
-      if (logicArray.length !== logic.length && this.appSettings[`CHECK_${key}`]) {
-        await this.updateSettings({ ...this.appSettings, [key]: [...new Set(logic)] });
+      if (logicArray.length !== logic.length && appSettings[`CHECK_${key}`]) {
+        await this.updateSettings({ [key]: [...new Set(logic)] });
         await this[`token_${key}`].setValue(logic.length);
         await this.checkFlowDiff(key, logic, logicArray, true);
-      } else if (!this.appSettings[`CHECK_${key}`]) {
-        await this.updateSettings({ ...this.appSettings, [key]: [] });
+      } else if (!appSettings[`CHECK_${key}`]) {
+        await this.updateSettings({ [key]: [] });
         await this[`token_${key}`].setValue(0);
         await this.checkFlowDiff(key, [], logicArray, true);
       }
@@ -779,6 +778,7 @@ class App extends Homey.App {
 
   async checkFlowDiff(key, flows, flowArray, logic = false) {
     try {
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
       let flowDiff = flows.filter(({ id: id1 }) => !flowArray.some(({ id: id2 }) => id2 === id1));
       let flowDiffReverse = flowArray.filter(({ id: id1 }) => !flows.some(({ id: id2 }) => id2 === id1));
 
@@ -801,7 +801,7 @@ class App extends Homey.App {
         });
       }
 
-      if (flowDiffReverse.length && logic && this.appSettings[`CHECK_FIXED_LOGIC`]) {
+      if (flowDiffReverse.length && logic && appSettings[`CHECK_FIXED_LOGIC`]) {
         flowDiffReverse.forEach(async (logic) => {
           await this.setNotification("FIXED_LOGIC", logic.name, null, "Variable");
 
@@ -811,7 +811,7 @@ class App extends Homey.App {
             .catch(this.error)
             .then(this.log(`[flowDiff] FIXED_LOGIC - Triggered: "${logic.name} | ${logic.id}"`));
         });
-      } else if (flowDiffReverse.length && this.appSettings[`CHECK_FIXED`]) {
+      } else if (flowDiffReverse.length && appSettings[`CHECK_FIXED`]) {
         flowDiffReverse.forEach(async (flow, index) => {
           if (index < 10) {
             await this.setNotification("FIXED", flow.name, flow.folder, "Flow");
@@ -832,7 +832,8 @@ class App extends Homey.App {
 
   async setNotification(key, flow, folderName, type, logicMessage = false) {
     try {
-      if (this.appSettings[`NOTIFICATION_${key}`]) {
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      if (appSettings[`NOTIFICATION_${key}`]) {
         const folder = folderName ? `| Folder: **${folderName}**` : "";
         const logicMsg = logicMessage ? `| Reason: **${logicMessage}**` : "";
         await this.homey.notifications.createNotification({
@@ -845,7 +846,8 @@ class App extends Homey.App {
   }
 
   async updateVariablesPerFlow() {
-    const flowDataArray = this.VARIABLES_PER_FLOW;
+    const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+    const flowDataArray = appSettings.VARIABLES_PER_FLOW || [];
     const homeyLogicTokens = this.API_DATA.FLOWTOKENS.filter((t) => t.ownerUri === "homey:manager:logic");
     const logicMappedToFlow = [];
     let updatedVariablesPerFlow = [];
@@ -869,12 +871,9 @@ class App extends Homey.App {
     });
 
     await this.updateSettings({
-      ...this.appSettings,
       VARIABLES_PER_FLOW: updatedVariablesPerFlow.sort((a, b) => a.flow.name.localeCompare(b.flow.name)),
       FLOW_LOGIC_MAP: logicMappedToFlow.sort((a, b) => a.token.localeCompare(b.token))
     });
-
-    this.VARIABLES_PER_FLOW = [];
   }
 
   async mapVariablesToFlow(flowData) {
@@ -884,7 +883,7 @@ class App extends Homey.App {
       .map((l) => {
         const tokenId = l.split("|")[1];
         const token = this.API_DATA.FLOWTOKENS.find((t) => t.id === `homey:manager:logic:${tokenId}`);
-        if (token) {
+        if (token && tokenId) {
           return { name: token.name || token.title, id: token.id, type: token.type };
         } else {
           return null;

@@ -7,12 +7,18 @@
     "url": "https://github.com/martijnpoppen/com.athom.flowchecker"
   },
   "dependencies": {
-    "homey-api": "^3.14.10"
+    "homey-api": "^3.14.18",
+    "level": "^10.0.0"
   },
   "scripts": {
-    "postinstall": "cp ./lib/homey-api-patch/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/Flow.js ./node_modules/homey-api/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/Flow.js && cp ./lib/homey-api-patch/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/AdvancedFlow.js ./node_modules/homey-api/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/AdvancedFlow.js",
+    "preinstall": "npx -y only-allow npm",
+    "postinstall": "cp -a ./lib/homey-api-patch/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/. ./node_modules/homey-api/lib/HomeyAPI/HomeyAPIV3/ManagerFlow/",
     "dev": "cd widgets/flow-overview/vue && yarn build --mode development && cd ../../.. && homey app run",
     "build": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app install",
     "publish-app": "cd widgets/flow-overview/vue && yarn build && cd ../../.. && homey app publish"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=8.0.0"
   }
 }

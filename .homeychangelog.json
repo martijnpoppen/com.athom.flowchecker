@@ -499,5 +499,8 @@
   },
   "1.34.9": {
     "en": "FIX: token error when selecti"
+  },
+  "1.35.0": {
+    "en": "FIX: decrease memory usage when checking variables. | NEW: prevent cached data during check to prevent memory build up"
   }
 }
