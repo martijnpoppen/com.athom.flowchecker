@@ -505,5 +505,8 @@
   },
   "1.35.1": {
     "en": "FIX: unused logic "
+  },
+  "1.35.2": {
+    "en": "FIX: app variable check"
   }
 }

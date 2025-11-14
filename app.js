@@ -12,8 +12,8 @@ const externalAppKeyFU = "com.flow.utilities";
 
 const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
-const HP23_CHECK = false;
-const VARIABLES_PER_FLOW_CHECK = false;
+const HP23_CHECK = true;
+const VARIABLES_PER_FLOW_CHECK = true;
 
 class App extends Homey.App {
   log() {
@@ -668,6 +668,7 @@ class App extends Homey.App {
           await this.updateSettings({
             VARIABLES_PER_FLOW: variablesPerFlow
           });
+          await sleep(300);
         }
 
         this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
