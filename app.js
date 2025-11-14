@@ -12,8 +12,8 @@ const externalAppKeyFU = "com.flow.utilities";
 
 const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
-const HP23_CHECK = true;
-const VARIABLES_PER_FLOW_CHECK = true;
+const HP23_CHECK = false;
+const VARIABLES_PER_FLOW_CHECK = false;
 
 class App extends Homey.App {
   log() {
@@ -176,7 +176,7 @@ class App extends Homey.App {
       };
 
       if (FORCE_LOGGING) {
-        console.log("[updateSettings] - settings:", { ...updatedSettings, FOLDERS: get(updatedSettings, "FOLDERS", 0).length, FILTERED_FOLDERS: get(updatedSettings, "FILTERED_FOLDERS", 0).length, BROKEN: get(updatedSettings, "BROKEN", 0).length, BROKEN_DISABLED: get(updatedSettings, "BROKEN_DISABLED", 0).length, DISABLED: get(updatedSettings, "DISABLED", 0).length, BROKEN_VARIABLE: get(updatedSettings, "BROKEN_VARIABLE", 0).length, UNUSED_FLOWS: get(updatedSettings, "UNUSED_FLOWS", 0).length, UNUSED_LOGIC: get(updatedSettings, "UNUSED_LOGIC", 0).length, VARIABLES_PER_FLOW: get(updatedSettings, "VARIABLES_PER_FLOW", 0).length, FLOW_LOGIC_MAP: get(updatedSettings, "FLOW_LOGIC_MAP", 0).length });
+        // console.log("[updateSettings] - settings:", { ...updatedSettings, FOLDERS: get(updatedSettings, "FOLDERS", 0).length, FILTERED_FOLDERS: get(updatedSettings, "FILTERED_FOLDERS", 0).length, BROKEN: get(updatedSettings, "BROKEN", 0).length, BROKEN_DISABLED: get(updatedSettings, "BROKEN_DISABLED", 0).length, DISABLED: get(updatedSettings, "DISABLED", 0).length, BROKEN_VARIABLE: get(updatedSettings, "BROKEN_VARIABLE", 0).length, UNUSED_FLOWS: get(updatedSettings, "UNUSED_FLOWS", 0).length, UNUSED_LOGIC: get(updatedSettings, "UNUSED_LOGIC", 0).length, VARIABLES_PER_FLOW: get(updatedSettings, "VARIABLES_PER_FLOW", 0).length, FLOW_LOGIC_MAP: get(updatedSettings, "FLOW_LOGIC_MAP", 0).length });
       }
 
       await this.homey.settings.set(_settingsKey, updatedSettings);
@@ -554,7 +554,7 @@ class App extends Homey.App {
           } else if (card.droptoken && card.droptoken.includes(`homey:app:${externalAppKeyFU}`)) {
             fuVariables.push(card.droptoken);
           } else if (card.droptoken && card.droptoken.includes("homey:app:")) {
-            appVariables.push(card.droptoken.split("|")[0]);
+            appVariables.push(card.droptoken);
           }
 
           if (card.args) {
@@ -673,15 +673,15 @@ class App extends Homey.App {
         this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
 
         if (FORCE_LOGGING && variablesLength) {
-          this.log(`[findLogic] ---------------------START---------------------------`);
-          this.log(`[findLogic]`, flow.name);
-          if (logicVariables.length) this.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
-          if (deviceVariables.length) this.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
-          if (appVariables.length) this.log(`[findLogic] ${key} - appVariables: `, appVariables);
-          if (blVariables.length) this.log(`[findLogic] ${key} - blVariables: `, blVariables);
-          if (fuVariables.length) this.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
-          if (screensaverVariables.length) this.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
-          this.log(`[findLogic] ---------------------END---------------------------`);
+          console.log(`[findLogic] ---------------------START---------------------------`);
+          console.log(`[findLogic]`, flow.name);
+          if (logicVariables.length) console.log(`[findLogic] ${key} - logicVariables: `, logicVariables);
+          if (deviceVariables.length) console.log(`[findLogic] ${key} - deviceVariables: `, deviceVariables);
+          if (appVariables.length) console.log(`[findLogic] ${key} - appVariables: `, appVariables);
+          if (blVariables.length) console.log(`[findLogic] ${key} - blVariables: `, blVariables);
+          if (fuVariables.length) console.log(`[findLogic] ${key} - fuVariables: `, fuVariables);
+          if (screensaverVariables.length) console.log(`[findLogic] ${key} - screensaverVariables: `, screensaverVariables);
+          console.log(`[findLogic] ---------------------END---------------------------`);
         }
 
         if (logicVariables.length && logicVariables.some((r) => homeyVariables.indexOf(r) === -1)) {
