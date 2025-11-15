@@ -508,5 +508,14 @@
   },
   "1.35.2": {
     "en": "FIX: app variable check"
+  },
+  "1.36.0": {
+    "en": "NEW: prevent cached data during check to prevent memory build up"
+  },
+  "1.36.1": {
+    "en": "FIX: crash with many variables"
+  },
+  "1.37.0": {
+    "en": "FIX: performance issues with a lot of flows | FIX: performance issues when a lot of variables needs to be checked | FIX: conditions and action cards not properly working | FIX: timeout on flowcard to prevent flowcard errors"
   }
 }

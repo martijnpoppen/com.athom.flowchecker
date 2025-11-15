@@ -14,6 +14,7 @@ const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
 const HP23_CHECK = true;
 const VARIABLES_PER_FLOW_CHECK = true;
+const MAX_FLOWS_FOR_STATS = 140;
 
 class App extends Homey.App {
   log() {
@@ -38,6 +39,8 @@ class App extends Homey.App {
       debug: false
     });
 
+    this.interval = 0;
+    this._isRunning = false;
     this._hp23 = this.homey.platformVersion === 2;
 
     this.API_DATA = {};
@@ -269,14 +272,14 @@ class App extends Homey.App {
 
   async setFolders() {
     try {
-      await this.updateSettings({ FOLDERS: [...new Set(this.API_DATA.FOLDERS.map(folder => ({id: folder.id, name: folder.name})))] });
+      await this.updateSettings({ FOLDERS: [...new Set(this.API_DATA.FOLDERS.map((folder) => ({ id: folder.id, name: folder.name })))] });
     } catch (error) {
       this.error("[setFolders]", error);
     }
   }
 
-  async getApiData() {
-    this.log(`[getApiData] Setting API_DATA`);
+  async setApiData() {
+    this.log(`[setApiData] Setting API_DATA`);
     await this._api.flow.connect();
     await this._api.flowtoken.connect();
     await sleep(2000);
@@ -331,7 +334,7 @@ class App extends Homey.App {
       })
     );
 
-    this.log(`[getApiData] Setting API_DATA - data length:`, Object.keys(this.API_DATA).length);
+    this.log(`[setApiData] Setting API_DATA - data length:`, Object.keys(this.API_DATA).length);
   }
 
   async clearAPIData() {
@@ -343,28 +346,29 @@ class App extends Homey.App {
     try {
       const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
 
-      if (initial && !FORCE_LOGGING) await sleep(15000);
+      if (initial && !FORCE_LOGGING) {
+        this.log(`[findFlowDefects] - Initial wait for Homey to settle`);
+        await sleep(15000);
+      }
 
       if (!initial || appSettings.CHECK_ON_STARTUP || FORCE_LOGGING) {
-        await this.getApiData();
+        this.log(`[findFlowDefects] - Starting flow defect check | initial: ${initial} | force: ${force} | interval: ${this.interval}`);
+
+        await this.setApiData();
         await this.setFolders();
         await this.findFlows("BROKEN");
         await this.findFlows("BROKEN_DISABLED");
         await this.findFlows("DISABLED");
         await this.findFlows("UNUSED_FLOWS");
 
-        if (force || this.interval % (appSettings.INTERVAL_FLOWS * 10) === 0) {
+        if (!this._isRunning && !initial && (force || this.interval % (appSettings.INTERVAL_FLOWS * 10) === 0)) {
           this.log(`[findFlowDefects] BROKEN_VARIABLE - this.interval: ${this.interval} | force: ${force}`);
-          await this.findLogic("BROKEN_VARIABLE");
-          await this.findUnusedLogic("UNUSED_LOGIC");
-          await this.updateVariablesPerFlow();
+          await this.logicChecks();
         }
-
-        await this.clearAPIData();
       }
 
       if (initial && appSettings.INTERVAL_ENABLED) {
-        this.interval = 0;
+        this.log(`[findFlowDefects] - Setting interval on init`);
         await sleep(9000);
         await this.setFindFlowsInterval(false, appSettings.INTERVAL_FLOWS);
       }
@@ -373,6 +377,14 @@ class App extends Homey.App {
     } catch (error) {
       this.error(error);
     }
+  }
+
+  async logicChecks() {
+    this._isRunning = true;
+    await this.findLogic("BROKEN_VARIABLE");
+    await this.findUnusedLogic("UNUSED_LOGIC");
+    await this.clearAPIData();
+    this._isRunning = false;
   }
 
   async findFlows(key) {
@@ -387,15 +399,25 @@ class App extends Homey.App {
         const f = this.API_DATA.FLOWS;
         const af = this.API_DATA.ADVANCED_FLOWS;
 
-        // get all flows, then check per flow if it is broken with isBroken() promise
-        const brokenFlows = await Promise.all(
-          [...f, ...af].map(async (flow) => {
-            const isBroken = await flow.isBroken().catch(() => null);
-            return isBroken ? flow : null;
-          })
-        );
+        const broken = [];
 
-        flows = brokenFlows.filter((flow) => flow !== null && flow.enabled);
+        // Regular flows
+        for (const flow of f) {
+          const isBroken = await flow.isBroken().catch(() => null);
+          if (isBroken && flow.enabled) {
+            broken.push(flow);
+          }
+        }
+
+        // Advanced flows
+        for (const aflow of af) {
+          const isBroken = await aflow.isBroken().catch(() => null);
+          if (isBroken && aflow.enabled) {
+            broken.push(aflow);
+          }
+        }
+
+        flows = broken;
       } else if (key === "BROKEN" && (!this._hp23 || !HP23_CHECK)) {
         const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && flow.enabled);
         const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && flow.enabled);
@@ -405,15 +427,25 @@ class App extends Homey.App {
         const f = this.API_DATA.FLOWS;
         const af = this.API_DATA.ADVANCED_FLOWS;
 
-        // get all flows, then check per flow if it is broken with isBroken() promise
-        const brokenFlows = await Promise.all(
-          [...f, ...af].map(async (flow) => {
-            const isBroken = await flow.isBroken().catch(() => null);
-            return isBroken ? flow : null;
-          })
-        );
+        const broken = [];
 
-        flows = brokenFlows.filter((flow) => flow !== null && !flow.enabled);
+        // Regular flows
+        for (const flow of f) {
+          const isBroken = await flow.isBroken().catch(() => null);
+          if (isBroken && !flow.enabled) {
+            broken.push(flow);
+          }
+        }
+
+        // Advanced flows
+        for (const aflow of af) {
+          const isBroken = await aflow.isBroken().catch(() => null);
+          if (isBroken && !aflow.enabled) {
+            broken.push(aflow);
+          }
+        }
+
+        flows = broken;
       } else if (key === "BROKEN_DISABLED" && (!this._hp23 || !HP23_CHECK)) {
         const f = this.API_DATA.FLOWS.filter((flow) => flow.broken && !aflow.enabled);
         const af = this.API_DATA.ADVANCED_FLOWS.filter((aflow) => aflow.broken && !aflow.enabled);
@@ -465,7 +497,7 @@ class App extends Homey.App {
 
   async findLogic(key) {
     try {
-      let appSettings = (await this.homey.settings.get(_settingsKey)) || {};
+      const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
       const flowArray = appSettings[key];
       const flowTokens = this.API_DATA.FLOWTOKENS;
       const screensavers = this.API_DATA.SCREENSAVERS;
@@ -473,11 +505,7 @@ class App extends Homey.App {
       this.ALL_VARIABLES = 0;
       this.ALL_VARIABLES_OBJ = { logic: 0, device: 0, app: 0, bl: 0, fu: 0, screensavers: 0 };
       this.LOGIC_VARIABLES = [];
-
-      appSettings = await this.updateSettings({
-        VARIABLES_PER_FLOW: [],
-        FLOW_LOGIC_MAP: []
-      });
+      const variablesPerFlowTemp = [];
 
       this.log(`[findLogic] ${key} - flowArray: `, flowArray);
 
@@ -653,9 +681,8 @@ class App extends Homey.App {
           screensavers: this.ALL_VARIABLES_OBJ ? this.ALL_VARIABLES_OBJ.screensavers + screensaverVariables.length : screensaverVariables.length
         };
 
-        if (variablesLength && VARIABLES_PER_FLOW_CHECK) {
-          const variablesPerFlow = appSettings.VARIABLES_PER_FLOW;
-          variablesPerFlow.push({
+        if (variablesLength && VARIABLES_PER_FLOW_CHECK && variablesPerFlowTemp.length < MAX_FLOWS_FOR_STATS) {
+          variablesPerFlowTemp.push({
             flow: { id: flow.id, name: flow.name, folder: flow.folder || "", advanced: "cards" in flow },
             logic: logicVariables,
             device: deviceVariables,
@@ -664,11 +691,6 @@ class App extends Homey.App {
             fu: fuVariables,
             screensavers: screensaverVariables
           });
-
-          await this.updateSettings({
-            VARIABLES_PER_FLOW: variablesPerFlow
-          });
-          await sleep(300);
         }
 
         this.LOGIC_VARIABLES = [...this.LOGIC_VARIABLES, ...logicVariables];
@@ -740,6 +762,10 @@ class App extends Homey.App {
         await this.updateSettings({ [key]: [] });
         await this[`token_${key}`].setValue(0);
         await this.checkFlowDiff(key, [], flowArray);
+      }
+
+      if (VARIABLES_PER_FLOW_CHECK && variablesPerFlowTemp.length) {
+        await this.updateVariablesPerFlow(variablesPerFlowTemp);
       }
     } catch (error) {
       this.error("[findLogic]", error);
@@ -843,9 +869,7 @@ class App extends Homey.App {
     }
   }
 
-  async updateVariablesPerFlow() {
-    const appSettings = (await this.homey.settings.get(_settingsKey)) || {};
-    const flowDataArray = appSettings.VARIABLES_PER_FLOW || [];
+  async updateVariablesPerFlow(flowDataArray = []) {
     const homeyLogicTokens = this.API_DATA.FLOWTOKENS.filter((t) => t.ownerUri === "homey:manager:logic");
     const logicMappedToFlow = [];
     let updatedVariablesPerFlow = [];
