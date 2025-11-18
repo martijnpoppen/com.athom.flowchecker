@@ -517,5 +517,11 @@
   },
   "1.37.0": {
     "en": "FIX: performance issues with a lot of flows | FIX: performance issues when a lot of variables needs to be checked | FIX: conditions and action cards not properly working | FIX: timeout on flowcard to prevent flowcard errors"
+  },
+  "1.37.1": {
+    "en": "FIX: condition cards"
+  },
+  "1.37.2": {
+    "en": "FIX: condition cards"
   }
 }

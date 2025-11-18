@@ -45,8 +45,8 @@ class App extends Homey.App {
 
     this.API_DATA = {};
 
-    await flowConditions.init(this.homey);
-    await flowActions.init(this.homey);
+    await flowConditions.init.bind(this)();
+    await flowActions.init.bind(this)();
 
     // Prevent false positives on startup of the app. When rebooting Homey not all flows are 'working'.
     await this.createTokens();
@@ -121,7 +121,17 @@ class App extends Homey.App {
           );
         }
 
+         if (appSettings.CHECK_ON_STARTUP === true) {
+          await this.updateSettings(
+            {
+              CHECK_ON_STARTUP: false
+            },
+            false
+          );
+        }
+
         this.log(`[InitSettings] - Loading ${_settingsKey}`);
+        this.log(`[InitSettings] - Startup Settings:`, { ...appSettings, BROKEN: appSettings.BROKEN.length, BROKEN_DISABLED: appSettings.BROKEN_DISABLED.length, DISABLED: appSettings.DISABLED.length, BROKEN_VARIABLE: appSettings.BROKEN_VARIABLE.length, UNUSED_FLOWS: appSettings.UNUSED_FLOWS.length, UNUSED_LOGIC: appSettings.UNUSED_LOGIC.length, VARIABLES_PER_FLOW: appSettings.VARIABLES_PER_FLOW.length, FLOW_LOGIC_MAP: appSettings.FLOW_LOGIC_MAP.length, FOLDERS: appSettings.FOLDERS.length, FILTERED_FOLDERS: appSettings.FILTERED_FOLDERS.length });
       } else {
         this.log(`[InitSettings] - Initializing ${_settingsKey} with defaults`);
         await this.updateSettings({
@@ -177,10 +187,6 @@ class App extends Homey.App {
         ...oldSettings,
         ...newSettings
       };
-
-      if (FORCE_LOGGING) {
-        // console.log("[updateSettings] - settings:", { ...updatedSettings, FOLDERS: get(updatedSettings, "FOLDERS", 0).length, FILTERED_FOLDERS: get(updatedSettings, "FILTERED_FOLDERS", 0).length, BROKEN: get(updatedSettings, "BROKEN", 0).length, BROKEN_DISABLED: get(updatedSettings, "BROKEN_DISABLED", 0).length, DISABLED: get(updatedSettings, "DISABLED", 0).length, BROKEN_VARIABLE: get(updatedSettings, "BROKEN_VARIABLE", 0).length, UNUSED_FLOWS: get(updatedSettings, "UNUSED_FLOWS", 0).length, UNUSED_LOGIC: get(updatedSettings, "UNUSED_LOGIC", 0).length, VARIABLES_PER_FLOW: get(updatedSettings, "VARIABLES_PER_FLOW", 0).length, FLOW_LOGIC_MAP: get(updatedSettings, "FLOW_LOGIC_MAP", 0).length });
-      }
 
       await this.homey.settings.set(_settingsKey, updatedSettings);
 
