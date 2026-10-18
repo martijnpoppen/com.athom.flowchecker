@@ -523,5 +523,8 @@
   },
   "1.37.2": {
     "en": "FIX: condition cards"
+  },
+  "1.38.0": {
+    "en": "NEW: variables used in HomeyScripts will be found as logic vars"
   }
 }
