@@ -523,5 +523,8 @@
   },
   "1.37.2": {
     "en": "FIX: condition cards"
+  },
+  "1.37.3": {
+    "en": "FIX: logic variables used in HomeyScripts were reported as unused"
   }
 }
