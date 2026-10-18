@@ -9,6 +9,7 @@ const { sleep, flattenObj, replaceLast, get } = require("./lib/helpers");
 const _settingsKey = `${Homey.manifest.id}.settings`;
 const externalAppKeyBL = "net.i-dev.betterlogic";
 const externalAppKeyFU = "com.flow.utilities";
+const externalAppKeyHS = "com.athom.homeyscript";
 
 const FORCE_LOGGING = false;
 const FORCE_FLOW = false;
@@ -788,6 +789,16 @@ class App extends Homey.App {
       this.log(`[findUnusedLogic] ${key} - logicArray: `, logicArray);
       let logic = homeyVariables.filter((r) => logicVariables.indexOf(`homey:manager:logic|${r.id}`) === -1);
 
+      // Variables referenced by ID inside a HomeyScript are in use as well
+      if (logic.length) {
+        const scriptsCode = await this.getHomeyScriptsCode();
+        this.log(`[findUnusedLogic] ${key} - homeyScripts: `, scriptsCode.length);
+
+        if (scriptsCode.length) {
+          logic = logic.filter((r) => !scriptsCode.some((code) => code.includes(r.id)));
+        }
+      }
+
       logic = logic.map((f) => ({ name: f.name, id: f.id, type: f.type, value: f.value }));
 
       if (logicArray.length !== logic.length && appSettings[`CHECK_${key}`]) {
@@ -803,6 +814,32 @@ class App extends Homey.App {
       this.LOGIC_VARIABLES = [];
     } catch (error) {
       this.error("[findUnusedLogic]", error);
+    }
+  }
+
+  async getHomeyScriptsCode() {
+    try {
+      const homeyScript = await this._api.apps.getApp({ id: externalAppKeyHS }).catch(() => null);
+      if (!homeyScript) return [];
+
+      const scripts = Object.values((await homeyScript.get({ path: "/script" }).catch(() => null)) || {});
+      const scriptsCode = [];
+
+      for (const script of scripts) {
+        let code = script.code;
+
+        if (typeof code !== "string" && script.id) {
+          const fullScript = await homeyScript.get({ path: `/script/${script.id}` }).catch(() => null);
+          code = fullScript && fullScript.code;
+        }
+
+        if (typeof code === "string" && code.length) scriptsCode.push(code);
+      }
+
+      return scriptsCode;
+    } catch (error) {
+      this.error("[getHomeyScriptsCode]", error);
+      return [];
     }
   }
 
