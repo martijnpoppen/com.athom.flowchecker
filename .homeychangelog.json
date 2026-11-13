@@ -526,5 +526,8 @@
   },
   "1.38.0": {
     "en": "NEW: variables used in HomeyScripts will be found as logic vars"
+  },
+  "1.38.1": {
+    "en": "FIX: Reset Settings button stuck on loading spinner"
   }
 }
