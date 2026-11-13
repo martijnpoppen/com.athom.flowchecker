@@ -347,92 +347,98 @@ function initClear() {
     const button = document.getElementById("clear");
     button.setAttribute("loading", "loading");
 
-    if (await Homey.confirm("Are you sure you want to clear all stored configuration data?")) {
-      document.getElementById("flows.broken").innerHTML = "";
-      document.getElementById("flows.disabled").innerHTML = "";
-      document.getElementById("flows.broken_variable").innerHTML = "";
-      document.getElementById("flows.overview").innerHTML = "";
-      document.getElementById("flows.unused").innerHTML = "";
-      document.getElementById("logic_unused").innerHTML = "";
-      document.getElementById("filtered_folders").innerHTML = "";
-      document.getElementById("notification_broken").checked = true;
-      document.getElementById("notification_broken_disabled").checked = true;
-      document.getElementById("notification_disabled").checked = false;
-      document.getElementById("notification_broken_variable").checked = true;
-      document.getElementById("notification_unused_flows").checked = false;
-      document.getElementById("notification_unused_logic").checked = false;
-      document.getElementById("notifcation_fixed").checked = false;
-      document.getElementById("notification_fixed_logic").checked = false;
-      document.getElementById("check_broken").checked = true;
-      document.getElementById("check_broken_disabled").checked = true;
-      document.getElementById("check_disabled").checked = true;
-      document.getElementById("check_broken_variable").checked = true;
-      document.getElementById("check_unused_flows").checked = true;
-      document.getElementById("check_unused_logic").checked = true;
-      document.getElementById("check_fixed").checked = true;
-      document.getElementById("check_fixed_logic").checked = true;
-      document.getElementById("interval_enabled").checked = true;
-      document.getElementById("check_on_startup").checked = false;
-      document.getElementById("interval_flows").value = 5;
-      document.getElementById("interval_variables").value = 50;
+    try {
+      if (await Homey.confirm("Are you sure you want to clear all stored configuration data?")) {
+        document.getElementById("flows.broken").innerHTML = "";
+        document.getElementById("flows.disabled").innerHTML = "";
+        document.getElementById("flows.broken_variable").innerHTML = "";
+        document.getElementById("flows.overview").innerHTML = "";
+        document.getElementById("flows.unused").innerHTML = "";
+        document.getElementById("logic_unused").innerHTML = "";
+        document.getElementById("filtered_folders").innerHTML = "";
+        document.getElementById("notification_broken").checked = true;
+        document.getElementById("notification_broken_disabled").checked = true;
+        document.getElementById("notification_disabled").checked = false;
+        document.getElementById("notification_broken_variable").checked = true;
+        document.getElementById("notification_unused_flows").checked = false;
+        document.getElementById("notification_unused_logic").checked = false;
+        document.getElementById("notification_fixed").checked = false;
+        document.getElementById("notification_fixed_logic").checked = false;
+        document.getElementById("check_broken").checked = true;
+        document.getElementById("check_broken_disabled").checked = true;
+        document.getElementById("check_disabled").checked = true;
+        document.getElementById("check_broken_variable").checked = true;
+        document.getElementById("check_unused_flows").checked = true;
+        document.getElementById("check_unused_logic").checked = true;
+        document.getElementById("check_fixed").checked = true;
+        document.getElementById("check_fixed_logic").checked = true;
+        document.getElementById("interval_enabled").checked = true;
+        document.getElementById("check_on_startup").checked = false;
+        document.getElementById("interval_flows").value = 5;
+        document.getElementById("interval_variables").value = 50;
 
-      const settings = {
-        NOTIFICATION_BROKEN: true,
-        CHECK_BROKEN: true,
-        NOTIFICATION_BROKEN_DISABLED: true,
-        CHECK_BROKEN_DISABLED: true,
-        NOTIFICATION_DISABLED: false,
-        CHECK_DISABLED: true,
-        NOTIFICATION_BROKEN_VARIABLE: true,
-        CHECK_BROKEN_VARIABLE: true,
-        NOTIFICATION_UNUSED_FLOWS: false,
-        CHECK_UNUSED_FLOWS: true,
-        NOTIFICATION_UNUSED_LOGIC: false,
-        CHECK_UNUSED_LOGIC: true,
-        NOTIFICATION_FIXED: false,
-        CHECK_FIXED: true,
-        NOTIFICATION_FIXED_LOGIC: false,
-        CHECK_FIXED_LOGIC: true,
-        INTERVAL_ENABLED: true,
-        CHECK_ON_STARTUP: false,
-        BROKEN: [],
-        BROKEN_DISABLED: [],
-        DISABLED: [],
-        BROKEN_VARIABLE: [],
-        UNUSED_FLOWS: [],
-        UNUSED_LOGIC: [],
-        INTERVAL_FLOWS: 3,
-        ALL_FLOWS: 0,
-        ALL_SCREENSAVERS: 0,
-        ALL_VARIABLES: 0,
-        ALL_VARIABLES_OBJ: {},
-        FOLDERS: [],
-        FILTERED_FOLDERS: [],
-        HOMEY_ID: window._settings["HOMEY_ID"]
-      };
+        const settings = {
+          NOTIFICATION_BROKEN: true,
+          CHECK_BROKEN: true,
+          NOTIFICATION_BROKEN_DISABLED: true,
+          CHECK_BROKEN_DISABLED: true,
+          NOTIFICATION_DISABLED: false,
+          CHECK_DISABLED: true,
+          NOTIFICATION_BROKEN_VARIABLE: true,
+          CHECK_BROKEN_VARIABLE: true,
+          NOTIFICATION_UNUSED_FLOWS: false,
+          CHECK_UNUSED_FLOWS: true,
+          NOTIFICATION_UNUSED_LOGIC: false,
+          CHECK_UNUSED_LOGIC: true,
+          NOTIFICATION_FIXED: false,
+          CHECK_FIXED: true,
+          NOTIFICATION_FIXED_LOGIC: false,
+          CHECK_FIXED_LOGIC: true,
+          INTERVAL_ENABLED: true,
+          CHECK_ON_STARTUP: false,
+          BROKEN: [],
+          BROKEN_DISABLED: [],
+          DISABLED: [],
+          BROKEN_VARIABLE: [],
+          UNUSED_FLOWS: [],
+          UNUSED_LOGIC: [],
+          INTERVAL_FLOWS: 5,
+          ALL_FLOWS: 0,
+          ALL_SCREENSAVERS: 0,
+          ALL_VARIABLES: 0,
+          ALL_VARIABLES_OBJ: {},
+          FOLDERS: [],
+          FILTERED_FOLDERS: [],
+          HOMEY_ID: window._settings["HOMEY_ID"]
+        };
 
-      Homey.api("PUT", "/settings", settings, function (err, result) {
-        if (err) {
-          console.error(err);
-          showDialog(err);
+        Homey.api("PUT", "/settings", settings, function (err, result) {
+          if (err) {
+            console.error(err);
+            showDialog(err);
 
-          setTimeout(() => {
-            button.removeAttribute("loading");
-          }, 2000);
-          return Homey.alert(err);
-        } else {
-          showDialog(`${Homey.__("settings.general.clear_and_saved")}`, "succes");
+            setTimeout(() => {
+              button.removeAttribute("loading");
+            }, 2000);
+            return Homey.alert(err);
+          } else {
+            showDialog(`${Homey.__("settings.general.clear_and_saved")}`, "succes");
 
-          setTimeout(() => {
-            button.removeAttribute("loading");
-          }, 2000);
-        }
-      });
-    } else {
-      console.log("canceled");
-      setTimeout(() => {
-        button.removeAttribute("loading");
-      }, 2000);
+            setTimeout(() => {
+              button.removeAttribute("loading");
+            }, 2000);
+          }
+        });
+      } else {
+        console.log("canceled");
+        setTimeout(() => {
+          button.removeAttribute("loading");
+        }, 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      showDialog(err && err.message ? err.message : err);
+      button.removeAttribute("loading");
     }
   });
 }
