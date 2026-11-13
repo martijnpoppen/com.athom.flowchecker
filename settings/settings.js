@@ -349,13 +349,23 @@ function initClear() {
 
     try {
       if (await Homey.confirm("Are you sure you want to clear all stored configuration data?")) {
-        document.getElementById("flows.broken").innerHTML = "";
-        document.getElementById("flows.disabled").innerHTML = "";
-        document.getElementById("flows.broken_variable").innerHTML = "";
-        document.getElementById("flows.overview").innerHTML = "";
-        document.getElementById("flows.unused").innerHTML = "";
-        document.getElementById("logic_unused").innerHTML = "";
-        document.getElementById("filtered_folders").innerHTML = "";
+        [
+          "flows.overview",
+          "flows_broken",
+          "flows_broken_disabled",
+          "flows_disabled",
+          "flows_broken_variable",
+          "flows_unused",
+          "logic_unused",
+          "filtered_folders",
+          "variable_per_flow_list",
+          "logic_flow_map_list_string",
+          "logic_flow_map_list_number",
+          "logic_flow_map_list_boolean"
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = "";
+        });
         document.getElementById("notification_broken").checked = true;
         document.getElementById("notification_broken_disabled").checked = true;
         document.getElementById("notification_disabled").checked = false;
@@ -407,6 +417,8 @@ function initClear() {
           ALL_SCREENSAVERS: 0,
           ALL_VARIABLES: 0,
           ALL_VARIABLES_OBJ: {},
+          VARIABLES_PER_FLOW: [],
+          FLOW_LOGIC_MAP: [],
           FOLDERS: [],
           FILTERED_FOLDERS: [],
           HOMEY_ID: window._settings["HOMEY_ID"]
