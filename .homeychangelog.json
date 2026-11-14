@@ -532,5 +532,8 @@
   },
   "1.38.2": {
     "en": "FIX: Reset Settings failing with 'getElementById(...) is null'"
+  },
+  "1.38.3": {
+    "en": "FIX: Reset Settings button stuck on loading spinner"
   }
 }
